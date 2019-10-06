@@ -8,7 +8,7 @@
 2. [Pliki](#Pliki)
 3. [Administracja kontami użytkowników](#Administracja-kontami-użytkowników)
 4. [Zasoby systemowe](#Zasoby-systemowe)
-5. [Quoty systemowe](#Quoty-systemowe)
+5. [Quoty](#Quoty)
 6. [Bibliografia](#Bibliografia)
 
 ------
@@ -127,6 +127,99 @@ chgrp student exampleFile
 
 
 
+### W systemie Linux inforamcje o użytkownikach znajdują się w plikach:
+
+* /etc/passwd
+* /etc/group
+* /etc/shadow
+
+#### Plik /etc/passwd
+
+W tym pliku przechowywane są informacje o użytkownikach.
+
+```bash
+#Wszyscy użytkownicy mają możliwość odczytu pliku, gdybyśmy ją odebrali niebylibyśmy w stanie zmienić użytkownika a wiele aplikacji przestało by działać poprawnie nie mając dostępu do danych w nim dostępnych(stąd późniejszy podziął na /etc/passwd i /etc/shadow)
+-rw-r--r-- 1 root root 1594 10-02 21:50 /etc/passwd
+#Przykładowy wpis w pliku /etc/passwd na Manjaro Linux
+mtracewicz:x:1000:1001:Michał Tracewicz:/home/mtracewicz:/bin/bash
+#|---1----|2|-3--|-4--|------5---------|------6--------|----7-----
+#Składnia:
+#1 - nazwa użytkownika
+#2 - hasło(zwykle znajdziemy tu x ponieważ aktualnie przechowuje się je w pliku /etc/shadow)
+#3 - id użytkownika
+#4 - id grupy
+#5 - komentarz/opis/informacja o użytkowniku
+#6 - folder domowy
+#7 - powłoka domyślna
+```
+
+#### Plik /etc/group
+
+W tym pliku przechowywane są informacje o poszczegulnych grupach w systemie. Dla przykłądu
+
+```bash
+-rw-r--r-- 1 root root 988 10-03 14:42 /etc/group
+#Przykładowy wpis w pliku /etc/group na Manjaro Linux
+sys:x:3:bin,mtracewicz
+#|1|2|3|-------4------
+#Składnia
+#1 - nazwa grupy
+#2 - hasło(zwykle puste ale może zawierać zaszyfrowane hasło)
+#3 - id grupy
+#4 - lista użytkowników należących do grupy
+
+```
+
+Możemy sprawdzić do jakich grup należy dany użytkownik poprzez użycie polecenia groups.
+
+```bash
+#Przykład użycia polecenia groups dla użytkownika mtracewicz
+groups mtracewicz
+wheel lp sys network power autologin vboxusers mtracewicz
+```
+
+
+
+#### Plik /etc/shadow
+
+W tym pliku przechowujemy hasła użytkowników.
+
+```bash
+#Możemy zauważyć, że w przeciwieństwie do popszednich plików plik /etc/shadow może być zarówno czytany jak i edytowany przez użytkownika root
+-rw------- 1 root root 922 10-02 21:50 /etc/shadow
+#Przykładowy wpis w pliku(wzięty z https://www.slashroot.in/how-are-passwords-stored-linux-understanding-hashing-shadow-utils i delikatnie zmodyfikowany)
+testUser:$1$Etg2ExUZ$F9NTP7omafhKIlqaBMqng1:15651:0:99999:7:::
+#-1-|----------------2-----------------|--3--|4|--5--|6|7|8|9
+#1 - nazwa użytkownika
+#2 - zaszyfrowane hasło(poniżej przykładu znajduje się informacja o tym jak wygląda ten proces)
+#3 - ile dni minęło od ostatniej zmiany hasło
+#4 - ile minimalnie dni jest wymaganych miedzy zmianami hasła(jak często można zmieniać hasło)
+#5 - ile maksymalnie dni jest dopuszczalne między zmianami hasła
+#6 - na ile dni przed następną wymaganą zmiany hasła użytkownik dostanie ostrzeżenie
+#7 - ile dni po wygaśnięciu hasła konto będzie wyłączone
+#8 - po ilu dniach od 01.01.1970r. konto zostanie wyłączone
+#9 - pole jesze nie użyte
+
+```
+
+##### Czym jest silne hasło?
+
+##### Jak można łamać hasła?
+
+##### Jak zabezpieczać hasła?
+
+## Administracja kontami użytkowników
+
+### Wyświetlanie listy aktywnych użytkowników
+
+### Wyświetlanie ostatnich logowań użytkowników
+
+
+
+## Zasoby systemowe
+
+## Quoty
+
 ## Bibliografia
 
 #### Polecenie last(wyświetlenie ostatnich loginów użytkownika)
@@ -140,10 +233,20 @@ chgrp student exampleFile
 * http://www.penguintutor.com/linux/file-permissions-reference
 * http://mediologia.pl/katalogi-i-pliki-linux/2-4-atrybuty-plikow-uzywanych-w-systemie-linux-polecenie-ls
 * https://www.hostingadvice.com/how-to/change-file-ownershipgroups-linux/
+
+#### Pliki z informacjami o użytkownikach/grupach
+
+* https://www.cyberciti.biz/faq/understanding-etcgroup-file/
+* http://www.yourownlinux.com/2015/07/etc-passwd-file-format-in-linux-explained.html
+
+#### Hasła użytkowników
+
+* https://www.cyberciti.biz/faq/understanding-etcshadow-file/
+
+- https://www.slashroot.in/how-are-passwords-stored-linux-understanding-hashing-shadow-utils
+
 #### Tworzenie kont użytkowników i edycja haseł
 * https://www.lifewire.com/create-users-useradd-command-3572157
-#### Hasła użytkowników
-* https://www.slashroot.in/how-are-passwords-stored-linux-understanding-hashing-shadow-utils
 #### Blokowanie użytkowników
 * https://www.linuxnix.com/lock-user-account-linux/
 * https://www.2daygeek.com/lock-unlock-disable-enable-user-account-linux/
@@ -163,4 +266,4 @@ chgrp student exampleFile
 * https://en.wikipedia.org/wiki/Disk_quota#Common_Unix_disk_quota_utilities
 #### Linux
 * https://en.wikipedia.org/wiki/Linux
-* http://www.yourownlinux.com/2015/07/etc-passwd-file-format-in-linux-explained.html
+* [The Complete History of Linux (Abridged) -Bryan Lunduke](https://www.youtube.com/watch?v=UjDQtNYxtbU)
