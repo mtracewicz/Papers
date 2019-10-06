@@ -198,15 +198,50 @@ testUser:$1$Etg2ExUZ$F9NTP7omafhKIlqaBMqng1:15651:0:99999:7:::
 #6 - na ile dni przed następną wymaganą zmiany hasła użytkownik dostanie ostrzeżenie
 #7 - ile dni po wygaśnięciu hasła konto będzie wyłączone
 #8 - po ilu dniach od 01.01.1970r. konto zostanie wyłączone
-#9 - pole jesze nie użyte
-
+#9 - pole jesze nie obecnie używane
 ```
 
-##### Czym jest silne hasło?
+##### W jaki sposób hasła są zabezpieczane?
+
+Hasło przechowywane w pliku /etc/shadow możemy podzielić na trzy części rozdzielone znakiem '$'. Przyjmuje ono postać $ID$SALT$HASHED.
+
+**Algorytm hasujący** - algorytm który z podanych danych  tworzy unikatowy ciąg znaków zadanej długości. Jest to funkcja, której nie da się odwrócić tzn. znając hash nie możemy odzyskać danych wejściowych( To odróznia algorytm hashujący od szyfrującego, ten drugi jest odwracalny).
+
+**ID** jest to wartość wskazująca jakiego algorytmu hashującego użyto. Może on przyjąć wartośći:
+
+* 1 - oznacza algorytm MD5
+* 2 - oznacza algorytm Blowfish
+* 2a - oznacza algorytm eksblowfish
+* 5 - oznacza algorytm SHA-256
+* 6 - oznacza algorytm SHA-512
+
+**Salt** jest to losowo wygenerowany ciąg znaków, który jest łączony z hasłem użytkownika w celu zwiększenia bezpieczeństwa.
+
+**HASHED** jest to wartość wynikowa algorytmu hashującego na haśle użytkonika połączonym z saltem.
+
+##### Co daje nam salt?
+
+Salt pomaga nam zabezpieczyć nasze hasła przed atakami typu dictionary atack czy rainbow table(więcej o tym w następnym podpunkcie). Dzięki zastosowaniu wartości salt nawet dwa dokładnie te same hasła będą posiadały inny hash. Co za tym idzie nawet jeżeli osobie atakującej udało się złamać jedno hasło nie będzie ona w stanie znaleźć osoby o identycznym haśle ponieważ ich zahaszowana wartość będzie inna.
 
 ##### Jak można łamać hasła?
 
-##### Jak zabezpieczać hasła?
+Najprostszym sposobem łamania haseł są tak zwany dictionary atack i rainbow table. 
+
+Pierwszy z nich to atak oparty na prostej metodzie siłowej gdzie znając algorytm hashujący próbujemy użyć go na wszystkich prawdopodobnych hasłach( najczęściej robi się to sprawdzając listę najczęstszych haseł oraz dodając do niej te same hasła tylko ze zmienioną wielkością liter czy podmieniając liery na cyfr np. 'A' -> 4, 'O'->0 itp. ) i znaleźć takie, które zgadza się z jednym z tych które pozyskaliśmy.
+
+Drugi sposób to pozyskanie bazy wktórej najpopularniejsze hasła są już zahaszowa wraz z informacjąo tym jaki algorytm został użyty. Następnie sprawdzamy czy, któryś z posiadanych przez nas hashy znajduję się w tej bazie i odczytujemy z niej hasło. 
+
+W pierwszym przypadku zużywamy niewiele pamięci jednak bardzo dużo mocy obliczeniowej, w drugi ataku jest dokłądnie odwrotnie. Przed oboma tymi atakami pomaga nam bronić się wartość salt. Dzięki generowaniu losowej wartości do naszych haseł mamy niemal pewność, że hash, który uzyskamy( nawet jeżeli użytkownik ustawi sobie hasło = haslo123! ) nie znajdzie się w żadnej z rainbow tables. W przypadku dictionary atack dodanie wartości salt masywnie zwiększa ilość możliwości, które atakująćy musi sprawdzić a co za tymi idzie zwiększamy czas, który musi poświęcić na próbę złamania każdego z haseł.
+
+##### Czym jest silne hasło?
+
+Silne hasło to takie które zawiera minimum osiem znaków, zarówno wilkie jak i małe litery, znaki specjalne i cyfry.
+
+Jeżeli nasze hasło zawiera tylko 8 małych liter to jest ich możliwie 26 ^ 8,natomiast w wypadku bezpiecznego hasła jest ich minimum 56 ^ 8 (liczba ta jest większa zależnie od tego jake znaki dopuszczamy jako znaki specjalne).
+
+Dodatkowo należy pamiętać,  że długość hasła ma istotny wpływ na jego bezpieczeństwo.  Jak już pokazaliśmy ośmioznakowych haseł jest ~56 ^8 natomiast dodanie np. czterech znaków znacząco zwiększa ilość możliwośći 56^12. Pokazuje to, że każdy kolejny znak zwiększa ilość obliczeń, którą musi wykonać ktoś, kto próbuje zgadnąc nasze hasło.
+
+Warto także pamiętać o tym, że hasło nie powinno zawierać żadnych danych z nami związannych takich jak imię, nazwisko czy rok urodzenia.
 
 ## Administracja kontami użytkowników
 
@@ -243,7 +278,8 @@ testUser:$1$Etg2ExUZ$F9NTP7omafhKIlqaBMqng1:15651:0:99999:7:::
 
 * https://www.cyberciti.biz/faq/understanding-etcshadow-file/
 
-- https://www.slashroot.in/how-are-passwords-stored-linux-understanding-hashing-shadow-utils
+- https://www.slashroot.in/how-are-passwords-stored-linux-understanding-hashing-shadow-utils\
+- https://blog.jscrambler.com/hashing-algorithms/
 
 #### Tworzenie kont użytkowników i edycja haseł
 * https://www.lifewire.com/create-users-useradd-command-3572157
