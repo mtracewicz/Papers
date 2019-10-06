@@ -78,11 +78,11 @@ Kolejno od lewej wpis zawiera:
 
      Gdzie:
 
-     |  0   | ---  |  4   | r--  |
-     | :--: | :--: | :--: | :--: |
-     |  1   | --x  |  5   | r-x  |
-     |  2   | -w-  |  6   | rw-  |
-     |  3   | -wx  |  7   | rwx  |
+     | **0** |   ---   |   4   |   r--   |
+     | :---: | :-----: | :---: | :-----: |
+     | **1** | **--x** | **5** | **r-x** |
+     | **2** | **-w-** | **6** | **rw-** |
+     | **3** | **-wx** | **7** | **rwx** |
 
      
 
@@ -209,7 +209,7 @@ Hasło przechowywane w pliku /etc/shadow możemy podzielić na trzy części roz
 
 **ID** jest to wartość wskazująca jakiego algorytmu hashującego użyto. Może on przyjąć wartośći:
 
-* 1 - oznacza algorytm MD5
+* 1 - oznacza algorytm MD5(Nie jest zalecane jego użycie, obecnie jest łatwy do złamania)
 * 2 - oznacza algorytm Blowfish
 * 2a - oznacza algorytm eksblowfish
 * 5 - oznacza algorytm SHA-256
@@ -247,9 +247,168 @@ Warto także pamiętać o tym, że hasło nie powinno zawierać żadnych danych 
 
 ### Wyświetlanie listy aktywnych użytkowników
 
+W systemie Linux możemy wyświetlić listę aktywnych użytkowników za pomocą polecenia users.
+
+```bash
+users
+#W normalnym systemie wynikiem tego polecenia jest lista aktualnie zalogowanych użytkowników
+test testUser exampleUSer
+```
+
+Polecenie to nie zawiera żadnych opcji.
+
 ### Wyświetlanie ostatnich logowań użytkowników
 
+W systemie Linux możemy wyświetlić listę ostatnich logowań użytkowników za pomocą polecenia last.
 
+```bash
+#polecenie wyświetli logowania użytkownika mtracewicz w kolejności od najstarszych do najnowszych możemy także wyświetlić dla konkretnego tty/host
+last mtracewicz
+#przykładowy wpis
+mtracewicz pts/9    188.147.44.127.nat.umt pią  4 paź 09:15 - 09:18  (00:02)
+#----1----|--2------|--------3------------|---------------4---------------|
+#1 - nazwa użytkownika
+#2 - tty(nazwa terminalu)
+#3 - host z którego użytkownik się loguje/miejsce dostępu
+#4 - data początku - końca logowania i w nawiasie czas trwania
+```
+
+### Dodawanie urzytkowników
+
+W systemie Linux możemy dodać użytkownika za pomocą polecenia useradd.
+
+```bash
+#polecenie, które doda do systemu użytkownika test, pobierze domyślne wartości z pliku /etc/default/useradd może zostać wykonane tylko przez użytkownika root lub użytkownik posiadający uprawnienia do polecenia sudo
+useradd test
+#jeżeli chcemy utworzyć katalog domowy użytkownikowi musimy użyć opcji -m
+useradd -m test
+#jeżeli użyjemy opcji -d możemy utworzyć katalog domowy w miejscu innym niż domyślne
+#jeżeli chcemy dodać użytkownika do grup użyjemy opcji -G
+useradd test -G student,inf
+#w tym wypadku utworzymy użytkownika test i dodamy go do grup student i inf
+#jaeżeli checmy ustawić np. po ilu dniach wygasa hasło użyjemy opcji -K
+useradd test -K PASS_MAX_DAYS = 3
+#jeżeli chcemy dodać komentarz jak np. imię i nazwisko to użyjemy opcji -c
+useradd test -c "Jan Kowalski"
+```
+
+### Usuwanie użytkowników
+
+W systemie Linux możemy usunąć użytkownika za pomocą polecenia userdel
+
+```bash
+#tym polceniem usuniemy użytkownika test, może zostać wywołane tylko przez użytkownika root lub użytkownik posiadający uprawnienia do polecenia sudo
+userdel test
+#jeżeli chcemy usunąć także katalog domowy użytkownika użyjemy opcji -r
+userdel -r test
+```
+
+### Modyfikacja użytkowników
+
+W systemie Linux możemy modyfikować użytkownika za pomocą polecenia usermod.
+
+```bash
+#tym poleceniem zmianimy katalog domowy użytkownika test na katalog /test
+usermod -d /test test
+#jeżeli chcemy wraz ze zmianą katalogu domowego przeniść do niego pliki ze starego używamy opcji -m
+usermod -d /test -m test
+#tym poleceniem zmienimy login uzytkownika test na jankowalski
+usermod -l test jankowalski
+#tym poleceniem zmienimy id użytkownika test na 1000
+usermod -u 1000 test
+#tym polceniem zmienimy główną grupę użytkownika test na pracownik(grupa musi już istnieć)
+usermod -g pracownik test
+#tym poleceniem dodamy wiele grup(student,informatyka) dla użytkownika test. Opcja -a sprawia, że użytkownik nie utraci obecnie przypisanych grup
+usermod -a -G student,informatyka	test 
+#tym poleceniem zmienimy datę wygaśnięcia konta użytkownika test na pierwszy stycznia 2020. Data musi być w formacie YYYY-MM-DD
+usermod -e 2020-01-01 test
+#tym polceniem zminimy powłokę użytkownika test na zsh
+usermod -s /bin/zsh test
+```
+
+### Zmiany hała
+
+W systemie Linux możemy modyfikować hasło użytkownika za pomocą polecenia passwd.
+
+```bash
+#Każdy użytkownik może zmienić własne hasło
+passwd
+#Wyświetli nam się taki komunikat
+Changing password for mtracewicz.
+#Zostaniemy poproszeni o aktualne hasło
+Current password: 
+#Następnie o nowe hasło
+New password: 
+#Oraz powtórzenie w celu potwierdzenia
+Retype new password: 
+#Użytkownik root może zmodyfikować hasło dowolnego użytkownika. Tym poleceniem zminimy hasło użytkownika test(jako root nie zostaniemy zapytani o poprzednie hasło)
+passwd test
+#Polecenie passwd pozwala nam też usunąć hasło opcją -d
+passwd -d test
+```
+
+#### Jak wymusić zmianę hasła?
+
+Aby wymusić zmianę hasła możemy użyć wcześniej wspomnianego polecenia passwd lub dedykowanego polcenia change.
+
+```bash
+#Aby wymusić zmianę hasła przy pierwszyzm logowaniu hasłem nadanym prze root-a możemy użyć opcji -e
+passwd -e test
+#Polcenie change służy do zarządzania wygasaniem haseł. Możemy użyć polecenia change do wyświetlenia aktualnych informacji o datach związanych z hasłem użytkownika w ten sposób:
+change -l mtracewicz
+#Możemy zmienić maksymalną ilość dni między zmianami hasła z opcja -M. W tym przykłdazie ustawimy, że użytkownik mtracewicz musi zmienić hasło co maksymalnie 5 dni
+change -M 5 mtracewicz
+#Jeżeli nie chcemy aby użytkownik zmieniał hasło codziennie możemy użyć opcji -m. W tym przykładzie zmienimy, że użytkownik mtracewicz będzie mógł zminić hasło najczęściej co dwa dni.
+change -m 2 mtracewicz
+```
+
+### Blokowanie / odblokowanie konta
+
+Wcześniej wymienionym poleceniem usermod możemy zablokować lub odblokować użytkownika.
+
+```bash
+#tym polceniem blokujemy użytkownika
+usermod -L test
+#tym polceniem odblokujemy użytkownika
+usermod -U test
+```
+
+### Zmiana tożsamości użytkownika
+
+W systemie Linux mamy dwa polecenia służące do zmiany tożsamości: sudo,su.
+
+#### Dobre praktyki
+
+### Dodawanie grup
+
+W systemie Linux możemy dodać grupę za pomocą polecenia useradd.
+
+```bash
+#Tym poleceniem dodamy grupę testGroup
+groupadd testGroup
+#Z opcją -g możemy sami wybrać id grupy(musi być unikatowe i nie ujemne)
+groupadd -g 999 testGroup
+```
+
+### Usuwanie grup
+
+W systemie Linux możemy usunąć grupę zapomocą polecenia groupdel.
+
+```bash
+#Tym polceniem usuniemy grpę testGroup, grupa musi istnieć i my jako administratorazy musimy zadbać aby grupa, która uwuwamy nie była główną grupą dla żadnego z użytkowników
+groupdel testGroup
+```
+
+### Modyfikacja grup
+
+W systemie Linux możemy zmodyfikować grupę za pomocą groupmod.
+
+```bash
+#Możemy zmodyfikować id grupy przy użyciu opcji -g
+groupmod -g 999 testGroup
+#Możemy też zmodyfikować nazwę grupy za pomocą opcji -n. W tym przykładzie zminimy nazwę grupy testGroup na myGroup
+groupmod -n myGroup testGroup
+```
 
 ## Zasoby systemowe
 
@@ -257,10 +416,10 @@ Warto także pamiętać o tym, że hasło nie powinno zawierać żadnych danych 
 
 ## Bibliografia
 
-#### Polecenie last(wyświetlenie ostatnich loginów użytkownika)
+#### Polecenie last
 * https://www.golinuxhub.com/2014/05/how-to-check-last-login-time-for-users.html
 * man last
-#### Polecenie users(wyświetlenie aktywnych użytkowników)
+#### Polecenie users
 * man users
 #### Sudo
 * https://www.lifewire.com/what-to-know-sudo-command-3576779
@@ -281,8 +440,10 @@ Warto także pamiętać o tym, że hasło nie powinno zawierać żadnych danych 
 - https://www.slashroot.in/how-are-passwords-stored-linux-understanding-hashing-shadow-utils\
 - https://blog.jscrambler.com/hashing-algorithms/
 
-#### Tworzenie kont użytkowników i edycja haseł
+#### Tworzenie, usuwanie i modyfikacja kont użytkowników 
 * https://www.lifewire.com/create-users-useradd-command-3572157
+* https://www.linuxnix.com/delete-user-account-linux/
+* https://www.itzgeek.com/how-tos/linux/how-to-modify-user-accounts-in-linux-using-usermod-command.html
 #### Blokowanie użytkowników
 * https://www.linuxnix.com/lock-user-account-linux/
 * https://www.2daygeek.com/lock-unlock-disable-enable-user-account-linux/
