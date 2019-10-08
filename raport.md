@@ -155,7 +155,7 @@ mtracewicz:x:1000:1001:Michał Tracewicz:/home/mtracewicz:/bin/bash
 
 #### Plik /etc/group
 
-W tym pliku przechowywane są informacje o poszczegulnych grupach w systemie. Dla przykłądu
+W tym pliku przechowywane są informacje o poszczególnych grupach w systemie. Dla przykładu
 
 ```bash
 -rw-r--r-- 1 root root 988 10-03 14:42 /etc/group
@@ -205,9 +205,9 @@ testUser:$1$Etg2ExUZ$F9NTP7omafhKIlqaBMqng1:15651:0:99999:7:::
 
 Hasło przechowywane w pliku /etc/shadow możemy podzielić na trzy części rozdzielone znakiem '$'. Przyjmuje ono postać $ID$SALT$HASHED.
 
-**Algorytm hasujący** - algorytm który z podanych danych  tworzy unikatowy ciąg znaków zadanej długości. Jest to funkcja, której nie da się odwrócić tzn. znając hash nie możemy odzyskać danych wejściowych( To odróznia algorytm hashujący od szyfrującego, ten drugi jest odwracalny).
+**Algorytm hashujący** - algorytm który z podanych danych  tworzy unikatowy ciąg znaków zadanej długości. Jest to funkcja, której  nie da się w prosty sposób odwrócić tzn. znając hash nie możemy odzyskać danych wejściowych (To odróżnia algorytm hashujący od szyfrującego, ten drugi jest odwracalny).
 
-**ID** jest to wartość wskazująca jakiego algorytmu hashującego użyto. Może on przyjąć wartośći:
+**ID** jest to wartość wskazująca jakiego algorytmu hashującego użyto. Może on przyjąć wartości:
 
 * 1 - oznacza algorytm MD5(Nie jest zalecane jego użycie, obecnie jest łatwy do złamania)
 * 2 - oznacza algorytm Blowfish
@@ -217,7 +217,7 @@ Hasło przechowywane w pliku /etc/shadow możemy podzielić na trzy części roz
 
 **Salt** jest to losowo wygenerowany ciąg znaków, który jest łączony z hasłem użytkownika w celu zwiększenia bezpieczeństwa.
 
-**HASHED** jest to wartość wynikowa algorytmu hashującego na haśle użytkonika połączonym z saltem.
+**HASHED** jest to wartość wynikowa algorytmu hashującego na haśle użytkownika połączonym z saltem.
 
 ##### Co daje nam salt?
 
@@ -227,21 +227,21 @@ Salt pomaga nam zabezpieczyć nasze hasła przed atakami typu dictionary atack c
 
 Najprostszym sposobem łamania haseł są tak zwany dictionary atack i rainbow table. 
 
-Pierwszy z nich to atak oparty na prostej metodzie siłowej gdzie znając algorytm hashujący próbujemy użyć go na wszystkich prawdopodobnych hasłach( najczęściej robi się to sprawdzając listę najczęstszych haseł oraz dodając do niej te same hasła tylko ze zmienioną wielkością liter czy podmieniając liery na cyfr np. 'A' -> 4, 'O'->0 itp. ) i znaleźć takie, które zgadza się z jednym z tych które pozyskaliśmy.
+Pierwszy z nich to atak oparty na prostej metodzie siłowej gdzie znając algorytm hashujący próbujemy użyć go na wszystkich prawdopodobnych hasłach( najczęściej robi się to sprawdzając listę najczęstszych haseł oraz dodając do niej te same hasła tylko ze zmienioną wielkością liter czy podmieniając litery na cyfr np. 'A' -> 4, 'O'->0 itp. ) i znaleźć takie, które zgadza się z jednym z tych które pozyskaliśmy.
 
-Drugi sposób to pozyskanie bazy wktórej najpopularniejsze hasła są już zahaszowa wraz z informacjąo tym jaki algorytm został użyty. Następnie sprawdzamy czy, któryś z posiadanych przez nas hashy znajduję się w tej bazie i odczytujemy z niej hasło. 
+Drugi sposób to pozyskanie bazy w której najpopularniejsze hasła są już zahaszowa wraz z informacją tym jaki algorytm został użyty. Następnie sprawdzamy czy, któryś z posiadanych przez nas hashy znajduję się w tej bazie i odczytujemy z niej hasło. 
 
-W pierwszym przypadku zużywamy niewiele pamięci jednak bardzo dużo mocy obliczeniowej, w drugi ataku jest dokłądnie odwrotnie. Przed oboma tymi atakami pomaga nam bronić się wartość salt. Dzięki generowaniu losowej wartości do naszych haseł mamy niemal pewność, że hash, który uzyskamy( nawet jeżeli użytkownik ustawi sobie hasło = haslo123! ) nie znajdzie się w żadnej z rainbow tables. W przypadku dictionary atack dodanie wartości salt masywnie zwiększa ilość możliwości, które atakująćy musi sprawdzić a co za tymi idzie zwiększamy czas, który musi poświęcić na próbę złamania każdego z haseł.
+W pierwszym przypadku zużywamy niewiele pamięci jednak bardzo dużo mocy obliczeniowej, w drugi ataku jest dokładnie odwrotnie. Przed oboma tymi atakami pomaga nam bronić się wartość salt. Dzięki generowaniu losowej wartości do naszych haseł mamy niemal pewność, że hash, który uzyskamy( nawet jeżeli użytkownik ustawi sobie hasło = haslo123! ) nie znajdzie się w żadnej z rainbow tables. W przypadku dictionary atack dodanie wartości salt masywnie zwiększa ilość możliwości, które atakujący musi sprawdzić a co za tymi idzie zwiększamy czas, który musi poświęcić na próbę złamania każdego z haseł.
 
 ##### Czym jest silne hasło?
 
-Silne hasło to takie które zawiera minimum osiem znaków, zarówno wilkie jak i małe litery, znaki specjalne i cyfry.
+Silne hasło to takie które zawiera minimum osiem znaków, zarówno wielkie jak i małe litery, znaki specjalne i cyfry.
 
-Jeżeli nasze hasło zawiera tylko 8 małych liter to jest ich możliwie 26 ^ 8,natomiast w wypadku bezpiecznego hasła jest ich minimum 56 ^ 8 (liczba ta jest większa zależnie od tego jake znaki dopuszczamy jako znaki specjalne).
+Jeżeli nasze hasło zawiera tylko 8 małych liter to jest ich możliwie 26 ^ 8,natomiast w wypadku bezpiecznego hasła jest ich minimum 56 ^ 8 (liczba ta jest większa zależnie od tego jakie znaki dopuszczamy jako znaki specjalne).
 
-Dodatkowo należy pamiętać,  że długość hasła ma istotny wpływ na jego bezpieczeństwo.  Jak już pokazaliśmy ośmioznakowych haseł jest ~56 ^8 natomiast dodanie np. czterech znaków znacząco zwiększa ilość możliwośći 56^12. Pokazuje to, że każdy kolejny znak zwiększa ilość obliczeń, którą musi wykonać ktoś, kto próbuje zgadnąc nasze hasło.
+Dodatkowo należy pamiętać,  że długość hasła ma istotny wpływ na jego bezpieczeństwo.  Jak już pokazaliśmy ośmioznakowych haseł jest ~56 ^8 natomiast dodanie np. czterech znaków znacząco zwiększa ilość możliwości 56^12. Pokazuje to, że każdy kolejny znak zwiększa ilość obliczeń, którą musi wykonać ktoś, kto próbuje zgadnąć nasze hasło.
 
-Warto także pamiętać o tym, że hasło nie powinno zawierać żadnych danych z nami związannych takich jak imię, nazwisko czy rok urodzenia.
+Warto także pamiętać o tym, że hasło nie powinno zawierać żadnych danych z nami związanych takich jak imię, nazwisko czy rok urodzenia.
 
 ## Administracja kontami użytkowników
 
@@ -349,7 +349,7 @@ passwd -d test
 
 #### Jak wymusić zmianę hasła?
 
-Aby wymusić zmianę hasła możemy użyć wcześniej wspomnianego polecenia passwd lub dedykowanego polcenia change.
+Aby wymusić zmianę hasła możemy użyć wcześniej wspomnianego polecenia passwd lub dedykowanego polecenia change.
 
 ```bash
 #Aby wymusić zmianę hasła przy pierwszyzm logowaniu hasłem nadanym prze root-a możemy użyć opcji -e
