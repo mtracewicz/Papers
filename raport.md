@@ -460,8 +460,6 @@ root ALL = (ALL) ALL
 %zwykliUzytkownicy ALL = (root) ALL, !BLACKLISTED_APPS, !USER_WRITABLE
 ```
 
-
-
 ### Dodawanie grup
 
 W systemie Linux możemy dodać grupę za pomocą polecenia useradd.
@@ -491,6 +489,35 @@ W systemie Linux możemy zmodyfikować grupę za pomocą groupmod.
 groupmod -g 999 testGroup
 #Możemy też zmodyfikować nazwę grupy za pomocą opcji -n. W tym przykładzie zminimy nazwę grupy testGroup na myGroup
 groupmod -n myGroup testGroup
+```
+
+### Zmiana tożsamości grup
+
+W systemie Linux możemy zmienić aktualną grupę na inną za pomocą polecenia newgrp.
+
+```bash
+#W wypadku nie podania argumentów program zaloguje nas do naszej domyślnej grupy nadanej nam w /etc/passwd
+newgrp
+#Zmienimy grupę od id 999
+newgrp 999
+```
+
+Jeżeli grupa ma hasło a nie jesteśmy jej członkiem zostaniemy poproszeni o hasło. W wypadku gdy grupa ma puste hasło i nie jesteśmy członkami grupy to dostep nie zostanie nam przyznany. W wypadku, gdy użytkownik nie ma hasła a grupa ma to zostanie on poproszony o jego wpisanie (nie dotyczy użytkownika root).
+
+### Sprawdzanie dostępnych tożsamości
+
+Za pomocą polecenia id możemy sprawdzić dane o tożsamości użytkownika oraz wszystkie grupy w systemie.
+
+```bash
+#W wypadku nie podania argumentów polecenie id zwróci nam informacje o naszym id użytkonika, id grupy i wszystkich grupach do których należymy np.:
+id
+uid=1000(mtracewicz) gid=1000(mtracewicz) groups=1000(mtracewicz),4(adm),20(dialout),24(cdrom),25(floppy),27(sudo),29(audio),30(dip),44(video),46(plugdev),108(lxd),114(netdev)
+#Możemy tym poleceniem wylistować informacje o innych użytkownikach
+id root                                                                                               uid=0(root) gid=0(root) groups=0(root)
+#Jest też możliwość wyświetlenia wszystkich grup w naszym systemie za pomocą opcji "g"
+id -g
+#Jeżeli checmy otzrymać nazwy zamiast id grup użyjemy opcji "n"
+id -gn
 ```
 
 ## Zasoby systemowe
@@ -667,14 +694,18 @@ mtracewicz soft nproc  50
 #### Polecenie users
 * man users
 
-#### SU
+#### Polecenie SU
 
 * man su
 
-#### Sudo
+#### Polecenie Sudo
 * https://www.lifewire.com/what-to-know-sudo-command-3576779
 * https://www.ixsystems.com/blog/best-practices-in-unix-access-control-with-sudo/
 * https://stelfox.net/blog/2016/02/better-practices-with-sudo/
+#### Polecenie id
+
+* man id
+
 #### Dostęp do plików
 * http://www.penguintutor.com/linux/file-permissions-reference
 * http://mediologia.pl/katalogi-i-pliki-linux/2-4-atrybuty-plikow-uzywanych-w-systemie-linux-polecenie-ls
@@ -705,6 +736,7 @@ mtracewicz soft nproc  50
 * https://linux.101hacks.com/monitoring-performance/ps-command-examples/
 #### Zasoby
 * https://ss64.com/bash/ulimit.html
+* https://ss64.com/bash/limits.conf.html
 * https://www.networkworld.com/article/2693414/setting-limits-with-ulimit.html
 #### Quoty
 * https://www.linux.com/tutorials/step-step-using-user-quotas-linux/
