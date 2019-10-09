@@ -17,7 +17,7 @@
 
 ## Historia
 
-System GNU-Linux powstał w roku 1991. Jest on oparty na systemie UNIX (lata 70-te dwudziestego wieku) wywodzącym się z Bell Labs. Co za tym idzie był on od początku projektowany z założeniem, że będzie to system przeznaczony na którym będzie możliwość pracy wielu użytkowników.
+System GNU-Linux powstał w roku 1991. Jest on wzorowany na systemie UNIX (lata 70-te dwudziestego wieku) wywodzącym się z Bell Labs. System ten był od początku projektowany z założeniem, że będzie to system przeznaczony do pracy wielu użytkowników. Czasy systemu UNIX to czasy komputerów będących drogimi pojedynczymi urządzeniami do których logowało się wielu użytkowników za pomocą zewnętrznych terminali. W kontraście z tym stoi system Windows, który był z założenia tworzony jako system dla jednego użytkownika domowego, a co za tym idzie mógł sobie pozwolić na pewne skróty i niedociągnięcia, na które nie ma miejsca gdy mamy wielu niezależnych od siebie użytkowników naszego systemu.
 
 ## Pliki
 
