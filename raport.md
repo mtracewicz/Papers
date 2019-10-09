@@ -205,7 +205,7 @@ testUser:$1$Etg2ExUZ$F9NTP7omafhKIlqaBMqng1:15651:0:99999:7:::
 
 Hasło przechowywane w pliku /etc/shadow możemy podzielić na trzy części rozdzielone znakiem '$'. Przyjmuje ono postać $ID$SALT$HASHED.
 
-**Algorytm hashujący** - algorytm który z podanych danych  tworzy unikatowy ciąg znaków zadanej długości. Jest to funkcja, której  nie da się w prosty sposób odwrócić tzn. znając hash nie możemy odzyskać danych wejściowych (To odróżnia algorytm hashujący od szyfrującego, ten drugi jest odwracalny).
+**Algorytm hashujący** - algorytm który z podanych danych  tworzy unikatowy ciąg znaków zadanej długości. Jest to funkcja, której  nie da się w prosty sposób odwrócić tzn. znając hash nie możemy odzyskać danych wejściowych (To odróżnia algorytm hashujący od szyfrującego, ten drugi jest łatwo odwracalny gdy znamy odpowiedni algorytm deszyfrujący).
 
 **ID** jest to wartość wskazująca jakiego algorytmu hashującego użyto. Może on przyjąć wartości:
 
@@ -227,11 +227,11 @@ Salt pomaga nam zabezpieczyć nasze hasła przed atakami typu dictionary atack c
 
 Najprostszym sposobem łamania haseł są tak zwany dictionary atack i rainbow table. 
 
-Pierwszy z nich to atak oparty na prostej metodzie siłowej gdzie znając algorytm hashujący próbujemy użyć go na wszystkich prawdopodobnych hasłach( najczęściej robi się to sprawdzając listę najczęstszych haseł oraz dodając do niej te same hasła tylko ze zmienioną wielkością liter czy podmieniając litery na cyfr np. 'A' -> 4, 'O'->0 itp. ) i znaleźć takie, które zgadza się z jednym z tych które pozyskaliśmy.
+Pierwszy z nich to atak oparty na prostej metodzie siłowej gdzie znając algorytm hashujący próbujemy użyć go na wszystkich prawdopodobnych hasłach (najczęściej robi się to sprawdzając listę najczęstszych haseł oraz dodając do niej te same hasła tylko ze zmienioną wielkością liter czy podmieniając litery na cyfr np. 'A' -> 4, 'O'->0 itp.) i znaleźć takie, które zgadza się z jednym z tych które pozyskaliśmy.
 
 Drugi sposób to pozyskanie bazy w której najpopularniejsze hasła są już zahaszowa wraz z informacją tym jaki algorytm został użyty. Następnie sprawdzamy czy, któryś z posiadanych przez nas hashy znajduję się w tej bazie i odczytujemy z niej hasło. 
 
-W pierwszym przypadku zużywamy niewiele pamięci jednak bardzo dużo mocy obliczeniowej, w drugi ataku jest dokładnie odwrotnie. Przed oboma tymi atakami pomaga nam bronić się wartość salt. Dzięki generowaniu losowej wartości do naszych haseł mamy niemal pewność, że hash, który uzyskamy( nawet jeżeli użytkownik ustawi sobie hasło = haslo123! ) nie znajdzie się w żadnej z rainbow tables. W przypadku dictionary atack dodanie wartości salt masywnie zwiększa ilość możliwości, które atakujący musi sprawdzić a co za tymi idzie zwiększamy czas, który musi poświęcić na próbę złamania każdego z haseł.
+W pierwszym przypadku zużywamy niewiele pamięci jednak bardzo dużo mocy obliczeniowej, w drugi ataku jest dokładnie odwrotnie. Przed oboma tymi atakami pomaga nam bronić się wartość salt. Dzięki generowaniu losowej wartości do naszych haseł mamy niemal pewność, że hash, który uzyskamy (nawet jeżeli użytkownik ustawi sobie hasło = haslo123!) nie znajdzie się w żadnej z rainbow tables. W przypadku dictionary atack dodanie wartości salt masywnie zwiększa ilość możliwości, które atakujący musi sprawdzić a co za tymi idzie zwiększamy czas, który musi poświęcić na próbę złamania każdego z haseł.
 
 ##### Czym jest silne hasło?
 
@@ -326,7 +326,7 @@ usermod -e 2020-01-01 test
 usermod -s /bin/zsh test
 ```
 
-### Zmiany hała
+### Zmiany hasła
 
 W systemie Linux możemy modyfikować hasło użytkownika za pomocą polecenia passwd.
 
@@ -349,17 +349,17 @@ passwd -d test
 
 #### Jak wymusić zmianę hasła?
 
-Aby wymusić zmianę hasła możemy użyć wcześniej wspomnianego polecenia passwd lub dedykowanego polecenia change.
+Aby wymusić zmianę hasła możemy użyć wcześniej wspomnianego polecenia passwd lub dedykowanego polecenia chage.
 
 ```bash
 #Aby wymusić zmianę hasła przy pierwszyzm logowaniu hasłem nadanym prze root-a możemy użyć opcji -e
 passwd -e test
 #Polcenie change służy do zarządzania wygasaniem haseł. Możemy użyć polecenia change do wyświetlenia aktualnych informacji o datach związanych z hasłem użytkownika w ten sposób:
-change -l mtracewicz
+chage -l mtracewicz
 #Możemy zmienić maksymalną ilość dni między zmianami hasła z opcja -M. W tym przykłdazie ustawimy, że użytkownik mtracewicz musi zmienić hasło co maksymalnie 5 dni
-change -M 5 mtracewicz
+chage -M 5 mtracewicz
 #Jeżeli nie chcemy aby użytkownik zmieniał hasło codziennie możemy użyć opcji -m. W tym przykładzie zmienimy, że użytkownik mtracewicz będzie mógł zminić hasło najczęściej co dwa dni.
-change -m 2 mtracewicz
+chage -m 2 mtracewicz
 ```
 
 ### Blokowanie / odblokowanie konta
@@ -375,9 +375,92 @@ usermod -U test
 
 ### Zmiana tożsamości użytkownika
 
-W systemie Linux mamy dwa polecenia służące do zmiany tożsamości: sudo,su.
+W systemie Linux mamy dwa polecenia służące do zmiany tożsamości: sudo, su.
+
+Różnica między nimi polega na tym, że polecenie sudo służy do wykonania polecenia jako inny użytkownik zaś polecenie su służy do zmiany użytkownika
+
+**Polecenie su:**
+
+```bash
+#Wykonanie polecenia su bez argumentów zmini użytkownika na root
+su
+#Możemy dopisać nazwę użytkownika aby wybrać na jakiego użytkownika checmy zminić
+su testUser
+#Użyjemy opcji -s kiedy checmy wybrać powłokę
+su -s /bin/zsh
+#Opcja -s wybierze powłokę w kolejności:
+#1. wprowadzona przez nas w poleceniu
+#2. ze zmiennej $SHELL (jeżeli użyto opcji --preserve-enviroment, opcja ta zachowuje nasze zmienne środowiskowe z wyjątkiem $PATH i $IFS)
+#3. odczytaną z pliku /etc/passwd
+```
+
+Polecenie su możemy konfigurować za pomocą pliku /etc/login.defs. Możemy tam np. ustawić logowanie do pliku wszystkich poleceń wykonanych przez użytkownika po użyciu polecenia su.
+
+**Polecenie sudo:**
+
+``` bash
+#W tym przykładzie użyjemy polecenia sudo aby zainstalować dodatkowe oprogramowanie
+sudo dnf install vim
+#Możemy użyć opcji -u aby wybrać jako jaki użytkownik checmy wykonać dane polecenie
+sudo -u test vim test.c
+#Możemy użyć opcji -g aby wykonać polecenie jakbyśmy byli członkami innej grupy
+sudo -g 999 vim test.c
+```
+
+Polecenie sudo jest konfigurowane w pliku /etc/sudoers.  Plik jest podzielony na trzy sekcje: defaults, aliases oraz     user specifications. Sekcja defaults zawiera konfiguracje, które będą automatycznie dopisywane do każdego rekordu, mogą one jednak być nadpisywane dla konkretnego wpisu. Sekcja aliases zawiera zmienne, które służą do grupowania wielu nazw do jednego słowa. Istnieją cztery typy aliasów:
+
+- User_Alias - łączymy kilku użytkowników w grupę np.: User_Alias testowi = test1, test2. Nie musimy tu redefiniować grup, które zdefiniować w systemie. Aby użyć grupy systemowej wstawimy przed jej nazwą '%' np.:            User_Alias testowi = %testowi.
+- Runas_Alias - jak wyżej z różnicą, że jest to grupa użytkowników jako, którzy polecenie ma być wykonane.
+- Host_Alias - służy do grupowania hostów z, których użytkownik wykonujący polecenie sudo  się loguje.
+- Cmnd_Alias - służy do grupowania poleceń np.: Cmnd_Alias fileList = /bin/ls
+
+Dla każdego z tych typów aliasów istnieje wbudowany alias ALL. Dodatkowo dodanie '!' przed nazwą polecenia oznacza, że użytkownik nie będzie mógł go wykonać
+
+W sekcji  user specifications zawieramy konkretne wpisy opisujące możliwości danego użytkownika.
+
+```bash
+#Wpis ma postać
+user host = (runas) command[, command, ...]
+#Przykładowy wpis
+testUser ALL = (%students) /bin/ls
+#----1--|-2--|-----3-----|---4---|
+#1. użytkownik/grupa systemowa(poprzedona %)/User_Alias, któremu przyznajemy prawa wykonania sudo(w tym wypadku testUser)
+#2. host/Host_Alias z, którego może on wykonać to polecenie(w tym wypadku dowolny)
+#3. może wykonać jako użytkownik/grupa systemowa(poprzedona %)/User_Alias(w tym wypadku grupa students)
+#4. polcenia do których otrzymuje dostęp (w tym wypadku polecenie ls)
+testUser2 ALL = (ALL) ALL,!/bin/vim
+#W powyższym przykłdazie daliśmy prawo wykonania wszystkich poleceń z wyjątkiem polecenia vim użytkownikowi testUser2 na wszystkich hostach jako dowolny użytkownik
+```
+
+Warto zaznaczyć, że domyślnie polecenie sudo pyta użytkownika o jego hasło, po czym zapamiętuje to hasło na pięć minut.
 
 #### Dobre praktyki
+
+Przy konfiguracji pliku /etc/sudoers warto pamiętać o kilku prostych zasadach aby polepszyć bezpieczeństwo naszego systemu. Prze wszystkim warto wyłączyć każdemu z użytkowników możliwość użycia polecenia su przez polecenie sudo. Jest to ważne ponieważ  w przeciwnym wypadku dowolny użytkownik może się zalogować jako root używając swojego hasła.
+
+```bash
+#W wypadku braku tego zabezpieczenia poniższym poleceniem możemy się zalogować na użytkownika root z użyciem hasła do naszego konta!
+sudo su
+```
+
+Dodatkowo warto wyłączyć możliwość uruchamiania plików z katalogów do których zwykły użytkownik ma prawo zapisu. Dzięki temu zwykły użytkownik nie będzie w stanie uruchomić programów pobranych z Internetu. Możemy to zrobić poprzez dodanie aliasu "Cmnd_Alias NAZWA_ALIASU = /home/*, /tmp/*, /var/tmp/*" oraz dodając przeciwny alias do zaufanych lokacji programów "Cmnd_Alias BEZPIECZNE = /sbin:/bin:/usr/sbin:/usr/bin";
+
+```bash  
+#Przykładowy plik /etc/sudoers (wzorowany na https://stelfox.net/blog/2016/02/better-practices-with-sudo/)
+# /etc/sudoers
+#Alias do poleceń, których nie chcemy aby użytkownicy używali, w naszym wypadku jest to polecenie su z wyżej wymienionego powodu
+Cmnd_Alias BLACKLISTED_APPS = /bin/su
+#Alias do folderów z, którch nie chcemy aby użytkownik mógł uruchamiać programy
+Cmnd_Alias USER_WRITEABLE = /home/*, /tmp/*, /var/tmp/*
+#Dopisujemy do wszystkich rekordów foldery z, których chcemy pozwolić uruchamiać programy
+Defaults secure_path = /sbin:/bin:/usr/sbin:/usr/bin
+#Pozwalamy użytkownikowi root robić wszystko
+root ALL = (ALL) ALL
+#Aplikujemy nasze zasady dla wszystkich pozostałych użytkowników
+%zwykliUzytkownicy ALL = (root) ALL, !BLACKLISTED_APPS, !USER_WRITABLE
+```
+
+
 
 ### Dodawanie grup
 
@@ -421,8 +504,15 @@ groupmod -n myGroup testGroup
 * man last
 #### Polecenie users
 * man users
+
+#### SU
+
+* man su
+
 #### Sudo
 * https://www.lifewire.com/what-to-know-sudo-command-3576779
+* https://www.ixsystems.com/blog/best-practices-in-unix-access-control-with-sudo/
+* https://stelfox.net/blog/2016/02/better-practices-with-sudo/
 #### Dostęp do plików
 * http://www.penguintutor.com/linux/file-permissions-reference
 * http://mediologia.pl/katalogi-i-pliki-linux/2-4-atrybuty-plikow-uzywanych-w-systemie-linux-polecenie-ls
