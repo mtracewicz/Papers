@@ -495,6 +495,168 @@ groupmod -n myGroup testGroup
 
 ## Zasoby systemowe
 
+#### Listowanie procesów i ich zasobów
+
+W systemie Linux istnieje kilka możliwości wyświetlenie aktywnych procesów. Możemy użyć do tego polecenia ps, top i fuser.
+
+##### PS 
+
+```bash
+#Podstawowe wywołanie 
+ps
+#Wyjście polecenie ma  format i wyświetla tylko procesy aktualnego użytkownika
+#PID TTY          TIME CMD     
+#Aby wyświetlić wszystkie procesy w systemie możemy użyć dwóch wersji polecenia ps (posiada ono różne wersje w standardzie UNIX, BSD i GNU)
+#Różnica między tymi poleceniami jest format wyświetlonego wyjścia
+ps -ely
+#Wyjście polecenia ma format
+#S   UID   PID  PPID  C PRI  NI   RSS    SZ WCHAN  TTY          TIME CMD    
+ps -axu
+#Wyjście polecenia ma format
+#USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND  
+#Jeżeli chcemy wyświetlić procesy danego użytkownika używamy opcji -U
+ps -U testUser
+```
+
+##### TOP
+
+```bash
+#Polecenie top w przeciwieństwie do polecenia ps jest dynamicznie aktualizowane i wyświetla aktualny stan zasobów systemu
+top
+#Przykładowy wynik polecenia top, widzimy tu status aktualnie uruchomionych zadań, obciążenie CPU, pamięć wolną, zajętą a także przeniesioną do swap
+top - 14:20:31 up  1:41,  0 users,  load average: 0.52, 0.58, 0.59                                    Tasks:   5 total,   1 running,   4 sleeping,   0 stopped,   0 zombie                                  %Cpu(s):  1.8 us,  2.3 sy,  0.0 ni, 95.1 id,  0.0 wa,  0.8 hi,  0.0 si,  0.0 st                        KiB Mem :  8241956 total,  4504524 free,  3508080 used,   229352 buff/cache                            KiB Swap: 25165824 total, 25064552 free,   101272 used.  4600144 avail Mem                                                                                                                              PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND                             1 root      20   0    8892    296    260 S   0.0  0.0   0:00.04 init                                 63 root      20   0   19464    744    576 S   0.0  0.0   0:00.00 sshd                                 242 root      20   0    8904    208    160 S   0.0  0.0   0:00.01 init                               243 mtracew+  20   0   17012   3696   3588 S   0.0  0.0   0:00.33 bash                               442 mtracew+  20   0   17620   2032   1504 R   0.0  0.0   0:00.01 top                               
+```
+
+##### FUSER
+
+```bash
+#W przeciwieństwie do poprzednich poleceń fuser nie wyświetla listy aktualnie działających procesów lecz to jakie procesty aktualnie korzystają z danego plik (plik ten może być katalogiem,zwykłym plikiem, pilkiem wykonywalnym, etc.) lub gniazda.
+#Wywołanie bez opcji spowoduje pokazanie pomocy, aby program działał musimy wskazć plik
+fuser .
+#Powyższe polecenie wskarze nam jakie procesy korzystają z obencego katalogu. W wyniku otrzymamy listę pidów zakończonych literą wskazującą typ dostępu, może on przyjmować następujące wartości.
+#1. c - obecny katalog
+#2. e - plik wykonywalny jest uruchomiony
+#3. f - otwarty plik (omijany w standardowym wyświetlaniu)
+#4. F - plik otwarty do zapisu (omijany w standardowym wyświetlaniu)
+#5. r - folder root
+#6. m - zmapowany plik lub biblioteka współdzielona
+#Przykładowe wyjście
+/home/mtracewicz: 1490c  1491c  1493c  1496c  1528c  1535c  1601c  1631c  1641c  1646c  1647c  1652c  1655c  1659c  1660c  1662c  1665c  1681c  1685c  1689c  1695c  1704c  1708c  1718c  1723c  1728c  1733c  1738c  1745c  1746c  1748c  1752c  1754c  1756c  1759c  1760c  1764c  1766c  1772c  1783c  1790c  1796c  1799c  1805c  1807c  1836c  1874c  1886c  1934c  1975c  1982c  1983c  1987c  1991c  1999c  2015c  2110c  2132c  2151c
+#Możemy użyć flagi -u pokaże nam użytkownika do, którego należy dany proces
+/home/mtracewicz:     1490c(mtracewicz)  1491c(mtracewicz)  1493c(mtracewicz)  1496c(mtracewicz)  1528c(mtracewicz)  1535c(mtracewicz)  1601c(mtracewicz)  1631c(mtracewicz)  1641c(mtracewicz)  1646c(mtracewicz)  1647c(mtracewicz)  1652c(mtracewicz)  1655c(mtracewicz)  1659c(mtracewicz)  1660c(mtracewicz)  1662c(mtracewicz)  1665c(mtracewicz)  1681c(mtracewicz)  1685c(mtracewicz)  1689c(mtracewicz)  1695c(mtracewicz)  1704c(mtracewicz)  1708c(mtracewicz)  1718c(mtracewicz)  1723c(mtracewicz)  1728c(mtracewicz)  1733c(mtracewicz)  1738c(mtracewicz)  1745c(mtracewicz)  1746c(mtracewicz)  1748c(mtracewicz)  1752c(mtracewicz)  1754c(mtracewicz)  1756c(mtracewicz)  1759c(mtracewicz)  1760c(mtracewicz)  1764c(mtracewicz)  1766c(mtracewicz)  1772c(mtracewicz)  1783c(mtracewicz)  1790c(mtracewicz)  1796c(mtracewicz)  1799c(mtracewicz)  1805c(mtracewicz)  1807c(mtracewicz)  1836c(mtracewicz)  1874c(mtracewicz)  1886c(mtracewicz)  1934c(mtracewicz)  1982c(mtracewicz)  1983c(mtracewicz)  1987c(mtracewicz)  1991c(mtracewicz)  1999c(mtracewicz)  2110c(mtracewicz)  2132c(mtracewicz)  2151c(mtracewicz)
+#Możemy także użyć opcji -v aby pokazać rozbudowane wyjście
+                    USER        PID ACCESS COMMAND
+/home/mtracewicz:    mtracewicz   1490 ..c.. dbus-broker-lau
+                     mtracewicz   1491 ..c.. dbus-broker
+                     mtracewicz   1493 ..c.. gdm-wayland-ses
+                     mtracewicz   1496 ..c.. gnome-session-b
+                     mtracewicz   1528 ..c.. gvfsd
+                     mtracewicz   1535 ..c.. gvfsd-fuse
+                     mtracewicz   1601 ..c.. gnome-shell
+                     mtracewicz   1631 ..c.. Xwayland
+                     mtracewicz   1641 ..c.. at-spi-bus-laun
+                     mtracewicz   1646 ..c.. dbus-broker-lau
+                     mtracewicz   1647 ..c.. dbus-broker
+                     mtracewicz   1652 ..c.. at-spi2-registr
+                     mtracewicz   1655 ..c.. ibus-daemon
+                     mtracewicz   1659 ..c.. ibus-dconf
+                     mtracewicz   1660 ..c.. ibus-extension-
+                     mtracewicz   1662 ..c.. ibus-x11
+                     mtracewicz   1665 ..c.. ibus-portal
+                     mtracewicz   1681 ..c.. xdg-permission-
+                     mtracewicz   1685 ..c.. gnome-shell-cal
+                     mtracewicz   1689 ..c.. evolution-sourc
+                     mtracewicz   1695 ..c.. goa-daemon
+                     mtracewicz   1704 ..c.. dconf-service
+                     mtracewicz   1708 ..c.. gvfs-udisks2-vo
+                     mtracewicz   1718 ..c.. gvfs-goa-volume
+                     mtracewicz   1723 ..c.. goa-identity-se
+                     mtracewicz   1728 ..c.. gvfs-gphoto2-vo
+                     mtracewicz   1733 ..c.. gvfs-mtp-volume
+                     mtracewicz   1738 ..c.. gvfs-afc-volume
+                     mtracewicz   1745 ..c.. gsd-smartcard
+                     mtracewicz   1746 ..c.. gsd-keyboard
+                     mtracewicz   1748 ..c.. gsd-power
+                     mtracewicz   1752 ..c.. gsd-a11y-settin
+                     mtracewicz   1754 ..c.. gsd-sound
+                     mtracewicz   1756 ..c.. gsd-media-keys
+                     mtracewicz   1759 ..c.. gsd-print-notif
+                     mtracewicz   1760 ..c.. gsd-clipboard
+                     mtracewicz   1764 ..c.. gsd-wacom
+                     mtracewicz   1766 ..c.. gsd-mouse
+                     mtracewicz   1772 ..c.. gsd-rfkill
+                     mtracewicz   1783 ..c.. gsd-color
+                     mtracewicz   1790 ..c.. gsd-xsettings
+                     mtracewicz   1796 ..c.. gsd-screensaver
+                     mtracewicz   1799 ..c.. gsd-datetime
+                     mtracewicz   1805 ..c.. gsd-sharing
+                     mtracewicz   1807 ..c.. gsd-housekeepin
+                     mtracewicz   1836 ..c.. evolution-calen
+                     mtracewicz   1874 ..c.. evolution-addre
+                     mtracewicz   1886 ..c.. gsd-printer
+                     mtracewicz   1934 ..c.. ibus-engine-sim
+                     mtracewicz   1982 ..c.. abrt-applet
+                     mtracewicz   1983 ..c.. gsd-disk-utilit
+                     mtracewicz   1987 ..c.. gnome-software
+                     mtracewicz   1991 ..c.. evolution-alarm
+                     mtracewicz   1999 ..c.. tracker-miner-f
+                     mtracewicz   2110 ..c.. gvfsd-metadata
+                     mtracewicz   2132 ..c.. gnome-terminal-
+                     mtracewicz   2151 ..c.. zsh
+```
+
+#### Limitowanie zasobów systemowych dla użytkownika
+
+W systemie Linux możemy użyć polecenia ulimit aby nakładać limit na zasoby systemowe.
+
+```bash
+#Możemy wyświetlić obecne limity dla zwykłego użytkownika użyjemy opcji -a
+ulimit -a
+#Przykładowe wyjście
+-t: cpu time (seconds)              unlimited
+-f: file size (blocks)              unlimited
+-d: data seg size (kbytes)          unlimited
+-s: stack size (kbytes)             8192
+-c: core file size (blocks)         unlimited
+-m: resident set size (kbytes)      unlimited
+-u: processes                       19678
+-n: file descriptors                1024
+-l: locked-in-memory size (kbytes)  64
+-v: address space (kbytes)          unlimited
+-x: file locks                      unlimited
+-i: pending signals                 19678
+-q: bytes in POSIX msg queues       819200
+-e: max nice                        0
+-r: max rt priority                 0
+-N 15:                              unlimited
+#W tym wyjściu widzimy też możliwe dla nas opcje. Widzimy np. opcję "-u", która pozwala nam zmienić limit procesów. Jeżeli użyjemy którejś z tych opcji bez wpisania wartości wyświetli on aktualny miękki limit. 
+ulimit -u
+19678
+#W systemie rozróżniamy dwa typy limitów:
+# miękki - jest on pilnowany przez jądro systemu
+# twardy - służy on za górną wartość dla limitu miękkiego
+#Teraz ustawiamy limit( nie podając opcji "S" lub "H" ustawimy naraz oba limity,miękki i twardy) 
+ulimit -u 50
+#Opcja "S" pozwala ustawić limit miękki
+ulimit -Su 50
+#A "H" twardy( ważne jest aby "H"/"S" znajdowały się przed inną opcją jak "u" inaczej zamiast ustawić nowy limit wyświetlimy odpowiedni limit a wartość którą chcemy nadać zostanie zignorowana)
+ulimit -uS 50
+#Powyższe polecenie wyświetli miękki limit dla procesów dla aktualnego użytkownika
+```
+
+Jeżeli chcemy ustawić dla konkretnych użytkowników musimy to zrobić w pliku /etc/security/limits.conf.
+
+```bash
+#Wpis w tym pliku ma format:
+#<domain>      <type>  <item>         <value>
+#Gdzie domian to użytkownik/grupa
+#Type to "soft"/"hard" (wyjaśnione w poprzednim przykładzie)
+#Item to zasobób (lista zasobów jest widoczna w poprzednim przykładzie jako lista opcji)
+#Value wskazuje na ile ustawiamy limit
+#Przykładowy wpis
+mtracewicz soft nproc  50
+```
+
 ## Quoty
 
 ## Bibliografia
@@ -543,6 +705,7 @@ groupmod -n myGroup testGroup
 * https://linux.101hacks.com/monitoring-performance/ps-command-examples/
 #### Zasoby
 * https://ss64.com/bash/ulimit.html
+* https://www.networkworld.com/article/2693414/setting-limits-with-ulimit.html
 #### Quoty
 * https://www.linux.com/tutorials/step-step-using-user-quotas-linux/
 * https://www.looklinux.com/how-to-manage-disk-quota-in-linux/
