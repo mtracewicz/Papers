@@ -230,8 +230,8 @@ Hasło przechowywane w pliku /etc/shadow możemy podzielić na trzy części roz
 * 6 - oznacza algorytm SHA-512 (Długość słowa to 64 bity. Na dzień pisania tego referaty jest on niezłamany i w mojej opinii jest najlepszym z algorytmów dostępnych do wyboru)
 
 ```bash
-#Możemy użyć poniższego polecenia aby wyświetlić aktualnie używany algorytm
-authconfig --test | grep hashing
+#Możemy sprawdzić obecenie używany algorytm hashujący należy sprawdzić plik /etc/pam.d/system-auth. Przykładowy wpis wskazujący algorytm sha512
+password    sufficient	pam_unix.so sha512 shadow nullok try_first_pass use_authtok
 #W ten sposób możemy zmienić algorytm hashujący na sha512
 authconfig --passalgo=sha512 --update
 #Po zmianie algorytmu musimy pamiętać, że użytkownik musi zmienić hasło aby zostało ono zahashowane nowym algorytmem. Możemy kazać użytkownikowi zmienić hasło przy następnym logowaniu za pomocą polecenia
@@ -259,7 +259,7 @@ W pierwszym przypadku zużywamy niewiele pamięci jednak bardzo dużo mocy oblic
 
 ##### Czym jest silne hasło?
 
-Silne hasło to takie które zawiera minimum dwanaście znaków, zarówno wielkie jak i małe litery, znaki specjalne i cyfry. Dodatkowo nie powinno być zlepkom słów, które można znaleźć w słowniku oraz nie powinno polegać na prostych substytucjach jak 'o'->0'. (Na podstawie:  https://www.howtogeek.com/195430/how-to-create-a-strong-password-and-remember-it/ )
+Silne hasło to takie które zawiera minimum dwanaście znaków, zarówno wielkie jak i małe litery, znaki specjalne i cyfry. Dodatkowo nie powinno być zlepkom słów, które można znaleźć w słowniku oraz nie powinno polegać na prostych substytucjach jak 'o'->0'. (Na podstawie: https://www.howtogeek.com/195430/how-to-create-a-strong-password-and-remember-it/ )
 
 Jeżeli nasze hasło zawiera tylko 12 małych liter to jest ich możliwie 26 ^ 12,natomiast w wypadku bezpiecznego hasła jest ich minimum 56 ^ 12 (liczba ta jest większa zależnie od tego jakie znaki dopuszczamy jako znaki specjalne).
 
