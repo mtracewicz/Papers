@@ -17,7 +17,7 @@
 
 ## Historia
 
-System GNU-Linux powstał w roku 1991. Jest on wzorowany na systemie UNIX (lata 70-te dwudziestego wieku) wywodzącym się z Bell Labs. System ten był od początku projektowany z założeniem, że będzie to system przeznaczony do pracy wielu użytkowników. Czasy systemu UNIX to czasy komputerów będących drogimi pojedynczymi urządzeniami do których logowało się wielu użytkowników za pomocą zewnętrznych terminali. W kontraście z tym stoi system Windows, który był z założenia tworzony jako system dla jednego użytkownika domowego, a co za tym idzie mógł sobie pozwolić na pewne skróty i niedociągnięcia, na które nie ma miejsca gdy mamy wielu niezależnych od siebie użytkowników naszego systemu.
+System GNU-Linux powstał w roku 1991. Jest on wzorowany na systemie UNIX (lata 70-te dwudziestego wieku) wywodzącym się z Bell Labs. System ten był od początku projektowany z założeniem, że będzie to system przeznaczony do pracy wielu użytkowników. Było to spowodowane tym, że czasy systemu UNIX to czasy komputerów będących drogimi pojedynczymi urządzeniami do których logowało się wielu użytkowników za pomocą zewnętrznych terminali. 
 
 ## Pliki
 
@@ -36,9 +36,11 @@ Kolejno od lewej wpis zawiera:
 
   1. **-** dla plików zwykłych
   2. **d** dla katalogów
-  3. **c** dla plików specjalnych
-  4. **b** dla plików specjalnych przypisanych
-  5. **l** dla łączy symbolicznych
+  3. **c** dla znakowych plików urządzenia 
+  4. **b** dla blokowych plików urządzenia 
+  5. **s** dla gniazd
+  6. **p** dla nazwanych potoków
+  7. **l** dla łączy symbolicznych
 
 * __Uprawnienia kolejno dla:__
 
@@ -50,7 +52,7 @@ Kolejno od lewej wpis zawiera:
 
      Dla każdej z tych kategorii możemy wyróżnić trzy rodzaje uprawnień
 
-     ( Myślnik '-' oznacza, że dany użytkownik nie posiada danego prawa)
+     ( Myślnik '-' wyświetlany przez polecenie ls oznacza, że dany użytkownik nie posiada danego prawa)
 
      W wypadku gdy jest to plik nie będący katalogiem
 
@@ -62,11 +64,11 @@ Kolejno od lewej wpis zawiera:
 
      W wypadku przeciwnym 
 
-     ​	r - oznaczające możliwość czytania plików zawartych w katalogu
+     ​	r - oznaczające możliwość czytania plików zawartych w katalogu (możemy wylistować pliki w nim zawarte)
 
      ​	w - oznaczające możliwość tworzenia i usuwania plików w katalogu
 
-     ​	x - oznaczające możliwość dostępu do katalogu
+     ​	x - oznaczające możliwość dostępu do katalogu (możemy kopiować z katalogu oraz ustawić go jako katalog    		 roboczy)
 
      ​	Możemy to interpretować jako:
 
@@ -86,10 +88,10 @@ Kolejno od lewej wpis zawiera:
 
      
 
-* Liczba łączy
+* Liczba twardo dowiązanych łączy
 * Właściciel
 * Grupa
-* Objętość
+* Wielkość
 * Data i godzina ostatniej modyfikacji
 * Nazwa pliku
 
@@ -125,9 +127,22 @@ Alternatywnie możemy zmienić grupę pliku za pomocą polecenia chgrp.
 chgrp student exampleFile
 ```
 
+### Access Control Lists (ACL)
 
+Jest to dodatkowy, bardziej elastyczny  system kontroli dostępu do zasobów na dysku zaprojektowany aby uzupełniać ten znany z systemów Unix. Możemy go użyć np. w sytuacji gdy jakiś użytkownik nie jest członkiem grupy a chcielibyśmy mu dać dostęp do jakiegoś pliku nie czyniąc go członkiem grupy. 
 
-### W systemie Linux inforamcje o użytkownikach znajdują się w plikach:
+```bash
+#Możemy wyświetlić jakie aktualnie mamy ograniczenia na pli poleceniem
+getfacl testFile
+#Aby nadać prawa użytkownikowi użyjemy:
+setfacl -m "u:user:uprawnienia" /sciezkaPliku
+#Aby nadać prawa grupie:
+setfacl -m "g:grupa:uprawnienia" /sciezkaPliku
+#Jeżeli użyjemy opcji -b usuniemy uprawnienia acl
+setfacl -b /sciezkaPliku
+```
+
+### W systemie Linux informacje o użytkownikach znajdują się w plikach:
 
 * /etc/passwd
 * /etc/group
@@ -208,11 +223,21 @@ Hasło przechowywane w pliku /etc/shadow możemy podzielić na trzy części roz
 
 **ID** jest to wartość wskazująca jakiego algorytmu hashującego użyto. Może on przyjąć wartości:
 
-* 1 - oznacza algorytm MD5 (Nie jest zalecane jego użycie, obecnie jest łatwy do złamania)
-* 2 - oznacza algorytm Blowfish
-* 2a - oznacza algorytm eksblowfish
-* 5 - oznacza algorytm SHA-256
-* 6 - oznacza algorytm SHA-512
+* 1 - oznacza algorytm MD5 (Nie jest zalecane jego użycie, na obecnym sprzęcie jest łatwy do złamania)
+* 2 - oznacza algorytm Blowfish (W przeciwieństwie do MD5 czy algorytmów z rodziny SHA jest to algorytm szyfrujący nie hashujący)
+* 2a - oznacza algorytm eksblowfish (Jest to inna wersja poprzedniego algorytmu, jego nazwę można rozwinąć do "expensive key schedule blowfish " różnica w nich polega na funkcji, która jest użyta do przetransformowania kluczy w podklucze )
+* 5 - oznacza algorytm SHA-256 (Długość słowa to 32 bity. Został już złamany za pomocą ataku opierającego się na odkryciu wiadomości na podstawie hashu i jego długości)
+* 6 - oznacza algorytm SHA-512 (Długość słowa to 64 bity. Na dzień pisania tego referaty jest on niezłamany i w mojej opinii jest najlepszym z algorytmów dostępnych do wyboru)
+
+```bash
+#Możemy użyć poniższego polecenia aby wyświetlić aktualnie używany algorytm
+authconfig --test | grep hashing
+#W ten sposób możemy zmienić algorytm hashujący na sha512
+authconfig --passalgo=sha512 --update
+#Po zmianie algorytmu musimy pamiętać, że użytkownik musi zmienić hasło aby zostało ono zahashowane nowym algorytmem. Możemy kazać użytkownikowi zmienić hasło przy następnym logowaniu za pomocą polecenia
+chage -d 0 testUser
+#Więcej o wymuszaniu zmianny hasła użytkownika w późniejszym podpunkcie.
+```
 
 **Salt** jest to losowo wygenerowany ciąg znaków, który jest łączony z hasłem użytkownika w celu zwiększenia bezpieczeństwa.
 
@@ -230,31 +255,29 @@ Pierwszy z nich to atak oparty na prostej metodzie siłowej, gdzie znając algor
 
 Drugi sposób to pozyskanie bazy w której najpopularniejsze hasła są już zahaszowane wraz z informacją o  tym jaki algorytm został użyty. Następnie sprawdzamy czy któryś z posiadanych przez nas hashy znajduję się w tej bazie i odczytujemy z niej hasło. 
 
-W pierwszym przypadku zużywamy niewiele pamięci jednak bardzo dużo mocy obliczeniowej, w drugim ataku jest dokładnie odwrotnie. Przed oboma tymi atakami pomaga nam bronić się wartość salt. Dzięki generowaniu losowej wartości do naszych haseł mamy niemal pewność, że hash, który uzyskamy (nawet jeżeli użytkownik ustawi sobie hasło = haslo123!) nie znajdzie się w żadnej z rainbow tables. W przypadku dictionary atack dodanie wartości salt masywnie zwiększa ilość możliwości, które atakujący musi sprawdzić a co za tymi idzie zwiększamy czas, który musi poświęcić na próbę złamania każdego z haseł.
+W pierwszym przypadku zużywamy niewiele pamięci jednak bardzo dużo mocy obliczeniowej, w drugim ataku jest dokładnie odwrotnie. Przed oboma tymi atakami pomaga nam bronić się wartość salt. Dzięki generowaniu losowej wartości do naszych haseł mamy niemal pewność, że hash, który uzyskamy (nawet jeżeli użytkownik ustawi sobie hasło = haslo123!) nie znajdzie się w żadnej z rainbow tables. W przypadku dictionary atack dodanie wartości salt masywnie zwiększa liczbę możliwości, które atakujący musi sprawdzić a co za tymi idzie zwiększamy czas, który musi poświęcić na próbę złamania każdego z haseł.
 
 ##### Czym jest silne hasło?
 
-Silne hasło to takie które zawiera minimum osiem znaków, zarówno wielkie jak i małe litery, znaki specjalne i cyfry.
+Silne hasło to takie które zawiera minimum dwanaście znaków, zarówno wielkie jak i małe litery, znaki specjalne i cyfry. Dodatkowo nie powinno być zlepkom słów, które można znaleźć w słowniku oraz nie powinno polegać na prostych substytucjach jak 'o'->0'. (Na podstawie:  https://www.howtogeek.com/195430/how-to-create-a-strong-password-and-remember-it/ )
 
-Jeżeli nasze hasło zawiera tylko 8 małych liter to jest ich możliwie 26 ^ 8,natomiast w wypadku bezpiecznego hasła jest ich minimum 56 ^ 8 (liczba ta jest większa zależnie od tego jakie znaki dopuszczamy jako znaki specjalne).
+Jeżeli nasze hasło zawiera tylko 12 małych liter to jest ich możliwie 26 ^ 12,natomiast w wypadku bezpiecznego hasła jest ich minimum 56 ^ 12 (liczba ta jest większa zależnie od tego jakie znaki dopuszczamy jako znaki specjalne).
 
-Dodatkowo należy pamiętać,  że długość hasła ma istotny wpływ na jego bezpieczeństwo.  Jak już pokazaliśmy ośmioznakowych haseł jest ~56 ^8 natomiast dodanie np. czterech znaków znacząco zwiększa ilość możliwości 56^12. Pokazuje to, że każdy kolejny znak zwiększa ilość obliczeń, którą musi wykonać ktoś, kto próbuje zgadnąć nasze hasło.
+Dodatkowo należy pamiętać,  że długość hasła ma istotny wpływ na jego bezpieczeństwo.  Jak już pokazaliśmy ośmioznakowych haseł jest ~56 ^12 natomiast dodanie np. czterech znaków znacząco zwiększa ilość możliwości 56^16. Pokazuje to, że każdy kolejny znak zwiększa ilość obliczeń, którą musi wykonać ktoś, kto próbuje zgadnąć nasze hasło.
 
-Warto także pamiętać o tym, że hasło nie powinno zawierać żadnych danych z nami związanych takich jak imię, nazwisko czy rok urodzenia.
+Warto także pamiętać o tym, że hasło nie powinno zawierać żadnych danych z nami związanych takich jak imię, nazwisko czy rok urodzenia. Użytkownicy często decydują się na hasło zawierające takie informacje, z powodu  tego, że ułatwienia im to jego zapamiętanie. Jednak jest to problematyczne, ponieważ informacje te są łatwe do pozyskania i jako, że tego typu hasła występują często to próba ich zgadnięcia (na podstawie pozyskanych informacji) często jest jednym z pierwszych sposobów w jaki hakerzy próbują się włamać na konto użytkownika.
 
 ## Administracja kontami użytkowników
 
-### Wyświetlanie listy aktywnych użytkowników
+### Wyświetlanie listy aktualnie zalogowanych użytkowników
 
 W systemie Linux możemy wyświetlić listę aktywnych użytkowników za pomocą polecenia users.
 
 ```bash
 users
-#W normalnym systemie wynikiem tego polecenia jest lista aktualnie zalogowanych użytkowników
+# Przykładowy wynik polecenia. Zawiera on listę zalogowanyhc użytkoników rozdzielonych spacją.
 test testUser exampleUSer
 ```
-
-Polecenie to nie zawiera żadnych opcji.
 
 ### Wyświetlanie ostatnich logowań użytkowników
 
@@ -406,7 +429,7 @@ sudo -u test vim test.c
 sudo -g 999 vim test.c
 ```
 
-Polecenie sudo jest konfigurowane w pliku /etc/sudoers.  Plik jest podzielony na trzy sekcje: defaults, aliases oraz user specifications. Sekcja defaults zawiera konfiguracje, które będą automatycznie dopisywane do każdego rekordu, mogą one jednak być nadpisywane dla konkretnego wpisu. Sekcja aliases zawiera zmienne, które służą do grupowania wielu nazw do jednego słowa. Istnieją cztery typy aliasów:
+Szczegóły działania polecenia sudo sąkonfigurowane w pliku /etc/sudoers.  Plik jest podzielony na trzy sekcje: defaults, aliases oraz user specifications. Sekcja defaults zawiera konfiguracje, które będą automatycznie dopisywane do każdego rekordu, mogą one jednak być nadpisywane dla konkretnego wpisu. Sekcja aliases zawiera zmienne, które służą do grupowania wielu nazw do jednego słowa. Istnieją cztery typy aliasów:
 
 - User_Alias - łączymy kilku użytkowników w grupę np.: User_Alias testowi = test1, test2. Nie musimy tu redefiniować grup, które zdefiniowaliśmy w systemie. Aby użyć grupy systemowej wstawimy przed jej nazwą '%' np.:            User_Alias testowi = %testowi.
 - Runas_Alias - jak wyżej z różnicą, że jest to grupa użytkowników jako którzy polecenie ma zostać wykonane.
@@ -435,7 +458,7 @@ Warto zaznaczyć, że domyślnie polecenie sudo pyta użytkownika o jego hasło,
 
 #### Dobre praktyki
 
-Przy konfiguracji pliku /etc/sudoers warto pamiętać o kilku prostych zasadach aby polepszyć bezpieczeństwo naszego systemu. Przdee wszystkim warto wyłączyć każdemu z użytkowników możliwość użycia polecenia su przez polecenie sudo. Jest to ważne, ponieważ  w przeciwnym wypadku dowolny użytkownik może się zalogować jako root używając swojego hasła.
+Przy konfiguracji pliku /etc/sudoers warto pamiętać o kilku prostych zasadach aby polepszyć bezpieczeństwo naszego systemu. Przde wszystkim warto wyłączyć każdemu z użytkowników możliwość użycia polecenia su przez polecenie sudo. Jest to ważne, ponieważ  w przeciwnym wypadku dowolny użytkownik może się zalogować jako root używając swojego hasła.
 
 ```bash
 #W wypadku braku tego zabezpieczenia poniższym poleceniem możemy się zalogować na użytkownika root z użyciem hasła do naszego konta!
@@ -526,7 +549,7 @@ id -gn
 
 W systemie Linux istnieje kilka możliwości wyświetlenia aktywnych procesów. Możemy użyć do tego poleceń: ps, top, fuser oraz lsof.
 
-##### PS 
+##### ps
 
 ```bash
 #Podstawowe wywołanie 
@@ -546,7 +569,7 @@ ps -axu
 ps -U testUser
 ```
 
-##### TOP
+##### top
 
 ```bash
 #Polecenie top w przeciwieństwie do polecenia ps jest dynamicznie aktualizowane i wyświetla aktualny stan zasobów systemu
@@ -566,7 +589,7 @@ PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
 # widzimy tu status aktualnie uruchomionych zadań, obciążenie CPU, pamięć wolną, zajętą a także przeniesioną do swap
 ```
 
-##### FUSER
+##### fuser
 
 ```bash
 #W przeciwieństwie do poprzednich poleceń fuser nie wyświetla listy aktualnie działających procesów, lecz to jakie procesty aktualnie korzystają z danego pliku (plik ten może być katalogiem,zwykłym plikiem, pilkiem wykonywalnym, etc.) lub gniazda.
@@ -593,7 +616,7 @@ fuser .
 				   mtracewicz   2151 ..c.. zsh
 ```
 
-##### LSOF
+##### lsof
 
 ```bash
 #Polecenie służące do wyświetlania listy otwartych plików
@@ -697,7 +720,7 @@ Aby móc ich używać musimy najpierw włączyć je dla konkretnego systemu plik
 #6. czy powinen być autoskanowany przy montowaniu (0 - nie, 1 - tak, 2 - tak dla wszystkich partycji nie będących partycją root)
 ```
 
-Następnie musimy odpiąć urządzenie i ponownie je podłączyć, aby zmiany zostały wprowadzone. Należy to zrobić używając polecenia:
+Następnie musimy odpiąć urządzenie i ponownie je podłączyć, aby zmiany zostały wprowadzone. Należy to zrobić resetując system lub używając polecenia:
 
 ```bash
 #W miejscu "/home" powinniśmy wstawić nasz system plików. W tym przykładzie zastosujemy "/home" dla spójności z poprzednim przykładem
@@ -817,6 +840,8 @@ repquota -av
 * http://www.penguintutor.com/linux/file-permissions-reference
 * http://mediologia.pl/katalogi-i-pliki-linux/2-4-atrybuty-plikow-uzywanych-w-systemie-linux-polecenie-ls
 * https://www.hostingadvice.com/how-to/change-file-ownershipgroups-linux/
+*  https://linuxconfig.org/identifying-file-types-in-linux 
+*  https://www.geeksforgeeks.org/access-control-listsacl-linux/ 
 
 #### Pliki z informacjami o użytkownikach/grupach
 
@@ -826,9 +851,13 @@ repquota -av
 #### Hasła użytkowników
 
 * https://www.cyberciti.biz/faq/understanding-etcshadow-file/
+*  https://www.howtogeek.com/195430/how-to-create-a-strong-password-and-remember-it/ 
 
 - https://www.slashroot.in/how-are-passwords-stored-linux-understanding-hashing-shadow-utils\
 - https://blog.jscrambler.com/hashing-algorithms/
+-  https://www.cyberciti.biz/faq/rhel-centos-fedora-linux-upgrading-password-hashing/ 
+-  https://www.usenix.org/legacy/events/usenix99/provos/provos_html/node4.html 
+-  https://en.wikipedia.org/wiki/SHA-2 
 
 #### Tworzenie, usuwanie i modyfikacja kont użytkowników 
 * https://www.lifewire.com/create-users-useradd-command-3572157
