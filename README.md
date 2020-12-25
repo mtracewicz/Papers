@@ -5,5 +5,5 @@
 ##### Currently covered topics are: 
 
 * Linux User Accounts
-* Docker (WiP)
-
+* Docker
+* Cell Segmentation using ML - thesis
