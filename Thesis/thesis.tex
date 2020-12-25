@@ -1,0 +1,74 @@
+\documentclass{article}
+\usepackage{listings}
+\usepackage{color}
+\usepackage[polish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Python,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=4
+} 
+
+\title{Segmentacja komórek na zdjęciach mikroskopowych skóry z użyciem głębokich sieci neuronowych.}
+\date{2020-12-25}
+\author{Michał Tracewicz}
+\begin{document}
+\pagenumbering{gobble}
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+\section{Przedstawienie problemu}
+\section{Sztuczne sieci neuronowe}
+\subsection{Ogólne zasady działania}
+\subsection{Porównanie do klasycznych metod programowania}
+\section{Sieci splotowe}
+\subsection{Operacja splotu}
+\subsection{Sieci w pełni splotowe}
+\section{Problem segmentacja}
+\subsection{Klasyfikacja}
+\subsection{Klasyfikacja z lokalizacja}
+\subsection{Wykrywanie obrazów}
+\subsection{Segmentacja}
+\subsection{Segmentacja instancji}
+\section{Architektura U-Net}
+\subsection{Historia i zastosowania}
+\subsection{Obrazy wejściowe}
+\subsection{Obrazy wyjściowe}
+\section{Przetestowane podejścia}
+\subsection{Bazowa sieć u-net}
+\subsection{Preprocessing obrazów}
+\subsubsection{Cięcie i sklejanie obrazów}
+\subsubsection{Wybór jednego kanału - czerwony/alfa}
+\subsubsection{Rozmycie - gausian blur}
+\subsubsection{Przekształcenie do obrazów trzy kanałowych}
+\subsection{Funkcja strat - Współczynnik Sørensena}
+\subsection{Własna funkcja strat}
+\subsection{Zapis wyniku w postaci distance map}
+\section{Powstałe narzędzia}
+\subsection{Skrypty pozwalające na preprocessing obrazów uczących}
+\subsection{Skrypty do uczenie sieci, poprzez wstrzyknięcie architektury sieci/funkcji strat}
+\subsection{Skrypty pozwalające na testowanie zapisanych modeli}
+\subsection{Skrypty pozwalające na predykcję dla obrazu/folderu obrazów}
+\subsection{Testy jednostkowe}
+\subsection{Automatyczne renderowaie i publikacja wyników}
+\section{Podsumowanie i możliwe następne kroki}
+\section{Bibliografia}
+\end{document}
