@@ -1,6 +1,7 @@
 \documentclass{article}
 \usepackage{listings}
 \usepackage{color}
+\usepackage{amsmath}
 \usepackage[polish]{babel}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -36,18 +37,70 @@
 \tableofcontents
 \newpage
 \section{Przedstawienie problemu}
+W codziennej pracy wielu lekarzy poświęca czas na manualne liczenie zafarbowanych komórek na zdjęciach.
+Jest to czasochłonne i monotonne zadanie, nie wymagające sześcioletnich studiów.
+Zadanie takie jak to idealnie nadaje się do automatyzacji.
+W ostatnich latach bardzo mocno rozwija się użycie uczenia maszynowego do rozwiązywania tej klasy problemów.
+W ramach mojej pracy powstał zestaw narzędzi pozwalający na łatwe testowanie różnych architektur, funkcji strat w tym problemie.
+Dodatkowo przeprowadziłem testy dla architektury u-net oraz pewnych wariacji na jej temat.
+Całość dopełnia moduł pozwalający na obróbkę zdjęć wejściowych oraz wyjściowych.
 \section{Sztuczne sieci neuronowe}
+Sztuczne sieci neuronowe są próbą stworzenia programów, których działanie jest inspirowane naszym rozumieniem mózgu.
+Chociaż zagadnienie to podejmowano już od bardzo długiego czasu, to dopiero od niedawna posiadamy wystarczającą moc obliczeniową aby realizować tworzone od wielu dziesięcioleci algorytmy.
+
 \subsection{Ogólne zasady działania}
+Głębokie sieci neuronowe składają się z warstwy wejściowej, wyjściowej oraz pewnej liczby warstw ukrytych.
+Liczba oraz typ tych ostatnich w dużej mierze determinuje działanie sieci.
+Omówienie zaczniemy od tego w jaki sposób sieć przeprowadza obliczenia zwracające odpowiedź, a następnie zajmiemy się procesem uczenia.
+Każda z warstw zawiera pewną ilość neuronów.
+Neurony kolejnych warstw są ze sobą połączone (zajmę się tu jedynie warstwami, które posiadają połączenia neuronów każdy z każdym, czyli tak zwanymi warstwami typu "dense").
+Połączenia te posiadają wagi.
+Aby obliczyć wynik zwracany przez sieć rozpoczynamy obliczenia od warstwy wejściowej i obliczmy wartości neuronów w kolejnych warstwach.
+Wartość dla neuronu w warstwie k-tej to wartość funkcji aktywacji na sumie wartości wszystkich neuronów z warstwy poprzedniej przemnożonych przez odpowiednie im wagi połączeń.
+\begin{align*}
+  x_{k,j} = \sigma(\sum\limits_{i=0}^{n-1}{w_i*x_{(k-1),i}})
+\end{align*}
+Gdzie (k>=1):
+\begin{itemize}
+  \item $\sigma$ - funkcja aktywacji
+  \item $x_{k,j}$ - wartość j-tego neuronu w k-tej warstwie
+  \item n - liczba neuronów w warstwie k-1
+  \item $w_i$ - i-ta waga wchodząca do neuronu
+\end{itemize}
 \subsection{Porównanie do klasycznych metod programowania}
+Przy standardowych paradygmatach programowania
 \section{Sieci splotowe}
 \subsection{Operacja splotu}
 \subsection{Sieci w pełni splotowe}
 \section{Problem segmentacja}
+Zaznaczenie konturów komórek na zdjęciach mikroskopowych jest problemem segmentacji instancji.
+W celu zrozumienia tego pojęcia przeanalizujemy składające się na niego mniejsze problemy z kategorii widzenia komputerowego.
 \subsection{Klasyfikacja}
-\subsection{Klasyfikacja z lokalizacja}
+Jest to najprostsze zagadnienie w dziedzinie widzenia komputerowego.
+Polega ono na tym, że dla otrzymanego na wejście obrazu sieć ma zwrócić klasę do której przedstawiony na zdjęciu obiekt należy.
+Za dobry przykład może nam posłużyć "Problem MNiST", polegający na rozpoznawaniu odręcznie napisanych cyfr.
+Jako wejście sieć otrzymuje czarno-biały obrazek rozmiaru 16x16 pikseli na, którym widnieje odręcznie napisana cyfra.
+Natomiast na wyjściu sieć zwraca nam predykcję jaka cyfra widnieje na zdjęciu.
+Ograniczeniem w tym typie problemu jest fakt, że na danym zdjęciu może znajdować się jedynie pojedyńczy obiekt.
+\subsection{Klasyfikacja z lokalizacją}
+Klasyfikacja z lokalizacją to dodanie do poprzedniego problemu zagadnienia odnalezienia klasyfikowanego obrazu na zdjęciu.
+Przykładowo tworząc sieć rozpoznającą gatunki zwierząt domowych, otrzymując zdjęcie kota siedzącego na kanapie otrzymamy nie tylko informację, 
+że jest to kot ale również informację o tym gdzie na tej kanapie się znajduje.
+Najczęściej zwracane są w takim wypadku oprócz klasy współrzędne pikseli w których zaczyn i kończy się obiekt.
+Następnie możemy na tej podstawie narysowanie naokoło obiektu ramkę z podpisem zawierającym nazwę klasy.
 \subsection{Wykrywanie obrazów}
+Kolejnym krokiem jest wykrywanie obrazów. Jest to klasyfikacja z lokalizacją dla wielu elementów jednocześnie.
+Kontynuując poprzedni przykład z rozpoznawaniem zwierząt domowych.
+W wypadku zdjęcia, które zawiera zarówno psa i kota dostaniemy zestaw współrzędnych oraz odpowiadających im klas.
 \subsection{Segmentacja}
+Segmentacja to przypisanie każdemu pikselowi na obrazie wejściowym klasy.
+Za przykład może nam posłużyć zdjęcie drogi w mieście.
+Celem naszej sieci neuronowej będzie podział obrazu na klasy: droga, człowiek, budynek, drzewo, niebo etc.
+Na wyjściu możemy na przykład otrzymać ten sam obrazek z tym, że zależnie od klasy danego piksela będzie miał on różny kolor (czerwony - droga, zielony - człowiek etc.)
 \subsection{Segmentacja instancji}
+Segmentacja instancji to dodanie do segmentacji ograniczenia, że każda jednostka ma być widocznie oddzielona.
+Dla przykładu gdy mamy zdjęcie czterech przytulających się osób, w wyniku segmentacji wszystkie cztery zostaną zakolorowane na ten sam kolor oraz podpisane raz jako człowiek.
+Natomiast gdy przeprowadzimy segmentację instancji to w wyniku otrzymamy każdą osobę pokolorowaną na własny kolor, oraz etykiety "człowiek 1.", "człowiek 2." etc.
 \section{Architektura U-Net}
 \subsection{Historia i zastosowania}
 \subsection{Obrazy wejściowe}

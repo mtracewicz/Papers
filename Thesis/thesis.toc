@@ -8,7 +8,7 @@
 \contentsline {subsection}{\numberline {3.2}Sieci w pełni splotowe}{}%
 \contentsline {section}{\numberline {4}Problem segmentacja}{}%
 \contentsline {subsection}{\numberline {4.1}Klasyfikacja}{}%
-\contentsline {subsection}{\numberline {4.2}Klasyfikacja z lokalizacja}{}%
+\contentsline {subsection}{\numberline {4.2}Klasyfikacja z lokalizacją}{}%
 \contentsline {subsection}{\numberline {4.3}Wykrywanie obrazów}{}%
 \contentsline {subsection}{\numberline {4.4}Segmentacja}{}%
 \contentsline {subsection}{\numberline {4.5}Segmentacja instancji}{}%
