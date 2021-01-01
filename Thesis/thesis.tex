@@ -58,7 +58,7 @@ Głębokie sieci neuronowe składają się z warstwy wejściowej, wyjściowej or
 Liczba oraz typ tych ostatnich w dużej mierze determinuje działanie sieci.
 Omówienie zaczniemy od tego w jaki sposób sieć przeprowadza obliczenia zwracające odpowiedź, a następnie zajmiemy się procesem uczenia.
 Każda z warstw zawiera pewną ilość neuronów.
-Neurony kolejnych warstw są ze sobą połączone (zajmę się tu jedynie warstwami, które posiadają połączenia neuronów każdy z każdym, czyli tak zwanymi warstwami typu "dense").
+Neurony kolejnych warstw są ze sobą połączone (zajmę się tu jedynie warstwami, które posiadają połączenia neuronów każdy z każdym, czyli tak zwanymi warstwami typu ``dense``).
 Połączenia te posiadają wagi.
 Aby obliczyć wynik zwracany przez sieć rozpoczynamy obliczenia od warstwy wejściowej i obliczmy wartości neuronów w kolejnych warstwach.
 Wartość dla neuronu w warstwie k-tej to wartość funkcji aktywacji na sumie wartości wszystkich neuronów z warstwy poprzedniej przemnożonych przez odpowiednie im wagi połączeń.
@@ -76,7 +76,7 @@ Gdzie (k>=1):
 Przy standardowych paradygmatach programowania (programowanie zorientowane obiektowo, programowanie proceduralne, programowanie funkcyjne) jako programista piszemy kod, który
 instruuje komputer na temat tego w jaki sposób ma on przekształcić otrzymane dane wejściowe.
 Natomiast sieci neuronowe są zdecydowanie bardziej zbliżone do programowania deklaratywnego. Jako programista podajemy dane wejściowe, architekturę i oczekiwane dane wyjściowe i
-na ich podstawie, chcemy aby komputer samemu "nauczył się" tego jaką drogą ma dojść aby uzyskać oczekiwany efekt (jakie wartości mają przyjmować wagi).
+na ich podstawie, chcemy aby komputer samemu ``nauczył się`` tego jaką drogą ma dojść aby uzyskać oczekiwany efekt (jakie wartości mają przyjmować wagi).
 \newpage
 \section{Sieci splotowe}
 Sieci splotowe to takie głębokie sieci neuronowe, które zawierają jedną lub więcej warstw splotowych.
@@ -93,7 +93,7 @@ W celu zrozumienia tego pojęcia przeanalizujemy składające się na niego mnie
 \subsection{Klasyfikacja}
 Jest to najprostsze zagadnienie w dziedzinie widzenia komputerowego.
 Polega ono na tym, że dla otrzymanego na wejście obrazu sieć ma zwrócić klasę do której przedstawiony na zdjęciu obiekt należy.
-Za dobry przykład może nam posłużyć "Problem MNiST", polegający na rozpoznawaniu odręcznie napisanych cyfr.
+Za dobry przykład może nam posłużyć ``Problem MNiST``, polegający na rozpoznawaniu odręcznie napisanych cyfr.
 Jako wejście sieć otrzymuje czarno-biały obrazek rozmiaru 16x16 pikseli na, którym widnieje odręcznie napisana cyfra.
 Natomiast na wyjściu sieć zwraca nam predykcję jaka cyfra widnieje na zdjęciu.
 Ograniczeniem w tym typie problemu jest fakt, że na danym zdjęciu może znajdować się jedynie pojedyńczy obiekt.
@@ -115,7 +115,7 @@ Na wyjściu możemy na przykład otrzymać ten sam obrazek z tym, że zależnie 
 \subsection{Segmentacja instancji}
 Segmentacja instancji to dodanie do segmentacji ograniczenia, że każda jednostka ma być widocznie oddzielona.
 Dla przykładu gdy mamy zdjęcie czterech przytulających się osób, w wyniku segmentacji wszystkie cztery zostaną zakolorowane na ten sam kolor oraz podpisane raz jako człowiek.
-Natomiast gdy przeprowadzimy segmentację instancji to w wyniku otrzymamy każdą osobę pokolorowaną na własny kolor, oraz etykiety "człowiek 1.", "człowiek 2." etc.
+Natomiast gdy przeprowadzimy segmentację instancji to w wyniku otrzymamy każdą osobę pokolorowaną na własny kolor, oraz etykiety ``człowiek 1.``, ``człowiek 2.`` etc.
 \newpage
 \section{Architektura U-Net}
 \subsection{Historia i zastosowania}
