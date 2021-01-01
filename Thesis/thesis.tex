@@ -124,8 +124,8 @@ Możemy na nich zobaczyć czerwoną otoczkę na około komórek, natomiast cała
 \subsection{Preprocessing obrazów}
 \subsubsection{Cięcie i sklejanie obrazów}
 \subsubsection{Wybór jednego kanału - czerwony/alfa}
-\subsubsection{Rozmycie - gausian blur}
-Kolejny pomysłem było zastosowanie na obrazach docelowych przekształcenia gausian blur przed pokazaniem ich sieci.
+\subsubsection{Rozmycie - Gaussian blur}
+Kolejny pomysłem było zastosowanie na obrazach docelowych przekształcenia Gaussian blur przed pokazaniem ich sieci.
 Ideą za tym stojącą było zwiększenie ilości czerwonych pikseli na obrazku w celu zredukowania wartości dokładności dla czysto czarnych obrazów zwracanych przez sieć.
 \subsubsection{Redukcja do obrazów trzy kanałowych i redukcja kolorów}
 W celu ułatwienia uczenia przeprowadziłem redukcję wymiarowości danych wyjściowych oraz zmniejszyłem ilość kolorów w obrazie.
@@ -142,7 +142,7 @@ Wyniki są prezentowane za pomocą platformy GitHub Pages i są dostępne pod ad
 W ramach prac stworzyłem cztery skrypty pozwalające na edycję zdjęć wejściowych/wyjściowych.
 Powstałe skrypty pozwalają na:
 \begin{itemize}
-  \item zastosowanie filtra Gausian Blur z wybranym parametrem na pojedyńczym obrazie lub katalogu obrazów
+  \item zastosowanie filtra Gaussian Blur z wybranym parametrem na pojedyńczym obrazie lub katalogu obrazów
   \item pocięcie obrazów na mniejsze nachodzące się na siebie obrazki
   \item zespolenie obrazków utworzonych poprzednim skryptem z powrotem w całość
   \item zredukowanie kanałów obrazów z RGBA do RGB i zaokrąglenie wartości pikseli do czerwonego (255, 0, 0) i czarnego (0, 0, 0)

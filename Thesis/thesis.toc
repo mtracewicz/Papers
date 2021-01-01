@@ -20,7 +20,7 @@
 \contentsline {subsection}{\numberline {6.2}Preprocessing obrazów}{}%
 \contentsline {subsubsection}{\numberline {6.2.1}Cięcie i sklejanie obrazów}{}%
 \contentsline {subsubsection}{\numberline {6.2.2}Wybór jednego kanału - czerwony/alfa}{}%
-\contentsline {subsubsection}{\numberline {6.2.3}Rozmycie - gausian blur}{}%
+\contentsline {subsubsection}{\numberline {6.2.3}Rozmycie - Gaussian blur}{}%
 \contentsline {subsubsection}{\numberline {6.2.4}Redukcja do obrazów trzy kanałowych i redukcja kolorów}{}%
 \contentsline {subsection}{\numberline {6.3}Funkcja strat - Współczynnik Sørensena}{}%
 \contentsline {subsection}{\numberline {6.4}Własna funkcja strat}{}%
