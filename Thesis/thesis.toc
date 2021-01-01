@@ -21,7 +21,7 @@
 \contentsline {subsubsection}{\numberline {6.2.1}Cięcie i sklejanie obrazów}{}%
 \contentsline {subsubsection}{\numberline {6.2.2}Wybór jednego kanału - czerwony/alfa}{}%
 \contentsline {subsubsection}{\numberline {6.2.3}Rozmycie - gausian blur}{}%
-\contentsline {subsubsection}{\numberline {6.2.4}Przekształcenie do obrazów trzy kanałowych i redukcja kolorów}{}%
+\contentsline {subsubsection}{\numberline {6.2.4}Redukcja do obrazów trzy kanałowych i redukcja kolorów}{}%
 \contentsline {subsection}{\numberline {6.3}Funkcja strat - Współczynnik Sørensena}{}%
 \contentsline {subsection}{\numberline {6.4}Własna funkcja strat}{}%
 \contentsline {subsection}{\numberline {6.5}Zapis wyniku w postaci distance map}{}%
@@ -32,5 +32,6 @@
 \contentsline {subsection}{\numberline {7.4}Skrypt pozwalające na predykcję dla obrazu/folderu obrazów}{}%
 \contentsline {subsection}{\numberline {7.5}Testy jednostkowe}{}%
 \contentsline {subsection}{\numberline {7.6}Automatyczne renderowanie i publikacja wyników}{}%
+\contentsline {subsection}{\numberline {7.7}Kontener developerski}{}%
 \contentsline {section}{\numberline {8}Podsumowanie i możliwe następne kroki}{}%
 \contentsline {section}{\numberline {9}Bibliografia}{}%

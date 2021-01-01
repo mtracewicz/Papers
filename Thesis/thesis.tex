@@ -127,7 +127,7 @@ Możemy na nich zobaczyć czerwoną otoczkę na około komórek, natomiast cała
 \subsubsection{Rozmycie - gausian blur}
 Kolejny pomysłem było zastosowanie na obrazach docelowych przekształcenia gausian blur przed pokazaniem ich sieci.
 Ideą za tym stojącą było zwiększenie ilości czerwonych pikseli na obrazku w celu zredukowania wartości dokładności dla czysto czarnych obrazów zwracanych przez sieć.
-\subsubsection{Przekształcenie do obrazów trzy kanałowych i redukcja kolorów}
+\subsubsection{Redukcja do obrazów trzy kanałowych i redukcja kolorów}
 W celu ułatwienia uczenia przeprowadziłem redukcję wymiarowości danych wyjściowych oraz zmniejszyłem ilość kolorów w obrazie.
 Zależnie od wartości kanałów czerwonego i alpha zaokrągliłem kolor piksela do czystego czerwonego (255, 0, 0) lub czystego czarnego (0, 0, 0).
 \subsection{Funkcja strat - Współczynnik Sørensena}
@@ -171,6 +171,10 @@ Otrzymuje ona informację od serwisu GitHub o nowym commicie następnie sprawdza
 Jeżeli tak to wywoła polecenie eksportujące go do pliku w formacie HTML a następnie sama stworzy commit i wyśle go do repozytorium na serwisie GitHub.
 Gdy ten go otrzyma opublikuje nowo utworzony plik na platformie GitHub Pages.
 Dzięki tej integracji wszystkie zmiany których dokonam w notatniku prezentującym wyniki moich prac są automatycznie publikowane i dostępne do wglądu.
+\subsection{Kontener developerski}
+Stworzyłem również skrypty, które pozwalają na uruchomienie kontenera, przy użyciu technologii Docker zawierającego wszystkie wymagane biblioteki.
+Rozwiązanie to w szczególności w znaczący sposób upraszcza dostęp do bibliotek firmy NVIDIA wymaganych do uruchomienia biblioteki TensorFlow na karcie graficznej tegoż producenta.
+Dzięki temu osoba zainteresowana uruchomieniem aplikacji z wykorzystaniem karty graficznej w celu przyśpieszenia obliczeń musi jedynie posiadać na swoim urządzeniu aktualne sterowniki oraz Docker.
 \newpage
 \section{Podsumowanie i możliwe następne kroki}
 Testy, które przeprowadziłem wskazują na to, że dla tych danych wejściowych/wyjściowych zastosowanie architektury U-Net nie sprawdza się.
