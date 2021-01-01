@@ -42,6 +42,11 @@ Jest to czasochłonne i monotonne zadanie, nie wymagające sześcioletnich studi
 Zadanie takie jak to idealnie nadaje się do automatyzacji.
 W ostatnich latach bardzo mocno rozwija się użycie uczenia maszynowego do rozwiązywania tej klasy problemów.
 W ramach mojej pracy powstał zestaw narzędzi pozwalający na łatwe testowanie różnych architektur oraz funkcji strat dla sieci neuronowych w tym problemie.
+Rozwiązanie zostało napisane w języku python z użyciem biblioteki Keras będącej interfejsem do framworku TensorFlow.
+Dodatkowo wykorzystałem biblioteki NumPy do obliczeń macierzowych, Pillow do manipulacji obrazów oraz Jupyter Notebook do interaktywnej prezentacji wyników.
+Kod źródłowy projektu jest wersjonowany z użyciem narzędzia git oraz upubliczniony na platformie GitHub.
+Repozytorium zawierające kod projektu zostało podłączone do platformy CircleCi w celu automatycznego uruchamiania testów jednostkowych (napisane przy użyciu PyTest i Tox) oraz publikacji wyników.
+W ramach pracy powstały również skrypty w jeżyku bash tworzące kontener deweloperski (technologia Docker) zawierający wszystkie niezbędne biblioteki.
 Dodatkowo przeprowadziłem testy dla architektury u-net oraz pewnych wariacji na jej temat.
 Całość dopełnia moduł pozwalający na obróbkę zdjęć wejściowych oraz wyjściowych.
 \newpage
@@ -76,6 +81,8 @@ na ich podstawie, chcemy aby komputer samemu "nauczył się" tego jaką drogą m
 \section{Sieci splotowe}
 Sieci splotowe to takie głębokie sieci neuronowe, które zawierają jedną lub więcej warstw splotowych.
 \subsection{Operacja splotu}
+Operacja splotu w kontekście sieci neuronowych jest to przebieg jądra przez wartości pikseli obrazu wejściowego.
+W przestrzeni dwu wymiarowej jest to równoważne z nałożeniem na obraz wejściowy filtra.
 \subsection{Sieci w pełni splotowe}
 Sieciami w pełni splotowymi nazywamy te głębokie sieci neuronowe, które jako wszystkie warstwy posiadają warstwy splotowe.
 Sieci tego typu służą głównie do przekształcania obrazów.
