@@ -1,5 +1,5 @@
 \babel@toc {polish}{}
-\contentsline {section}{\numberline {1}Przedstawienie problemu}{}%
+\contentsline {section}{\numberline {1}Wstęp}{}%
 \contentsline {section}{\numberline {2}Sztuczne sieci neuronowe}{}%
 \contentsline {subsection}{\numberline {2.1}Ogólne zasady działania}{}%
 \contentsline {subsection}{\numberline {2.2}Porównanie do klasycznych metod programowania}{}%
@@ -14,24 +14,23 @@
 \contentsline {subsection}{\numberline {4.5}Segmentacja instancji}{}%
 \contentsline {section}{\numberline {5}Architektura U-Net}{}%
 \contentsline {subsection}{\numberline {5.1}Historia i zastosowania}{}%
-\contentsline {subsection}{\numberline {5.2}Obrazy wejściowe}{}%
-\contentsline {subsection}{\numberline {5.3}Obrazy wyjściowe}{}%
+\contentsline {subsection}{\numberline {5.2}Obrazy wejściowe i wyjściowe}{}%
 \contentsline {section}{\numberline {6}Przetestowane podejścia}{}%
 \contentsline {subsection}{\numberline {6.1}Bazowa sieć u-net}{}%
 \contentsline {subsection}{\numberline {6.2}Preprocessing obrazów}{}%
 \contentsline {subsubsection}{\numberline {6.2.1}Cięcie i sklejanie obrazów}{}%
 \contentsline {subsubsection}{\numberline {6.2.2}Wybór jednego kanału - czerwony/alfa}{}%
 \contentsline {subsubsection}{\numberline {6.2.3}Rozmycie - gausian blur}{}%
-\contentsline {subsubsection}{\numberline {6.2.4}Przekształcenie do obrazów trzy kanałowych}{}%
+\contentsline {subsubsection}{\numberline {6.2.4}Przekształcenie do obrazów trzy kanałowych i redukcja kolorów}{}%
 \contentsline {subsection}{\numberline {6.3}Funkcja strat - Współczynnik Sørensena}{}%
 \contentsline {subsection}{\numberline {6.4}Własna funkcja strat}{}%
 \contentsline {subsection}{\numberline {6.5}Zapis wyniku w postaci distance map}{}%
 \contentsline {section}{\numberline {7}Powstałe narzędzia}{}%
 \contentsline {subsection}{\numberline {7.1}Skrypty pozwalające na preprocessing obrazów uczących}{}%
-\contentsline {subsection}{\numberline {7.2}Skrypty do uczenie sieci, poprzez wstrzyknięcie architektury sieci/funkcji strat}{}%
-\contentsline {subsection}{\numberline {7.3}Skrypty pozwalające na testowanie zapisanych modeli}{}%
-\contentsline {subsection}{\numberline {7.4}Skrypty pozwalające na predykcję dla obrazu/folderu obrazów}{}%
+\contentsline {subsection}{\numberline {7.2}Skrypt do uczenie sieci, poprzez wstrzyknięcie architektury sieci/funkcji strat}{}%
+\contentsline {subsection}{\numberline {7.3}Skrypt pozwalające na testowanie zapisanych modeli}{}%
+\contentsline {subsection}{\numberline {7.4}Skrypt pozwalające na predykcję dla obrazu/folderu obrazów}{}%
 \contentsline {subsection}{\numberline {7.5}Testy jednostkowe}{}%
-\contentsline {subsection}{\numberline {7.6}Automatyczne renderowaie i publikacja wyników}{}%
+\contentsline {subsection}{\numberline {7.6}Automatyczne renderowanie i publikacja wyników}{}%
 \contentsline {section}{\numberline {8}Podsumowanie i możliwe następne kroki}{}%
 \contentsline {section}{\numberline {9}Bibliografia}{}%

@@ -25,7 +25,7 @@
   breaklines=true,
   breakatwhitespace=true,
   tabsize=4
-} 
+}
 
 \title{Segmentacja komórek na zdjęciach mikroskopowych skóry z użyciem głębokich sieci neuronowych.}
 \date{2020-12-25}
@@ -36,18 +36,18 @@
 \newpage
 \tableofcontents
 \newpage
-\section{Przedstawienie problemu}
+\section{Wstęp}
 W codziennej pracy wielu lekarzy poświęca czas na manualne liczenie zafarbowanych komórek na zdjęciach.
 Jest to czasochłonne i monotonne zadanie, nie wymagające sześcioletnich studiów.
 Zadanie takie jak to idealnie nadaje się do automatyzacji.
 W ostatnich latach bardzo mocno rozwija się użycie uczenia maszynowego do rozwiązywania tej klasy problemów.
-W ramach mojej pracy powstał zestaw narzędzi pozwalający na łatwe testowanie różnych architektur, funkcji strat w tym problemie.
+W ramach mojej pracy powstał zestaw narzędzi pozwalający na łatwe testowanie różnych architektur oraz funkcji strat dla sieci neuronowych w tym problemie.
 Dodatkowo przeprowadziłem testy dla architektury u-net oraz pewnych wariacji na jej temat.
 Całość dopełnia moduł pozwalający na obróbkę zdjęć wejściowych oraz wyjściowych.
+\newpage
 \section{Sztuczne sieci neuronowe}
 Sztuczne sieci neuronowe są próbą stworzenia programów, których działanie jest inspirowane naszym rozumieniem mózgu.
 Chociaż zagadnienie to podejmowano już od bardzo długiego czasu, to dopiero od niedawna posiadamy wystarczającą moc obliczeniową aby realizować tworzone od wielu dziesięcioleci algorytmy.
-
 \subsection{Ogólne zasady działania}
 Głębokie sieci neuronowe składają się z warstwy wejściowej, wyjściowej oraz pewnej liczby warstw ukrytych.
 Liczba oraz typ tych ostatnich w dużej mierze determinuje działanie sieci.
@@ -58,7 +58,7 @@ Połączenia te posiadają wagi.
 Aby obliczyć wynik zwracany przez sieć rozpoczynamy obliczenia od warstwy wejściowej i obliczmy wartości neuronów w kolejnych warstwach.
 Wartość dla neuronu w warstwie k-tej to wartość funkcji aktywacji na sumie wartości wszystkich neuronów z warstwy poprzedniej przemnożonych przez odpowiednie im wagi połączeń.
 \begin{align*}
-  x_{k,j} = \sigma(\sum\limits_{i=0}^{n-1}{w_i*x_{(k-1),i}})
+  x_{k,j} = \sigma(\sum\limits_{i=0}^{n-1}{w_ix_{(k-1),i}})
 \end{align*}
 Gdzie (k>=1):
 \begin{itemize}
@@ -68,10 +68,18 @@ Gdzie (k>=1):
   \item $w_i$ - i-ta waga wchodząca do neuronu
 \end{itemize}
 \subsection{Porównanie do klasycznych metod programowania}
-Przy standardowych paradygmatach programowania
+Przy standardowych paradygmatach programowania (programowanie zorientowane obiektowo, programowanie proceduralne, programowanie funkcyjne) jako programista piszemy kod, który
+instruuje komputer na temat tego w jaki sposób ma on przekształcić otrzymane dane wejściowe.
+Natomiast sieci neuronowe są zdecydowanie bardziej zbliżone do programowania deklaratywnego. Jako programista podajemy dane wejściowe, architekturę i oczekiwane dane wyjściowe i
+na ich podstawie, chcemy aby komputer samemu "nauczył się" tego jaką drogą ma dojść aby uzyskać oczekiwany efekt (jakie wartości mają przyjmować wagi).
+\newpage
 \section{Sieci splotowe}
+Sieci splotowe to takie głębokie sieci neuronowe, które zawierają jedną lub więcej warstw splotowych.
 \subsection{Operacja splotu}
 \subsection{Sieci w pełni splotowe}
+Sieciami w pełni splotowymi nazywamy te głębokie sieci neuronowe, które jako wszystkie warstwy posiadają warstwy splotowe.
+Sieci tego typu służą głównie do przekształcania obrazów.
+\newpage
 \section{Problem segmentacja}
 Zaznaczenie konturów komórek na zdjęciach mikroskopowych jest problemem segmentacji instancji.
 W celu zrozumienia tego pojęcia przeanalizujemy składające się na niego mniejsze problemy z kategorii widzenia komputerowego.
@@ -84,7 +92,7 @@ Natomiast na wyjściu sieć zwraca nam predykcję jaka cyfra widnieje na zdjęci
 Ograniczeniem w tym typie problemu jest fakt, że na danym zdjęciu może znajdować się jedynie pojedyńczy obiekt.
 \subsection{Klasyfikacja z lokalizacją}
 Klasyfikacja z lokalizacją to dodanie do poprzedniego problemu zagadnienia odnalezienia klasyfikowanego obrazu na zdjęciu.
-Przykładowo tworząc sieć rozpoznającą gatunki zwierząt domowych, otrzymując zdjęcie kota siedzącego na kanapie otrzymamy nie tylko informację, 
+Przykładowo tworząc sieć rozpoznającą gatunki zwierząt domowych, otrzymując zdjęcie kota siedzącego na kanapie otrzymamy nie tylko informację,
 że jest to kot ale również informację o tym gdzie na tej kanapie się znajduje.
 Najczęściej zwracane są w takim wypadku oprócz klasy współrzędne pikseli w których zaczyn i kończy się obiekt.
 Następnie możemy na tej podstawie narysowanie naokoło obiektu ramkę z podpisem zawierającym nazwę klasy.
@@ -101,27 +109,73 @@ Na wyjściu możemy na przykład otrzymać ten sam obrazek z tym, że zależnie 
 Segmentacja instancji to dodanie do segmentacji ograniczenia, że każda jednostka ma być widocznie oddzielona.
 Dla przykładu gdy mamy zdjęcie czterech przytulających się osób, w wyniku segmentacji wszystkie cztery zostaną zakolorowane na ten sam kolor oraz podpisane raz jako człowiek.
 Natomiast gdy przeprowadzimy segmentację instancji to w wyniku otrzymamy każdą osobę pokolorowaną na własny kolor, oraz etykiety "człowiek 1.", "człowiek 2." etc.
+\newpage
 \section{Architektura U-Net}
 \subsection{Historia i zastosowania}
-\subsection{Obrazy wejściowe}
-\subsection{Obrazy wyjściowe}
+\subsection{Obrazy wejściowe i wyjściowe}
+W opracowywanym przeze mnie zagadnieniu jako obrazy wejściowe użyte zostały zdjęcia mikroskopowe skóry.
+Wszystkie zdjęcia są zrobione z przybliżeniem x40 oraz posiadają rozmiar 1200x1600px z trzema kanałami.
+Obrazy wyjściowe zostały przygotowane za pomocą programu dostarczonego mi, przez dr. Wiśniewskiego.
+Są to obrazy tego samego rozmiaru jednak zawierają cztery kanały zamiast trzech (RGBA zamiast RGB).
+Możemy na nich zobaczyć czerwoną otoczkę na około komórek, natomiast cała reszta obrazu przyjmuje kolor czarny.
+\newpage
 \section{Przetestowane podejścia}
 \subsection{Bazowa sieć u-net}
 \subsection{Preprocessing obrazów}
 \subsubsection{Cięcie i sklejanie obrazów}
 \subsubsection{Wybór jednego kanału - czerwony/alfa}
 \subsubsection{Rozmycie - gausian blur}
-\subsubsection{Przekształcenie do obrazów trzy kanałowych}
+Kolejny pomysłem było zastosowanie na obrazach docelowych przekształcenia gausian blur przed pokazaniem ich sieci.
+Ideą za tym stojącą było zwiększenie ilości czerwonych pikseli na obrazku w celu zredukowania wartości dokładności dla czysto czarnych obrazów zwracanych przez sieć.
+\subsubsection{Przekształcenie do obrazów trzy kanałowych i redukcja kolorów}
+W celu ułatwienia uczenia przeprowadziłem redukcję wymiarowości danych wyjściowych oraz zmniejszyłem ilość kolorów w obrazie.
+Zależnie od wartości kanałów czerwonego i alpha zaokrągliłem kolor piksela do czystego czerwonego (255, 0, 0) lub czystego czarnego (0, 0, 0).
 \subsection{Funkcja strat - Współczynnik Sørensena}
 \subsection{Własna funkcja strat}
 \subsection{Zapis wyniku w postaci distance map}
+\newpage
 \section{Powstałe narzędzia}
+W trakcie prac powstał szereg narzędzi znacznie ułatwiających pracę nad tym zagadnieniem.
+Kod wraz z historią jest dostępny na platformie GitHub.
+Wyniki są prezentowane za pomocą platformy GitHub Pages i są dostępne pod adresem:.
 \subsection{Skrypty pozwalające na preprocessing obrazów uczących}
-\subsection{Skrypty do uczenie sieci, poprzez wstrzyknięcie architektury sieci/funkcji strat}
-\subsection{Skrypty pozwalające na testowanie zapisanych modeli}
-\subsection{Skrypty pozwalające na predykcję dla obrazu/folderu obrazów}
+W ramach prac stworzyłem cztery skrypty pozwalające na edycję zdjęć wejściowych/wyjściowych.
+Powstałe skrypty pozwalają na:
+\begin{itemize}
+  \item zastosowanie filtra Gausian Blur z wybranym parametrem na pojedyńczym obrazie lub katalogu obrazów
+  \item pocięcie obrazów na mniejsze nachodzące się na siebie obrazki
+  \item zespolenie obrazków utworzonych poprzednim skryptem z powrotem w całość
+  \item zredukowanie kanałów obrazów z RGBA do RGB i zaokrąglenie wartości pikseli do czerwonego (255, 0, 0) i czarnego (0, 0, 0)
+\end{itemize}
+\subsection{Skrypt do uczenie sieci, poprzez wstrzyknięcie architektury sieci/funkcji strat}
+\subsection{Skrypt pozwalające na testowanie zapisanych modeli}
+Kolejny skrypt przyjmuje na wejście ścieżkę do zapisanego modelu oraz ścieżki do katalogów zawierających dane wejściowe i wyjściowe.
+A następnie przeprowadza na nich test sprawdzający jak dobrze model sobie na nich poradził.
+\subsection{Skrypt pozwalające na predykcję dla obrazu/folderu obrazów}
+Stworzyłem również skrypt, który otrzymując na wejście ścieżkę do modelu, którego chcemy użyć oraz
+ścieżkę do obrazu wejściowego/katalogu obrazów wejściowych zapiszę do pliku/plików nowy obraz będący predykcją modelu.
 \subsection{Testy jednostkowe}
-\subsection{Automatyczne renderowaie i publikacja wyników}
+W celu wykazania poprawności działania oraz umożliwienia szybszej modyfikacji bez wprowadzania błędów do modułu pozwalającego na preprocessing zdjęć
+zostały dodane testy jednostkowe. Zostały napisane przy pomocy modułu PyTest a ich uruchamianie jest obsługiwane, przez moduł Tox.
+Testy są automatycznie uruchamiane przy wypchnięciu lokalnych commitów, do publicznego repozytorium na platformie GitHub.
+Funkcjonalność ta została zrealizowana za pomocą platformy CircleCi, pozwala ona na uruchomienie testów po otrzymaniu informacji od portalu GitHub.
+Status tych testów możemy zobaczyć w łatwy sposób poprzez dodany do pliku README.md obraz.
+Jest on każdorazowo przy wyświetlaniu wyrenderowanego pliku README pobierany z serwera CircleCi i zależnie od tego czy wszystkie testy jednostkowe z ostatniego commita zostały poprawnie ukończone czy nie przybiera odpowiednio kolor zielony/czerwony.
+\subsection{Automatyczne renderowanie i publikacja wyników}
+Dodatkowo powstał notatnik Jupyter\footnote{interaktywne środowisko uruchomieniowe. Pozwalające na łączenie kodu oraz języka znaczników markdown. Dostępne pod adresem: https://jupyter.org/} zawierający prezentację uzyskanych wyników.
+W celu interaktywnego przejrzenia go należy pobrać repozytorium.
+Jednakże jest on również dostępny jako strona internetowa w postaci z pokazanymi wyjściami z wszystkich komórek.
+Strona ta jest uaktualniana za każdym razem gdy do repozytorium na serwerze GitHub zostanie wysłany nowy commit zawierający modyfikację notatnika.
+Rozwiązanie to tak samo jak automatyczne testy jednostkowe zostało zrealizowane przy użyciu platformy CircleCi.
+Otrzymuje ona informację od serwisu GitHub o nowym commicie następnie sprawdza, czy plik notatnika został zmieniony.
+Jeżeli tak to wywoła polecenie eksportujące go do pliku w formacie HTML a następnie sama stworzy commit i wyśle go do repozytorium na serwisie GitHub.
+Gdy ten go otrzyma opublikuje nowo utworzony plik na platformie GitHub Pages.
+Dzięki tej integracji wszystkie zmiany których dokonam w notatniku prezentującym wyniki moich prac są automatycznie publikowane i dostępne do wglądu.
+\newpage
 \section{Podsumowanie i możliwe następne kroki}
+Testy, które przeprowadziłem wskazują na to, że dla tych danych wejściowych/wyjściowych zastosowanie architektury U-Net nie sprawdza się.
+Jako, że jest to najbardziej rozpowszechniona architektura do segmentacji obrazów medycznych może to również sugerować, że użycie sieci neuronowych do tego zadania na ten moment nie przyniesie żądanych wyników.
+Jednakże dzięki powstałym w trakcie testów narzędziom pojawiła się możliwość łatwego testowania nowych podejść, które jak wskazują na to ostatnie lata pojawiają się w dziedzinie uczenia maszynowego i głębokich sieci neuronowych bardzo często.
+\newpage
 \section{Bibliografia}
 \end{document}
