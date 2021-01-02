@@ -154,10 +154,10 @@ Działo się tak mimo, że sieć uzyskiwała w trakcie uczenia/walidacji wyniki 
 
 Powyższe testy uświadomiły mi konieczność znalezienia lepszej funkcji strat/metryki mierzącej poprawność lub poprawienie w jakiś sposób danych wejściowych i wyjściowych w celu ułatwienia sieci procesu uczenia.
 \subsection{Preprocessing obrazów}
-Skupię się teraz na preprocessingu danych, którego dokonałem w nadziei na poprawę wyników uczenia.
+Skupię się teraz na modyfikacji danych, której dokonałem w nadziei na poprawę wyników uczenia.
 \subsubsection{Cięcie i sklejanie obrazów}
-Przy rozwiązywaniu postawionego przedemną problemu natkąłem się na dwa problemy, które miały to samo rozwiązanie.
-Pierwszym z nich była wielkość obrazów wejściowych, która przy wybranej przezemnie architekturze sieci była zdecydowanie zbyt duża.
+Przy rozwiązywaniu postawionego przede mną problemu natkąłem się na dwa problemy, które miały to samo rozwiązanie.
+Pierwszym z nich była wielkość obrazów wejściowych, która przy wybranej przeze mnie architekturze sieci była zdecydowanie zbyt duża.
 Natomiast drugim był niedobór danych uczących.
 Doszedłem do wniosku, że oba te problemy mogę rozwiązać poprzez pocięcie dużych obrazów wejściowych (1200x1600px) na wiele mniejszych (90x90px z zakładką wynoszącą 10px), a następnie uczenie na nich modelu.
 Gdy model będzie już wyuczony w celu otrzymania segmentacji obraz wejściowy będzie najpierw dzielony w ten sam sposób, aby był zestawem mniejszych zdjęć, potem nastąpi segmentacja a po niej wyniki zostaną scalone ponownie w jeden obraz wyjściowy (w miejscach, gdzie będzie więcej niż jedna odpowiedź dla piksela z powodu kieszonki przyjmę wartość maksymalną).
@@ -165,32 +165,58 @@ Dzięki takiemu rozwiązaniu udało mi się znacząco zmniejszyć ilość pamię
 Dodatkowo rozmiar 90x90px jest obrazem kwadratowym a z takimi najlepiej radzi sobię ta architektura.
 Kolejnym plusem jest to, że w ten sposób ilość moich danych wejściowych drastycznie wzrośnie, ponieważ z każdego jednego obrazu utworzy się trzysta mniejszych, z których każdy będzie oddzielny/niezależnym przykładem uczącym (w tym wypadku obraz oryginalny składa się na siatkę o szerokości 20 i wysokości 15 mniejszych obrazów).
 \subsubsection{Wybór jednego kanału - czerwony/alfa}
+Analizując dane wyjściowe zauważyłem, że piksele czarne (tło) posiadają wartości kanału alpha bliskie zeru natomiast piksele linii wartości bliskie dwustu pięć dziesięciu pięciu.
+Niemal identycznie wyglądały wartości kanału czerwonego.
+Natomiast kanały zielony i niebieski miały niemal zawsze wartość równą zero.
+
+Dlatego wpadłem na pomysł, żeby spróbować potraktować kanały alfa i czerwony jako obrazy monochromatyczne i użyć ich jako dane wyjściowe.
+W ten sposób w założeniu predykcje tworzyłyby monochromatyczny obraz z białymi liniami na czarnym tle.
+
+Niestety zastosowanie tego rozwiązania nie przyniosło porządnych efektów.
+Obrazy wynikowe przyjmowały teraz w całości kolor czerwony (gdy jako wyjście przykładów uczących podaliśmy obraz monochromatyczny wygenerowany z kanału czerwonego) lub
+czarny (gdy dane wyjściowe były na podstawie kanału alfa).
+\subsubsection{Redukcja do obrazów trzy kanałowych i redukcja kolorów}
+Kolejnym pomysłem było przeprowadzenie redukcję wymiarowości danych wyjściowych oraz zmniejszyłem ilość kolorów w obrazie.
+Wartości kanałów czerwonego i alfa są ze sobą powiązane (dla tła obie zmierzają do zera).
+Dlatego zdecydowałem się na zmianę obrazów wyjściowych z formatu RGBA do RGB.
+Zależnie od wartości kanałów czerwonego i alfa zaokrągliłem kolor danego piksela do czystego czerwonego (255, 0, 0) lub czystego czarnego (0, 0, 0).
+Przeprowadziłem te operację z różnymi wartościami progowymi dla obu kanałów.
+W wyniku jednak nadal otrzymywałem całkowicie czerwone/czarne obrazy zależnie od tego jak dużo pikseli zostało zaokrąglonych do danego koloru.
 
 \subsubsection{Rozmycie - Gaussian blur}
-Kolejny pomysłem było zastosowanie na obrazach docelowych przekształcenia Gaussian blur przed pokazaniem ich sieci.
-Ideą za tym stojącą było zwiększenie ilości czerwonych pikseli na obrazku w celu zredukowania wartości dokładności dla czysto czarnych obrazów zwracanych przez sieć.
-\subsubsection{Redukcja do obrazów trzy kanałowych i redukcja kolorów}
-W celu ułatwienia uczenia przeprowadziłem redukcję wymiarowości danych wyjściowych oraz zmniejszyłem ilość kolorów w obrazie.
-Zależnie od wartości kanałów czerwonego i alpha zaokrągliłem kolor piksela do czystego czerwonego (255, 0, 0) lub czystego czarnego (0, 0, 0).
-\subsection{Funkcja strat - Współczynnik Sørensena}
-\subsection{Własna funkcja strat}
+Otrzymane w poprzednich próbach wyniki skłoniły mnie do myśli, że proporcje koloru czerwonego do czarnego są zbyt nierówne.
+Z powodu tej nierówności model jest w stanie uzyskać wysoką wartość dokładności (rzędu dziewięćdziesięciu czterech procent) jako predykcję zwracając wszystkie piksele w tym samym kolorze.
+
+Pomysłem na rozwiązanie tego problemu było zastosowanie na obrazach docelowych rozmycia Gaussa przed pokazaniem ich sieci.
+Filtr ten rozmywa obraz co w wypadku dwu kolorowego obrazu zawierającego linie oraz tło będzie skutkowało poszerzeniem linii.
+\subsection{Funkcje start}
+We wszystkich wykonanych do tej pory eksperymentach otrzymywałem jako predykcję jednokolorowe obrazy.
+Jednakże dla każdego z tych podejść otrzymywałem bardzo wysoką wartość dokładności i małą wartość funkcji strat.
+Dlatego zdecydowałem się na zbadanie innych sposobów oceny poprawności działania sieci.
+\subsubsection{Funkcja strat - Współczynnik Sørensena}
+Często używaną w zagadnieniu segmentacji funkcją strat jest $1-f(x)$ gdzie f(x) to współczynnik Sørensena.
+
+\subsubsection{Własna funkcja strat}
+Kolejny pomysł opierał się na tym aby metryka mierząca poprawność zwracała większą uwagę na poprawnie sklasyfikowane czerwone piksele (gdyż jest ich znacznie mniej).
+
 \subsection{Zapis wyniku w postaci distance map}
 \subsection{Obliczenie predykcji na komputerze klienckim}
 Jednym z problemów przy pracy z danymi medycznymi jest to, że nie mogą one opuścić sieci wewnętrznej szpitala.
 Dlatego nie możemy uruchomić wytrenowanego modelu na serwerze i zapewnić możliwości odpytania poprzez API.
 Rozwiązaniem w tej sytuacji było przeniesienie wytrenowanych w TensorFlow modeli do TensorFlowJS który pozwala na użycie ich na komputerze klienckim.
-Pierwszym krokiem było przekształcenie modelu z biblioteki pythonowej na bibliotekę javascriptową.
-Można to było łatwo wykonać w skrypcie pythonowym za pomocą metody tfjs.converters.save\_keras\_model, której przekazujemy model oraz ścieżkę do niego.
+Testy te były dokonane na znacznie prostszy modelu służącym do rozpoznawania odręcznie pisanych cyfr (stosował on jednak wszystkie warstwy z, których składa się model w architekturze u-net, jedynie w innej ilości/konfiguracji).
+Pierwszym krokiem było przekształcenie modelu z biblioteki python-owej na bibliotekę javascript-ową.
+Można to było łatwo wykonać w skrypcie python-owym za pomocą metody tfjs.converters.save\_keras\_model, której przekazujemy model oraz ścieżkę do niego.
 Największym problemem w tej zmianie było jednak to, że aby użyć biblioteki w javascript operacje przez nią wykonywane musiały być poza wątkiem głównym, w celu nie blokowania UI - jest to narzucane przez samą bibliotekę.
 Aby to osiągnąć posłużyłem się tak zwanymi webworker-ami.
 Pozwalają one na wykonywanie zadań równolegle do wątku głównego.
-W wątku głównym tworzymy obiekt klasy Worker oraz subskybujemy wydarzenie worker.onmessage.
+W wątku głównym tworzymy obiekt klasy Worker oraz subskrybujemy wydarzenie worker.onmessage.
 Dzięki temu możemy wykonać operację na danych otrzymanych w wiadomości. Natomiast w celu wysłania zapytania do workera używamy metody worker.postMessgae w której przekazujemy dane.
 W moim wypadku była to pobrana z wyświetlonej kanwy tablica z danymi o pikselach w obrazku.
 W skrypcie zawierającym kod źródłowy workera również subskrybujemy wydarzenie onmessage, w jego obsłudze najpierw preprocesuję dane w ten sposób aby ich format na wejście był taki sam jak danych uczących.
 Jest to wymagane nawet jeżeli chcielibyśmy sprawdzić model korzystając z tego samego obrazu ponieważ biblioteki PIL oraz NumPy mają inny format danych niż dane zwrócone przy pomocy javascript z obiektu canvas dostępnego w HTML5 na którym wyświetlany był obraz do klasyfikacji.
 Następnie po doprowadzeniu otrzymanych danych do odpowiedniego formatu jesteśmy w stanie użyć wyuczonego w pythonie i TensorFlow modelu w celu uzyskania predykcji.
-Następnie za pomocą metody postMessage jestesmy w stanie wysłać do wątku głównego wiadomość zawierającą predykcję modelu, który ją wyświetli.
+Następnie za pomocą metody postMessage jesteśmy w stanie wysłać do wątku głównego wiadomość zawierającą predykcję modelu, który ją wyświetli.
 Dzięki powyższemu rozwiązaniu jesteśmy w stanie uruchomić nasz model po stronie klienta w przeglądarce.
 Dodatkowo zapewniona jest płynność działania ponieważ procesowanie danych oraz predykcja modelu wykonywane są równolegle do wątku głównego, który obsługuje interfejs użytkownika.
 \newpage
