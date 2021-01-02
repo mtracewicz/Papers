@@ -1,8 +1,8 @@
 # Fdb version 3
-["pdflatex"] 1609607493 "/home/mtracewicz/Papers/Thesis/thesis.tex" "/home/mtracewicz/Papers/Thesis/thesis.pdf" "thesis" 1609607493
+["pdflatex"] 1609609473 "/home/mtracewicz/Papers/Thesis/thesis.tex" "/home/mtracewicz/Papers/Thesis/thesis.pdf" "thesis" 1609609556
   "/etc/texmf/web2c/texmf.cnf" 1609415812 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/mtracewicz/Papers/Thesis/thesis.aux" 1609607493 4583 51f005b747502b7a8a9dc75f580a6269 ""
-  "/home/mtracewicz/Papers/Thesis/thesis.tex" 1609607493 24310 0a974557aaa15fb74471d11674271842 ""
+  "/home/mtracewicz/Papers/Thesis/thesis.aux" 1609609474 4427 4b9a8825ba5d12f98b5ed40a232b22ed ""
+  "/home/mtracewicz/Papers/Thesis/thesis.tex" 1609609556 24230 571e194e8b148046cdb39b08859debd3 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/ecbx1000.tfm" 1136768653 3584 2d666ecf6d466d8b007246bc2f94d9da ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/ecbx1200.tfm" 1136768653 3584 402da0b29eafbad07963b1224b222f18 ""
@@ -73,13 +73,13 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1581979058 38841 ce3692aa899bb693b90b87eaa5d4d84e ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1609415869 4770781 1ed1abab22da9c3e2cc82e4db562318b ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1609415932 8256393 a8ea1fed6efc982e25ab6834ed4a5f6d ""
-  "thesis.aux" 1609607493 4583 51f005b747502b7a8a9dc75f580a6269 "pdflatex"
-  "thesis.tex" 1609607493 24310 0a974557aaa15fb74471d11674271842 ""
-  "thesis.toc" 1609607493 2971 110c9391602f6511843b727986e57479 "pdflatex"
+  "thesis.aux" 1609609474 4427 4b9a8825ba5d12f98b5ed40a232b22ed "pdflatex"
+  "thesis.tex" 1609609556 24230 571e194e8b148046cdb39b08859debd3 ""
+  "thesis.toc" 1609609474 2856 7b93c69cfda4a332592d59d6433cf578 "pdflatex"
   (generated)
-  "thesis.toc"
-  "thesis.aux"
-  "thesis.log"
-  "thesis.pdf"
-  "/home/mtracewicz/Papers/Thesis/thesis.pdf"
   "/home/mtracewicz/Papers/Thesis/thesis.log"
+  "thesis.aux"
+  "/home/mtracewicz/Papers/Thesis/thesis.pdf"
+  "thesis.pdf"
+  "thesis.log"
+  "thesis.toc"

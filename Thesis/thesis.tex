@@ -55,6 +55,12 @@ Z tego powodu przetestowałem również możliwość uruchomienia splotowej siec
 Co pozwala aby wszystkie operacje były wykonane po stornie użytkownika końcowego a dane medyczne nie musiały być wysyłane na serwer.
 
 Całość pracy dopełnia moduł pozwalający na obróbkę zdjęć wejściowych oraz wyjściowych.
+\subsection{Obrazy wejściowe i wyjściowe}
+W opracowywanym przeze mnie zagadnieniu jako obrazy wejściowe użyte zostały zdjęcia mikroskopowe skóry.
+Wszystkie zdjęcia są zrobione z przybliżeniem x40 oraz posiadają rozmiar 1200x1600px z trzema kanałami.
+Obrazy wyjściowe zostały przygotowane za pomocą programu dostarczonego mi, przez dr. Wiśniewskiego.
+Są to obrazy tego samego rozmiaru jednak zawierają cztery kanały zamiast trzech (RGBA zamiast RGB).
+Możemy na nich zobaczyć czerwoną otoczkę na około komórek, natomiast cała reszta obrazu przyjmuje kolor czarny.
 \newpage
 \section{Sztuczne sieci neuronowe}
 Sztuczne sieci neuronowe są próbą stworzenia programów, których działanie jest inspirowane naszym rozumieniem mózgu.
@@ -131,14 +137,7 @@ Segmentacja instancji to dodanie do segmentacji ograniczenia, że każda jednost
 Dla przykładu gdy mamy zdjęcie czterech przytulających się osób, w wyniku segmentacji wszystkie cztery zostaną zakolorowane na ten sam kolor oraz podpisane raz jako człowiek.
 Natomiast gdy przeprowadzimy segmentację instancji to w wyniku otrzymamy każdą osobę pokolorowaną na własny kolor, oraz etykiety ``człowiek 1.``, ``człowiek 2.`` etc.
 \newpage
-\section{Architektura U-Net}
-\subsection{Historia i zastosowania}
-\subsection{Obrazy wejściowe i wyjściowe}
-W opracowywanym przeze mnie zagadnieniu jako obrazy wejściowe użyte zostały zdjęcia mikroskopowe skóry.
-Wszystkie zdjęcia są zrobione z przybliżeniem x40 oraz posiadają rozmiar 1200x1600px z trzema kanałami.
-Obrazy wyjściowe zostały przygotowane za pomocą programu dostarczonego mi, przez dr. Wiśniewskiego.
-Są to obrazy tego samego rozmiaru jednak zawierają cztery kanały zamiast trzech (RGBA zamiast RGB).
-Możemy na nich zobaczyć czerwoną otoczkę na około komórek, natomiast cała reszta obrazu przyjmuje kolor czarny.
+\section{Architektura U-Net historia i zastosowania}
 \newpage
 \section{Przetestowane podejścia}
 W ramach pracy przetestowałem architekturę U-Net oraz różne podejścia do obróbki danych wejściowych i wyjściowych.
@@ -183,7 +182,7 @@ Zależnie od wartości kanałów czerwonego i alfa zaokrągliłem kolor danego p
 Przeprowadziłem te operację z różnymi wartościami progowymi dla obu kanałów.
 W wyniku jednak nadal otrzymywałem całkowicie czerwone/czarne obrazy zależnie od tego jak dużo pikseli zostało zaokrąglonych do danego koloru.
 
-\subsubsection{Rozmycie - Gaussian blur}
+\subsubsection{Rozmycie Gausa}
 Otrzymane w poprzednich próbach wyniki skłoniły mnie do myśli, że proporcje koloru czerwonego do czarnego są zbyt nierówne.
 Z powodu tej nierówności model jest w stanie uzyskać wysoką wartość dokładności (rzędu dziewięćdziesięciu czterech procent) jako predykcję zwracając wszystkie piksele w tym samym kolorze.
 
@@ -233,7 +232,7 @@ Powstałe skrypty pozwalają na:
   \item zespolenie obrazków utworzonych poprzednim skryptem z powrotem w całość
   \item zredukowanie kanałów obrazów z RGBA do RGB i zaokrąglenie wartości pikseli do czerwonego (255, 0, 0) i czarnego (0, 0, 0)
 \end{itemize}
-\subsection{Skrypt do uczenie sieci, poprzez wstrzyknięcie architektury sieci/funkcji strat}
+\subsection{Skrypt do uczenie sieci}
 \subsection{Skrypt pozwalające na testowanie zapisanych modeli}
 Kolejny skrypt przyjmuje na wejście ścieżkę do zapisanego modelu oraz ścieżki do katalogów zawierających dane wejściowe i wyjściowe.
 A następnie przeprowadza na nich test sprawdzający jak dobrze model sobie na nich poradził.
