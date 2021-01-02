@@ -39,25 +39,33 @@
 \section{Wstęp}
 W codziennej pracy wielu lekarzy poświęca czas na manualne liczenie zafarbowanych komórek na zdjęciach.
 Jest to czasochłonne i monotonne zadanie, nie wymagające sześcioletnich studiów.
-Zadanie takie jak to idealnie nadaje się do automatyzacji.
+Nadaje się ono idealnie do automatyzacji.
 W ostatnich latach bardzo mocno rozwija się użycie uczenia maszynowego do rozwiązywania tej klasy problemów.
+
 W ramach mojej pracy powstał zestaw narzędzi pozwalający na łatwe testowanie różnych architektur oraz funkcji strat dla sieci neuronowych w tym problemie.
-Rozwiązanie zostało napisane w języku python z użyciem biblioteki Keras będącej interfejsem do framworku TensorFlow.
+Rozwiązanie zostało napisane w języku python z użyciem biblioteki Keras (służącej do pracy z sieciami neuronowymi) będącej interfejsem do biblioteki TensorFlow (pozwalającej na operacje na tensorach).
 Dodatkowo wykorzystałem biblioteki NumPy do obliczeń macierzowych, Pillow do manipulacji obrazów oraz Jupyter Notebook do interaktywnej prezentacji wyników.
 Kod źródłowy projektu jest wersjonowany z użyciem narzędzia git oraz upubliczniony na platformie GitHub.
 Repozytorium zawierające kod projektu zostało podłączone do platformy CircleCi w celu automatycznego uruchamiania testów jednostkowych (napisane przy użyciu PyTest i Tox) oraz publikacji wyników.
 W ramach pracy powstały również skrypty w jeżyku bash tworzące kontener deweloperski (technologia Docker) zawierający wszystkie niezbędne biblioteki.
+
 Dodatkowo przeprowadziłem testy dla architektury u-net oraz pewnych wariacji na jej temat.
-Całość dopełnia moduł pozwalający na obróbkę zdjęć wejściowych oraz wyjściowych.
+Jako, że zdjęcia tego typu są danymi chronionymi prawnie to szpitale, nie mogą wysłać ich poza własną sieć wewnętrzną.
+Z tego powodu przetestowałem również możliwość uruchomienia splotowej sieci neuronowej w przeglądarce z użyciem TensorFlowJS.
+Co pozwala aby wszystkie operacje były wykonane po stornie użytkownika końcowego a dane medyczne nie musiały być wysyłane na serwer.
+
+Całość pracy dopełnia moduł pozwalający na obróbkę zdjęć wejściowych oraz wyjściowych.
 \newpage
 \section{Sztuczne sieci neuronowe}
 Sztuczne sieci neuronowe są próbą stworzenia programów, których działanie jest inspirowane naszym rozumieniem mózgu.
 Chociaż zagadnienie to podejmowano już od bardzo długiego czasu, to dopiero od niedawna posiadamy wystarczającą moc obliczeniową aby realizować tworzone od wielu dziesięcioleci algorytmy.
+
 \subsection{Ogólne zasady działania}
 Głębokie sieci neuronowe składają się z warstwy wejściowej, wyjściowej oraz pewnej liczby warstw ukrytych.
-Liczba oraz typ tych ostatnich w dużej mierze determinuje działanie sieci.
+Każda warstwa składa się z neuronów, które przyjmują wartość zależnie od wyniku funkcji aktywacyjnej.
+Liczba oraz typ warstw ukrytych a także ilość zawartych w nich neuronów w dużej mierze determinuje działanie sieci.
+
 Omówienie zaczniemy od tego w jaki sposób sieć przeprowadza obliczenia zwracające odpowiedź, a następnie zajmiemy się procesem uczenia.
-Każda z warstw zawiera pewną ilość neuronów.
 Neurony kolejnych warstw są ze sobą połączone (zajmę się tu jedynie warstwami, które posiadają połączenia neuronów każdy z każdym, czyli tak zwanymi warstwami typu ``dense``).
 Połączenia te posiadają wagi.
 Aby obliczyć wynik zwracany przez sieć rozpoczynamy obliczenia od warstwy wejściowej i obliczmy wartości neuronów w kolejnych warstwach.
@@ -72,6 +80,12 @@ Gdzie (k>=1):
   \item n - liczba neuronów w warstwie k-1
   \item $w_i$ - i-ta waga wchodząca do neuronu
 \end{itemize}
+Obliczając w ten sposób wartości wszystkich neuronów w ostatniej - warstwie wyjściowe otrzymujemy odpowiedź naszego modelu.
+
+Proces uczenia to wielorazowe przejście przez poprawnie opisane dane wejściowe i poprawianie wag w celu minimalizacji funkcji błędu.
+W celu poprawy wag używamy algorytmu wstecznej propagacji błędu.
+Polega on na poprawianiu wag poprzez przejście sieci w przeciwnym kierunku i zmianie wartości wag na podstawie delt wyliczonych przy pomocy algorytmu spadku gradientowego.
+
 \subsection{Porównanie do klasycznych metod programowania}
 Przy standardowych paradygmatach programowania (programowanie zorientowane obiektowo, programowanie proceduralne, programowanie funkcyjne) jako programista piszemy kod, który
 instruuje komputer na temat tego w jaki sposób ma on przekształcić otrzymane dane wejściowe.
@@ -127,10 +141,31 @@ Są to obrazy tego samego rozmiaru jednak zawierają cztery kanały zamiast trze
 Możemy na nich zobaczyć czerwoną otoczkę na około komórek, natomiast cała reszta obrazu przyjmuje kolor czarny.
 \newpage
 \section{Przetestowane podejścia}
+W ramach pracy przetestowałem architekturę U-Net oraz różne podejścia do obróbki danych wejściowych i wyjściowych.
+Mimo wielu prób sieci które przygotowałem zawsze zwracały niemal w pełni czarne/czerwone obrazy.
 \subsection{Bazowa sieć u-net}
+Pierwszym podejściem, które przetestowałem było uruchomienie trzy poziomowej (dziesięcio warstwowej) sieci neuronowej w architekturze u-net.
+Sieć otrzymywała na wejście obrazy rozmiaru 200x200x3 a jako wyjście zwracała obrazy 200x200x4.
+Na tym etapie przeprowadziłem testy modyfikując opisujące te sieć hiperparametry.
+Zmieniałem liczbę epok, stałą uczącą oraz wielkość batchy.
+Dodatkowo modyfikowałem również ilość filtrów używanych w każdej warstwie.
+Niezależnie od tych zmian wszystkie powyższe eksperymenty zwracały jako predykcję obrazy praktycznie w stu procentach czarne, zawierały maksymalnie dwa/trzy piksele koloru czerwonego.
+Działo się tak mimo, że sieć uzyskiwała w trakcie uczenia/walidacji wyniki dokładności na poziomie dziewięćdziesięciu czterech procent.
+
+Powyższe testy uświadomiły mi konieczność znalezienia lepszej funkcji strat/metryki mierzącej poprawność lub poprawienie w jakiś sposób danych wejściowych i wyjściowych w celu ułatwienia sieci procesu uczenia.
 \subsection{Preprocessing obrazów}
+Skupię się teraz na preprocessingu danych, którego dokonałem w nadziei na poprawę wyników uczenia.
 \subsubsection{Cięcie i sklejanie obrazów}
+Przy rozwiązywaniu postawionego przedemną problemu natkąłem się na dwa problemy, które miały to samo rozwiązanie.
+Pierwszym z nich była wielkość obrazów wejściowych, która przy wybranej przezemnie architekturze sieci była zdecydowanie zbyt duża.
+Natomiast drugim był niedobór danych uczących.
+Doszedłem do wniosku, że oba te problemy mogę rozwiązać poprzez pocięcie dużych obrazów wejściowych (1200x1600px) na wiele mniejszych (90x90px z zakładką wynoszącą 10px), a następnie uczenie na nich modelu.
+Gdy model będzie już wyuczony w celu otrzymania segmentacji obraz wejściowy będzie najpierw dzielony w ten sam sposób, aby był zestawem mniejszych zdjęć, potem nastąpi segmentacja a po niej wyniki zostaną scalone ponownie w jeden obraz wyjściowy (w miejscach, gdzie będzie więcej niż jedna odpowiedź dla piksela z powodu kieszonki przyjmę wartość maksymalną).
+Dzięki takiemu rozwiązaniu udało mi się znacząco zmniejszyć ilość pamięci operacyjnej wymaganej dla pojedyńczego przebiegu sieci, dzięki czemu mogę wykorzystać architekturę u-net oraz znacząco zwiększyć jej skuteczność, ponieważ dostępną pamięć można wykorzystać by dodać dodatkowe warstwy/filtry.
+Dodatkowo rozmiar 90x90px jest obrazem kwadratowym a z takimi najlepiej radzi sobię ta architektura.
+Kolejnym plusem jest to, że w ten sposób ilość moich danych wejściowych drastycznie wzrośnie, ponieważ z każdego jednego obrazu utworzy się trzysta mniejszych, z których każdy będzie oddzielny/niezależnym przykładem uczącym (w tym wypadku obraz oryginalny składa się na siatkę o szerokości 20 i wysokości 15 mniejszych obrazów).
 \subsubsection{Wybór jednego kanału - czerwony/alfa}
+
 \subsubsection{Rozmycie - Gaussian blur}
 Kolejny pomysłem było zastosowanie na obrazach docelowych przekształcenia Gaussian blur przed pokazaniem ich sieci.
 Ideą za tym stojącą było zwiększenie ilości czerwonych pikseli na obrazku w celu zredukowania wartości dokładności dla czysto czarnych obrazów zwracanych przez sieć.
@@ -140,6 +175,24 @@ Zależnie od wartości kanałów czerwonego i alpha zaokrągliłem kolor piksela
 \subsection{Funkcja strat - Współczynnik Sørensena}
 \subsection{Własna funkcja strat}
 \subsection{Zapis wyniku w postaci distance map}
+\subsection{Obliczenie predykcji na komputerze klienckim}
+Jednym z problemów przy pracy z danymi medycznymi jest to, że nie mogą one opuścić sieci wewnętrznej szpitala.
+Dlatego nie możemy uruchomić wytrenowanego modelu na serwerze i zapewnić możliwości odpytania poprzez API.
+Rozwiązaniem w tej sytuacji było przeniesienie wytrenowanych w TensorFlow modeli do TensorFlowJS który pozwala na użycie ich na komputerze klienckim.
+Pierwszym krokiem było przekształcenie modelu z biblioteki pythonowej na bibliotekę javascriptową.
+Można to było łatwo wykonać w skrypcie pythonowym za pomocą metody tfjs.converters.save\_keras\_model, której przekazujemy model oraz ścieżkę do niego.
+Największym problemem w tej zmianie było jednak to, że aby użyć biblioteki w javascript operacje przez nią wykonywane musiały być poza wątkiem głównym, w celu nie blokowania UI - jest to narzucane przez samą bibliotekę.
+Aby to osiągnąć posłużyłem się tak zwanymi webworker-ami.
+Pozwalają one na wykonywanie zadań równolegle do wątku głównego.
+W wątku głównym tworzymy obiekt klasy Worker oraz subskybujemy wydarzenie worker.onmessage.
+Dzięki temu możemy wykonać operację na danych otrzymanych w wiadomości. Natomiast w celu wysłania zapytania do workera używamy metody worker.postMessgae w której przekazujemy dane.
+W moim wypadku była to pobrana z wyświetlonej kanwy tablica z danymi o pikselach w obrazku.
+W skrypcie zawierającym kod źródłowy workera również subskrybujemy wydarzenie onmessage, w jego obsłudze najpierw preprocesuję dane w ten sposób aby ich format na wejście był taki sam jak danych uczących.
+Jest to wymagane nawet jeżeli chcielibyśmy sprawdzić model korzystając z tego samego obrazu ponieważ biblioteki PIL oraz NumPy mają inny format danych niż dane zwrócone przy pomocy javascript z obiektu canvas dostępnego w HTML5 na którym wyświetlany był obraz do klasyfikacji.
+Następnie po doprowadzeniu otrzymanych danych do odpowiedniego formatu jesteśmy w stanie użyć wyuczonego w pythonie i TensorFlow modelu w celu uzyskania predykcji.
+Następnie za pomocą metody postMessage jestesmy w stanie wysłać do wątku głównego wiadomość zawierającą predykcję modelu, który ją wyświetli.
+Dzięki powyższemu rozwiązaniu jesteśmy w stanie uruchomić nasz model po stronie klienta w przeglądarce.
+Dodatkowo zapewniona jest płynność działania ponieważ procesowanie danych oraz predykcja modelu wykonywane są równolegle do wątku głównego, który obsługuje interfejs użytkownika.
 \newpage
 \section{Powstałe narzędzia}
 W trakcie prac powstał szereg narzędzi znacznie ułatwiających pracę nad tym zagadnieniem.
