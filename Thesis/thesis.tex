@@ -5,6 +5,7 @@
 \usepackage[polish]{babel}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
+\usepackage{graphicx}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -117,25 +118,55 @@ Za dobry przykład może nam posłużyć ``Problem MNiST``, polegający na rozpo
 Jako wejście sieć otrzymuje czarno-biały obrazek rozmiaru 16x16 pikseli na, którym widnieje odręcznie napisana cyfra.
 Natomiast na wyjściu sieć zwraca nam predykcję jaka cyfra widnieje na zdjęciu.
 Ograniczeniem w tym typie problemu jest fakt, że na danym zdjęciu może znajdować się jedynie pojedyńczy obiekt.
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{images/klasyfikacja.png}
+  \caption{Przykład klasyfikacji}
+  \label{fig:klasyfikacja}
+\end{figure}
 \subsection{Klasyfikacja z lokalizacją}
 Klasyfikacja z lokalizacją to dodanie do poprzedniego problemu zagadnienia odnalezienia klasyfikowanego obrazu na zdjęciu.
 Przykładowo tworząc sieć rozpoznającą gatunki zwierząt domowych, otrzymując zdjęcie kota siedzącego na kanapie otrzymamy nie tylko informację,
 że jest to kot ale również informację o tym gdzie na tej kanapie się znajduje.
 Najczęściej zwracane są w takim wypadku oprócz klasy współrzędne pikseli w których zaczyn i kończy się obiekt.
 Następnie możemy na tej podstawie narysowanie naokoło obiektu ramkę z podpisem zawierającym nazwę klasy.
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{images/klasyfikacja_z_lokalizacja.jpeg}
+  \caption{Przykład klasyfikacji z lokalizacją}
+  \label{fig:klasyfikacja_z_lokalizacja}
+\end{figure}
 \subsection{Wykrywanie obrazów}
 Kolejnym krokiem jest wykrywanie obrazów. Jest to klasyfikacja z lokalizacją dla wielu elementów jednocześnie.
 Kontynuując poprzedni przykład z rozpoznawaniem zwierząt domowych.
 W wypadku zdjęcia, które zawiera zarówno psa i kota dostaniemy zestaw współrzędnych oraz odpowiadających im klas.
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{images/detekcja.jpeg}
+  \caption{Przykład wykrywania obrazów}
+  \label{fig:wykrywanie_obrazow}
+\end{figure}
 \subsection{Segmentacja}
 Segmentacja to przypisanie każdemu pikselowi na obrazie wejściowym klasy.
 Za przykład może nam posłużyć zdjęcie drogi w mieście.
 Celem naszej sieci neuronowej będzie podział obrazu na klasy: droga, człowiek, budynek, drzewo, niebo etc.
 Na wyjściu możemy na przykład otrzymać ten sam obrazek z tym, że zależnie od klasy danego piksela będzie miał on różny kolor (czerwony - droga, zielony - człowiek etc.)
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{images/segmentacja.png}
+  \caption{Przykład segmentacji}
+  \label{fig:segmentacja}
+\end{figure}
 \subsection{Segmentacja instancji}
 Segmentacja instancji to dodanie do segmentacji ograniczenia, że każda jednostka ma być widocznie oddzielona.
 Dla przykładu gdy mamy zdjęcie czterech przytulających się osób, w wyniku segmentacji wszystkie cztery zostaną zakolorowane na ten sam kolor oraz podpisane raz jako człowiek.
 Natomiast gdy przeprowadzimy segmentację instancji to w wyniku otrzymamy każdą osobę pokolorowaną na własny kolor, oraz etykiety ``człowiek 1.``, ``człowiek 2.`` etc.
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\linewidth]{images/segmentacja_instancji.jpeg}
+  \caption{Przykład segmentacji instancji}
+  \label{fig:segmentacja_instancji}
+\end{figure}
 \newpage
 \section{Architektura U-Net historia i zastosowania}
 \newpage
@@ -233,6 +264,12 @@ Powstałe skrypty pozwalają na:
   \item zredukowanie kanałów obrazów z RGBA do RGB i zaokrąglenie wartości pikseli do czerwonego (255, 0, 0) i czarnego (0, 0, 0)
 \end{itemize}
 \subsection{Skrypt do uczenie sieci}
+Skrypt przyjmuje na wejściu pod jaką nazwą ma zostać zapisany wytrenowany model oraz katalogi ze zdjęciami wejściowymi i wyjściowymi.
+Dodatkowo opcjonalnie możemy podać nazwę metryki i funkcji strat dostępnych w bibliotece Keras lub podać ścieżkę do skryptu napisanego w języku python w, którym znajdują się funkcje o nazwach custom\_loss i custom\_metrics (w wypadku braku domyślnie użyty jest współczynnik Sørensena).
+Kolejnym opcjonalny parametr jest odpowiedzialny za użytą architekturę, jest to ścieżka do pliku zawierającego funkcję get\_model, która zwraca obiekt klasy tf.Keras.Model (domyślnie używany jest model z moją implementacją architektury U-Net).
+Następny parametr to ścieżka do pliku zawierającego hiperparametry jako zmienne w skrypcie języka python (domyślnie jest to plik hyperparameters.py z moduły neural\_network).
+Skrypt zaczyta dane do pamięci a następnie wykona uczenie modelu na podanych danych ze wskazaną funkcją strat, metryką, hiperparametrami i architekturą.
+Następnie wynikowy model zostanie zapisany pod wskazaną nazwą w katalogu trained\_models.
 \subsection{Skrypt pozwalające na testowanie zapisanych modeli}
 Kolejny skrypt przyjmuje na wejście ścieżkę do zapisanego modelu oraz ścieżki do katalogów zawierających dane wejściowe i wyjściowe.
 A następnie przeprowadza na nich test sprawdzający jak dobrze model sobie na nich poradził.
