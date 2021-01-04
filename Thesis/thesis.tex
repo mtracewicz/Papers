@@ -6,6 +6,10 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{cite}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -61,7 +65,20 @@ W opracowywanym przeze mnie zagadnieniu jako obrazy wejściowe użyte zostały z
 Wszystkie zdjęcia są zrobione z przybliżeniem x40 oraz posiadają rozmiar 1200x1600px z trzema kanałami.
 Obrazy wyjściowe zostały przygotowane za pomocą programu dostarczonego mi, przez dr. Wiśniewskiego.
 Są to obrazy tego samego rozmiaru jednak zawierają cztery kanały zamiast trzech (RGBA zamiast RGB).
-Możemy na nich zobaczyć czerwoną otoczkę na około komórek, natomiast cała reszta obrazu przyjmuje kolor czarny.
+Możemy na nich zobaczyć czerwoną otoczkę na około komórek, natomiast cała reszta obrazu jest przezroczysta.
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}{0.4\linewidth}
+    \includegraphics[width=\linewidth]{images/input.png}
+    \caption{Wejście}
+  \end{subfigure}
+  \begin{subfigure}{0.4\linewidth}
+    \includegraphics[width=\linewidth]{images/output.jpg}
+    \caption{Wyjście}
+  \end{subfigure}
+  \caption{Przykładowe obrazy wejściowy i wyjściowy}
+  \label{fig:input_and_output}
+\end{figure}
 \newpage
 \section{Sztuczne sieci neuronowe}
 Sztuczne sieci neuronowe są próbą stworzenia programów, których działanie jest inspirowane naszym rozumieniem mózgu.
@@ -140,7 +157,7 @@ Następnie możemy na tej podstawie narysowanie naokoło obiektu ramkę z podpis
 Kolejnym krokiem jest wykrywanie obrazów. Jest to klasyfikacja z lokalizacją dla wielu elementów jednocześnie.
 Kontynuując poprzedni przykład z rozpoznawaniem zwierząt domowych.
 W wypadku zdjęcia, które zawiera zarówno psa i kota dostaniemy zestaw współrzędnych oraz odpowiadających im klas.
-\begin{figure}[h!]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{images/detekcja.jpeg}
   \caption{Przykład wykrywania obrazów}
@@ -151,7 +168,7 @@ Segmentacja to przypisanie każdemu pikselowi na obrazie wejściowym klasy.
 Za przykład może nam posłużyć zdjęcie drogi w mieście.
 Celem naszej sieci neuronowej będzie podział obrazu na klasy: droga, człowiek, budynek, drzewo, niebo etc.
 Na wyjściu możemy na przykład otrzymać ten sam obrazek z tym, że zależnie od klasy danego piksela będzie miał on różny kolor (czerwony - droga, zielony - człowiek etc.)
-\begin{figure}[h!]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{images/segmentacja.png}
   \caption{Przykład segmentacji}
@@ -161,10 +178,11 @@ Na wyjściu możemy na przykład otrzymać ten sam obrazek z tym, że zależnie 
 Segmentacja instancji to dodanie do segmentacji ograniczenia, że każda jednostka ma być widocznie oddzielona.
 Dla przykładu gdy mamy zdjęcie czterech przytulających się osób, w wyniku segmentacji wszystkie cztery zostaną zakolorowane na ten sam kolor oraz podpisane raz jako człowiek.
 Natomiast gdy przeprowadzimy segmentację instancji to w wyniku otrzymamy każdą osobę pokolorowaną na własny kolor, oraz etykiety ``człowiek 1.``, ``człowiek 2.`` etc.
-\begin{figure}[h!]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{images/segmentacja_instancji.jpeg}
   \caption{Przykład segmentacji instancji}
+  \cite{patashnik-bibtexing}
   \label{fig:segmentacja_instancji}
 \end{figure}
 \newpage
@@ -304,4 +322,6 @@ Jako, że jest to najbardziej rozpowszechniona architektura do segmentacji obraz
 Jednakże dzięki powstałym w trakcie testów narzędziom pojawiła się możliwość łatwego testowania nowych podejść, które jak wskazują na to ostatnie lata pojawiają się w dziedzinie uczenia maszynowego i głębokich sieci neuronowych bardzo często.
 \newpage
 \section{Bibliografia}
+\bibliography{bibliography.bib}{}
+\bibliographystyle{plain}
 \end{document}
