@@ -1,15 +1,15 @@
 \documentclass{article}
-\usepackage{listings}
+\usepackage{cite}
 \usepackage{color}
-\usepackage{amsmath}
-\usepackage[polish]{babel}
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage{graphicx}
 \usepackage{float}
 \usepackage{caption}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{listings}
 \usepackage{subcaption}
-\usepackage{cite}
+\usepackage[T1]{fontenc}
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -43,23 +43,38 @@
 \newpage
 \section{Wstęp}
 W codziennej pracy wielu lekarzy poświęca czas na manualne liczenie zafarbowanych komórek na zdjęciach.
-Jest to czasochłonne i monotonne zadanie, nie wymagające sześcioletnich studiów.
-Nadaje się ono idealnie do automatyzacji.
-W ostatnich latach bardzo mocno rozwija się użycie uczenia maszynowego do rozwiązywania tej klasy problemów.
+Jest to czasochłonne i monotonne zadanie.
+Zdecydowanie nie należy ono do takich, które wymagają sześcioletnich studiów.
+Co za tym idzie, nadaje się ono idealnie do automatyzacji.
 
-W ramach mojej pracy powstał zestaw narzędzi pozwalający na łatwe testowanie różnych architektur oraz funkcji strat dla sieci neuronowych w tym problemie.
-Rozwiązanie zostało napisane w języku python z użyciem biblioteki Keras (służącej do pracy z sieciami neuronowymi) będącej interfejsem do biblioteki TensorFlow (pozwalającej na operacje na tensorach).
-Dodatkowo wykorzystałem biblioteki NumPy do obliczeń macierzowych, Pillow do manipulacji obrazów oraz Jupyter Notebook do interaktywnej prezentacji wyników.
+W ostatnich latach bardzo mocno rozwija się dziedzina uczenia maszynowego.
+Technika ta jest inspirowana działaniem ludzkiego mózgu i pozwala na pisanie programów dla, których trudno jest zdefiniować jednoznaczny zbiór reguł postępowania.
+Człowiek posiada pewną intuicję dzięki, której jest w stanie w dość krótkim czasie nauczyć się w jaki sposób należy obrysować komórkę.
+Jednakże gdy zostanie poproszony o wyjaśnienie swojego podejścia będzie to trudne lub wręcz nie wykonalne.
+Możemy się raczej spodziewać odpowiedzi pokroju ``No patrzę na komórkę i ją obrysowuje.''.
+Biorąc pod uwagę specyfikę tego problemu użycie tej metody wydaję się idealne.
+
+W ramach mojej pracy przeprowadziłem testy architektury U-Net będącej najpopularniejszym wyborem do zadań segmentacji obrazów medycznych.
+Dodatkowo przetestowałem również kilka jej modyfikacji a także różne rodzaje obróbki obrazów wyjściowych.
+
+Co więcej stworzyłem również zestaw narzędzi pozwalający na łatwe testowanie różnych architektur oraz funkcji strat dla sieci neuronowych w tym problemie.
+Rozwiązanie zostało napisane w języku Python z użyciem następujących bibliotek
+\begin{itemize}
+  \item Keras - służy do pracy z sieciami neuronowymi i jest interfejsem do biblioteki TensorFlow
+  \item TensorFlow - biblioteka ta pozwala na wykonywanie obliczeń na tensorach
+  \item NumPy - biblioteka do obliczeń numerycznych na n-wymiarowych tablicach
+  \item Pillow - biblioteka pozwalająca na wczytywanie, zapisywanie oraz edycję obrazów.
+  \item Jupyter Notebook - pozwalająca utworzyć interaktywne środowisko uruchomieniowe Python-a w przeglądarce.
+\end{itemize}
 Kod źródłowy projektu jest wersjonowany z użyciem narzędzia git oraz upubliczniony na platformie GitHub.
 Repozytorium zawierające kod projektu zostało podłączone do platformy CircleCi w celu automatycznego uruchamiania testów jednostkowych (napisane przy użyciu PyTest i Tox) oraz publikacji wyników.
 W ramach pracy powstały również skrypty w jeżyku bash tworzące kontener deweloperski (technologia Docker) zawierający wszystkie niezbędne biblioteki.
+Całość dopełnia moduł pozwalający na obróbkę zdjęć wejściowych oraz wyjściowych.
 
-Dodatkowo przeprowadziłem testy dla architektury u-net oraz pewnych wariacji na jej temat.
-Jako, że zdjęcia tego typu są danymi chronionymi prawnie to szpitale, nie mogą wysłać ich poza własną sieć wewnętrzną.
-Z tego powodu przetestowałem również możliwość uruchomienia splotowej sieci neuronowej w przeglądarce z użyciem TensorFlowJS.
-Co pozwala aby wszystkie operacje były wykonane po stornie użytkownika końcowego a dane medyczne nie musiały być wysyłane na serwer.
-
-Całość pracy dopełnia moduł pozwalający na obróbkę zdjęć wejściowych oraz wyjściowych.
+Jako, że obrazy medyczne są danymi chronionymi prawnie to szpitale w większości wypadków nie mogą wysłać ich poza własną sieć wewnętrzną.
+Z tego powodu przetestowałem również możliwość uruchomienia splotowej sieci neuronowej w przeglądarce z użyciem biblioteki TensorFlowJS.
+Dzięki takiemu podejściu jedynie uczenie modelu przebiega na komputerze nie będącym komputerem klienckim.
+Model zostaje nauczony na jednym komputerze ale predykcja dla konkretnego obrazu wejściowego wykonywana jest w przeglądarce po stronie klienta (nie następuje wysłanie zapytania do serwera API) i nigdy nie opuszcza sieci.
 \subsection{Obrazy wejściowe i wyjściowe}
 W opracowywanym przeze mnie zagadnieniu jako obrazy wejściowe użyte zostały zdjęcia mikroskopowe skóry.
 Wszystkie zdjęcia są zrobione z przybliżeniem x40 oraz posiadają rozmiar 1200x1600px z trzema kanałami.
@@ -113,8 +128,7 @@ Polega on na poprawianiu wag poprzez przejście sieci w przeciwnym kierunku i zm
 \subsection{Porównanie do klasycznych metod programowania}
 Przy standardowych paradygmatach programowania (programowanie zorientowane obiektowo, programowanie proceduralne, programowanie funkcyjne) jako programista piszemy kod, który
 instruuje komputer na temat tego w jaki sposób ma on przekształcić otrzymane dane wejściowe.
-Natomiast sieci neuronowe są zdecydowanie bardziej zbliżone do programowania deklaratywnego. Jako programista podajemy dane wejściowe, architekturę i oczekiwane dane wyjściowe i
-na ich podstawie, chcemy aby komputer samemu ``nauczył się`` tego jaką drogą ma dojść aby uzyskać oczekiwany efekt (jakie wartości mają przyjmować wagi).
+Natomiast sieci neuronowe są zdecydowanie bardziej zbliżone do programowania deklaratywnego. Jako programista podajemy dane wejściowe, architekturę i oczekiwane dane wyjściowe i na ich podstawie, chcemy aby komputer samemu ``nauczył się`` tego jaką drogą ma dojść aby uzyskać oczekiwany efekt (jakie wartości mają przyjmować wagi).
 \newpage
 \section{Sieci splotowe}
 Sieci splotowe to takie głębokie sieci neuronowe, które zawierają jedną lub więcej warstw splotowych.
@@ -135,7 +149,7 @@ Za dobry przykład może nam posłużyć ``Problem MNiST``, polegający na rozpo
 Jako wejście sieć otrzymuje czarno-biały obrazek rozmiaru 16x16 pikseli na, którym widnieje odręcznie napisana cyfra.
 Natomiast na wyjściu sieć zwraca nam predykcję jaka cyfra widnieje na zdjęciu.
 Ograniczeniem w tym typie problemu jest fakt, że na danym zdjęciu może znajdować się jedynie pojedyńczy obiekt.
-\begin{figure}[h!]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{images/klasyfikacja.png}
   \caption{Przykład klasyfikacji}
@@ -147,7 +161,7 @@ Przykładowo tworząc sieć rozpoznającą gatunki zwierząt domowych, otrzymuj�
 że jest to kot ale również informację o tym gdzie na tej kanapie się znajduje.
 Najczęściej zwracane są w takim wypadku oprócz klasy współrzędne pikseli w których zaczyn i kończy się obiekt.
 Następnie możemy na tej podstawie narysowanie naokoło obiektu ramkę z podpisem zawierającym nazwę klasy.
-\begin{figure}[h!]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\linewidth]{images/klasyfikacja_z_lokalizacja.jpeg}
   \caption{Przykład klasyfikacji z lokalizacją}
@@ -253,8 +267,8 @@ Jednym z problemów przy pracy z danymi medycznymi jest to, że nie mogą one op
 Dlatego nie możemy uruchomić wytrenowanego modelu na serwerze i zapewnić możliwości odpytania poprzez API.
 Rozwiązaniem w tej sytuacji było przeniesienie wytrenowanych w TensorFlow modeli do TensorFlowJS który pozwala na użycie ich na komputerze klienckim.
 Testy te były dokonane na znacznie prostszy modelu służącym do rozpoznawania odręcznie pisanych cyfr (stosował on jednak wszystkie warstwy z, których składa się model w architekturze u-net, jedynie w innej ilości/konfiguracji).
-Pierwszym krokiem było przekształcenie modelu z biblioteki python-owej na bibliotekę javascript-ową.
-Można to było łatwo wykonać w skrypcie python-owym za pomocą metody tfjs.converters.save\_keras\_model, której przekazujemy model oraz ścieżkę do niego.
+Pierwszym krokiem było przekształcenie modelu z biblioteki Python-owej na bibliotekę javascript-ową.
+Można to było łatwo wykonać w skrypcie Python-owym za pomocą metody tfjs.converters.save\_keras\_model, której przekazujemy model oraz ścieżkę do niego.
 Największym problemem w tej zmianie było jednak to, że aby użyć biblioteki w javascript operacje przez nią wykonywane musiały być poza wątkiem głównym, w celu nie blokowania UI - jest to narzucane przez samą bibliotekę.
 Aby to osiągnąć posłużyłem się tak zwanymi webworker-ami.
 Pozwalają one na wykonywanie zadań równolegle do wątku głównego.
@@ -263,58 +277,63 @@ Dzięki temu możemy wykonać operację na danych otrzymanych w wiadomości. Nat
 W moim wypadku była to pobrana z wyświetlonej kanwy tablica z danymi o pikselach w obrazku.
 W skrypcie zawierającym kod źródłowy workera również subskrybujemy wydarzenie onmessage, w jego obsłudze najpierw preprocesuję dane w ten sposób aby ich format na wejście był taki sam jak danych uczących.
 Jest to wymagane nawet jeżeli chcielibyśmy sprawdzić model korzystając z tego samego obrazu ponieważ biblioteki PIL oraz NumPy mają inny format danych niż dane zwrócone przy pomocy javascript z obiektu canvas dostępnego w HTML5 na którym wyświetlany był obraz do klasyfikacji.
-Następnie po doprowadzeniu otrzymanych danych do odpowiedniego formatu jesteśmy w stanie użyć wyuczonego w pythonie i TensorFlow modelu w celu uzyskania predykcji.
+Następnie po doprowadzeniu otrzymanych danych do odpowiedniego formatu jesteśmy w stanie użyć wyuczonego w Pythonie i TensorFlow modelu w celu uzyskania predykcji.
 Następnie za pomocą metody postMessage jesteśmy w stanie wysłać do wątku głównego wiadomość zawierającą predykcję modelu, który ją wyświetli.
 Dzięki powyższemu rozwiązaniu jesteśmy w stanie uruchomić nasz model po stronie klienta w przeglądarce.
 Dodatkowo zapewniona jest płynność działania ponieważ procesowanie danych oraz predykcja modelu wykonywane są równolegle do wątku głównego, który obsługuje interfejs użytkownika.
 \newpage
 \section{Powstałe narzędzia}
-W trakcie prac powstał szereg narzędzi znacznie ułatwiających pracę nad tym zagadnieniem.
+W trakcie prac powstał szereg narzędzi mających za zadanie ułatwić pracę nad tym zagadnieniem.
 Kod wraz z historią jest dostępny na platformie GitHub.
-Wyniki są prezentowane za pomocą platformy GitHub Pages i są dostępne pod adresem:.
+Wyniki są prezentowane za pomocą platformy GitHub Pages i są dostępne pod adresem: https://mtracewicz.ksummarized.com/CellSegmentation/.
 \subsection{Skrypty pozwalające na preprocessing obrazów uczących}
 W ramach prac stworzyłem cztery skrypty pozwalające na edycję zdjęć wejściowych/wyjściowych.
 Powstałe skrypty pozwalają na:
 \begin{itemize}
-  \item zastosowanie filtra Gaussian Blur z wybranym parametrem na pojedyńczym obrazie lub katalogu obrazów
+  \item zastosowanie filtra rozmycia Gaussa z wybranym parametrem na pojedyńczym obrazie lub katalogu obrazów
   \item pocięcie obrazów na mniejsze nachodzące się na siebie obrazki
   \item zespolenie obrazków utworzonych poprzednim skryptem z powrotem w całość
   \item zredukowanie kanałów obrazów z RGBA do RGB i zaokrąglenie wartości pikseli do czerwonego (255, 0, 0) i czarnego (0, 0, 0)
 \end{itemize}
 \subsection{Skrypt do uczenie sieci}
 Skrypt przyjmuje na wejściu pod jaką nazwą ma zostać zapisany wytrenowany model oraz katalogi ze zdjęciami wejściowymi i wyjściowymi.
-Dodatkowo opcjonalnie możemy podać nazwę metryki i funkcji strat dostępnych w bibliotece Keras lub podać ścieżkę do skryptu napisanego w języku python w, którym znajdują się funkcje o nazwach custom\_loss i custom\_metrics (w wypadku braku domyślnie użyty jest współczynnik Sørensena).
+Dodatkowo opcjonalnie możemy podać nazwę metryki i funkcji strat dostępnych w bibliotece Keras lub podać ścieżkę do skryptu napisanego w języku Python w, którym znajdują się funkcje o nazwach custom\_loss i custom\_metrics (w wypadku braku domyślnie użyty jest współczynnik Sørensena).
 Kolejnym opcjonalny parametr jest odpowiedzialny za użytą architekturę, jest to ścieżka do pliku zawierającego funkcję get\_model, która zwraca obiekt klasy tf.Keras.Model (domyślnie używany jest model z moją implementacją architektury U-Net).
-Następny parametr to ścieżka do pliku zawierającego hiperparametry jako zmienne w skrypcie języka python (domyślnie jest to plik hyperparameters.py z moduły neural\_network).
+Następny parametr to ścieżka do pliku zawierającego hiperparametry jako zmienne w skrypcie języka Python (domyślnie jest to plik hyperparameters.py z moduły neural\_network).
 Skrypt zaczyta dane do pamięci a następnie wykona uczenie modelu na podanych danych ze wskazaną funkcją strat, metryką, hiperparametrami i architekturą.
 Następnie wynikowy model zostanie zapisany pod wskazaną nazwą w katalogu trained\_models.
 \subsection{Skrypt pozwalające na testowanie zapisanych modeli}
 Kolejny skrypt przyjmuje na wejście ścieżkę do zapisanego modelu oraz ścieżki do katalogów zawierających dane wejściowe i wyjściowe.
-A następnie przeprowadza na nich test sprawdzający jak dobrze model sobie na nich poradził.
+A następnie przeprowadza na nich test sprawdzający jak dobrze model sobie na nich poradził za pomocą metody model.evaluate.
 \subsection{Skrypt pozwalające na predykcję dla obrazu/folderu obrazów}
 Stworzyłem również skrypt, który otrzymując na wejście ścieżkę do modelu, którego chcemy użyć oraz
 ścieżkę do obrazu wejściowego/katalogu obrazów wejściowych zapiszę do pliku/plików nowy obraz będący predykcją modelu.
 \subsection{Testy jednostkowe}
-W celu wykazania poprawności działania oraz umożliwienia szybszej modyfikacji bez wprowadzania błędów do modułu pozwalającego na preprocessing zdjęć
-zostały dodane testy jednostkowe. Zostały napisane przy pomocy modułu PyTest a ich uruchamianie jest obsługiwane, przez moduł Tox.
+W celu wykazania poprawności działania oraz umożliwienia szybszej modyfikacji bez wprowadzania błędów do modułu pozwalającego na preprocessing zdjęć zostały dodane testy jednostkowe.
+Zostały napisane przy pomocy modułu PyTest a ich uruchamianie jest obsługiwane, przez moduł Tox.
 Testy są automatycznie uruchamiane przy wypchnięciu lokalnych commitów, do publicznego repozytorium na platformie GitHub.
 Funkcjonalność ta została zrealizowana za pomocą platformy CircleCi, pozwala ona na uruchomienie testów po otrzymaniu informacji od portalu GitHub.
 Status tych testów możemy zobaczyć w łatwy sposób poprzez dodany do pliku README.md obraz.
 Jest on każdorazowo przy wyświetlaniu wyrenderowanego pliku README pobierany z serwera CircleCi i zależnie od tego czy wszystkie testy jednostkowe z ostatniego commita zostały poprawnie ukończone czy nie przybiera odpowiednio kolor zielony/czerwony.
 \subsection{Automatyczne renderowanie i publikacja wyników}
-Dodatkowo powstał notatnik Jupyter\footnote{interaktywne środowisko uruchomieniowe. Pozwalające na łączenie kodu oraz języka znaczników markdown. Dostępne pod adresem: https://jupyter.org/} zawierający prezentację uzyskanych wyników.
-W celu interaktywnego przejrzenia go należy pobrać repozytorium.
-Jednakże jest on również dostępny jako strona internetowa w postaci z pokazanymi wyjściami z wszystkich komórek.
-Strona ta jest uaktualniana za każdym razem gdy do repozytorium na serwerze GitHub zostanie wysłany nowy commit zawierający modyfikację notatnika.
+W celu prezentacji wyników oraz łatwego i interaktywnego badania ich powstał notatnik Jupyter\footnote{interaktywne środowisko uruchomieniowe. Pozwalające na łączenie kodu oraz języka znaczników markdown. Dostępne pod adresem: https://jupyter.org/}.
+W celu interaktywnego przejrzenia go należy pobrać repozytorium a następnie zainstalować wymagane biblioteki oraz uruchomić serwer jupyter za pomocą polecenie ``jupyter notebook''.
+Jednakże jest on również dostępny jako strona internetowa w postaci nie interaktywnej (z pokazanymi wyjściami z wszystkich komórek).
+Strona ta jest automatycznie uaktualniana za każdym razem gdy do repozytorium na serwerze GitHub zostanie wysłany nowy commit zawierający modyfikację notatnika.
 Rozwiązanie to tak samo jak automatyczne testy jednostkowe zostało zrealizowane przy użyciu platformy CircleCi.
-Otrzymuje ona informację od serwisu GitHub o nowym commicie następnie sprawdza, czy plik notatnika został zmieniony.
-Jeżeli tak to wywoła polecenie eksportujące go do pliku w formacie HTML a następnie sama stworzy commit i wyśle go do repozytorium na serwisie GitHub.
+Otrzymuje ona informację od serwisu GitHub o nowym commicie a następnie sprawdza, czy został w nim zmieniony plik notatnika.
+Jeżeli tak to wywołane zostanie polecenie eksportujące go do pliku w formacie HTML a następnie platforma stworzy nowy commit (jako wiadomość przesłany jest ciąg znaków, który sygnalizuje, że testy jednostkowe nie powinny być dla niego uruchamiane, ponieważ stało się to już przy commicie wywołującym konwersję) i wyśle go do repozytorium na serwisie GitHub.
 Gdy ten go otrzyma opublikuje nowo utworzony plik na platformie GitHub Pages.
 Dzięki tej integracji wszystkie zmiany których dokonam w notatniku prezentującym wyniki moich prac są automatycznie publikowane i dostępne do wglądu.
 \subsection{Kontener developerski}
-Stworzyłem również skrypty, które pozwalają na uruchomienie kontenera, przy użyciu technologii Docker zawierającego wszystkie wymagane biblioteki.
+Stworzyłem również skrypty, które pozwalają na uruchomienie kontenera (przy użyciu technologii Docker) zawierającego wszystkie wymagane biblioteki.
+
 Rozwiązanie to w szczególności w znaczący sposób upraszcza dostęp do bibliotek firmy NVIDIA wymaganych do uruchomienia biblioteki TensorFlow na karcie graficznej tegoż producenta.
 Dzięki temu osoba zainteresowana uruchomieniem aplikacji z wykorzystaniem karty graficznej w celu przyśpieszenia obliczeń musi jedynie posiadać na swoim urządzeniu aktualne sterowniki oraz Docker.
+
+Skrypt przyjmuje na wejście ścieżkę do katalogu, który zawiera kod programu.
+Jest on montowany do kontenera.
+Dzięki czemu zmiany mogą być dokonywane zarówno w kontenerze jaki poza nim.
 \newpage
 \section{Podsumowanie i możliwe następne kroki}
 Testy, które przeprowadziłem wskazują na to, że dla tych danych wejściowych/wyjściowych zastosowanie architektury U-Net nie sprawdza się.
