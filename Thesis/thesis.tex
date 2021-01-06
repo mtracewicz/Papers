@@ -205,11 +205,11 @@ Natomiast gdy przeprowadzimy segmentację instancji to w wyniku otrzymamy każd�
 \section{Przetestowane podejścia}
 W ramach pracy przetestowałem architekturę U-Net oraz różne podejścia do obróbki danych wejściowych i wyjściowych.
 Mimo wielu prób sieci które przygotowałem zawsze zwracały niemal w pełni czarne/czerwone obrazy.
-\subsection{Bazowa sieć u-net}
-Pierwszym podejściem, które przetestowałem było uruchomienie trzy poziomowej (dziesięcio warstwowej) sieci neuronowej w architekturze u-net.
+\subsection{Bazowa sieć U-Net}
+Pierwszym podejściem, które przetestowałem było uruchomienie trzy poziomowej (dziesięciu warstwowej) sieci neuronowej w architekturze U-Net.
 Sieć otrzymywała na wejście obrazy rozmiaru 200x200x3 a jako wyjście zwracała obrazy 200x200x4.
 Na tym etapie przeprowadziłem testy modyfikując opisujące te sieć hiperparametry.
-Zmieniałem liczbę epok, stałą uczącą oraz wielkość batchy.
+Zmieniałem liczbę epok, stałą uczącą oraz wielkość parti.
 Dodatkowo modyfikowałem również ilość filtrów używanych w każdej warstwie.
 Niezależnie od tych zmian wszystkie powyższe eksperymenty zwracały jako predykcję obrazy praktycznie w stu procentach czarne, zawierały maksymalnie dwa/trzy piksele koloru czerwonego.
 Działo się tak mimo, że sieć uzyskiwała w trakcie uczenia/walidacji wyniki dokładności na poziomie dziewięćdziesięciu czterech procent.
@@ -221,10 +221,10 @@ Skupię się teraz na modyfikacji danych, której dokonałem w nadziei na popraw
 Przy rozwiązywaniu postawionego przede mną problemu natkąłem się na dwa problemy, które miały to samo rozwiązanie.
 Pierwszym z nich była wielkość obrazów wejściowych, która przy wybranej przeze mnie architekturze sieci była zdecydowanie zbyt duża.
 Natomiast drugim był niedobór danych uczących.
-Doszedłem do wniosku, że oba te problemy mogę rozwiązać poprzez pocięcie dużych obrazów wejściowych (1200x1600px) na wiele mniejszych (90x90px z zakładką wynoszącą 10px), a następnie uczenie na nich modelu.
+Doszedłem do wniosku, że oba te problemy mogę rozwiązać poprzez pocięcie dużych obrazów wejściowych (1200x1600px) na wiele mniejszych (200x200px z zakładką wynoszącą 100px), a następnie uczenie na nich modelu.
 Gdy model będzie już wyuczony w celu otrzymania segmentacji obraz wejściowy będzie najpierw dzielony w ten sam sposób, aby był zestawem mniejszych zdjęć, potem nastąpi segmentacja a po niej wyniki zostaną scalone ponownie w jeden obraz wyjściowy (w miejscach, gdzie będzie więcej niż jedna odpowiedź dla piksela z powodu kieszonki przyjmę wartość maksymalną).
-Dzięki takiemu rozwiązaniu udało mi się znacząco zmniejszyć ilość pamięci operacyjnej wymaganej dla pojedyńczego przebiegu sieci, dzięki czemu mogę wykorzystać architekturę u-net oraz znacząco zwiększyć jej skuteczność, ponieważ dostępną pamięć można wykorzystać by dodać dodatkowe warstwy/filtry.
-Dodatkowo rozmiar 90x90px jest obrazem kwadratowym a z takimi najlepiej radzi sobię ta architektura.
+Dzięki takiemu rozwiązaniu udało mi się znacząco zmniejszyć ilość pamięci operacyjnej wymaganej dla pojedyńczego przebiegu sieci, dzięki czemu mogę wykorzystać architekturę U-Net oraz znacząco zwiększyć jej skuteczność, ponieważ dostępną pamięć można wykorzystać by dodać dodatkowe warstwy/filtry.
+Dodatkowo rozmiar 200x200px jest obrazem kwadratowym a z takimi najlepiej radzi sobię ta architektura.
 Kolejnym plusem jest to, że w ten sposób ilość moich danych wejściowych drastycznie wzrośnie, ponieważ z każdego jednego obrazu utworzy się trzysta mniejszych, z których każdy będzie oddzielny/niezależnym przykładem uczącym (w tym wypadku obraz oryginalny składa się na siatkę o szerokości 20 i wysokości 15 mniejszych obrazów).
 \subsubsection{Wybór jednego kanału - czerwony/alfa}
 Analizując dane wyjściowe zauważyłem, że piksele czarne (tło) posiadają wartości kanału alpha bliskie zeru natomiast piksele linii wartości bliskie dwustu pięć dziesięciu pięciu.
@@ -266,7 +266,7 @@ Kolejny pomysł opierał się na tym aby metryka mierząca poprawność zwracał
 Jednym z problemów przy pracy z danymi medycznymi jest to, że nie mogą one opuścić sieci wewnętrznej szpitala.
 Dlatego nie możemy uruchomić wytrenowanego modelu na serwerze i zapewnić możliwości odpytania poprzez API.
 Rozwiązaniem w tej sytuacji było przeniesienie wytrenowanych w TensorFlow modeli do TensorFlowJS który pozwala na użycie ich na komputerze klienckim.
-Testy te były dokonane na znacznie prostszy modelu służącym do rozpoznawania odręcznie pisanych cyfr (stosował on jednak wszystkie warstwy z, których składa się model w architekturze u-net, jedynie w innej ilości/konfiguracji).
+Testy te były dokonane na znacznie prostszy modelu służącym do rozpoznawania odręcznie pisanych cyfr (stosował on jednak wszystkie warstwy z, których składa się model w architekturze U-Net, jedynie w innej ilości/konfiguracji).
 Pierwszym krokiem było przekształcenie modelu z biblioteki Python-owej na bibliotekę javascript-ową.
 Można to było łatwo wykonać w skrypcie Python-owym za pomocą metody tfjs.converters.save\_keras\_model, której przekazujemy model oraz ścieżkę do niego.
 Największym problemem w tej zmianie było jednak to, że aby użyć biblioteki w javascript operacje przez nią wykonywane musiały być poza wątkiem głównym, w celu nie blokowania UI - jest to narzucane przez samą bibliotekę.
