@@ -58,21 +58,21 @@ W ramach mojej pracy przeprowadziłem testy architektury U-Net będącej najpopu
 Dodatkowo przetestowałem również kilka jej modyfikacji a także różne rodzaje obróbki obrazów wyjściowych.
 
 Co więcej stworzyłem również zestaw narzędzi pozwalający na łatwe testowanie różnych architektur oraz funkcji strat dla sieci neuronowych w tym problemie.
-Rozwiązanie zostało napisane w języku Python z użyciem następujących bibliotek
+Rozwiązanie zostało napisane w języku Python\footnote{https://www.python.org/} z użyciem następujących bibliotek
 \begin{itemize}
-  \item Keras - służy do pracy z sieciami neuronowymi i jest interfejsem do biblioteki TensorFlow
-  \item TensorFlow - biblioteka ta pozwala na wykonywanie obliczeń na tensorach
-  \item NumPy - biblioteka do obliczeń numerycznych na n-wymiarowych tablicach
-  \item Pillow - biblioteka pozwalająca na wczytywanie, zapisywanie oraz edycję obrazów.
-  \item Jupyter Notebook - pozwalająca utworzyć interaktywne środowisko uruchomieniowe Python-a w przeglądarce.
+  \item Keras\footnote{https://keras.io/} - służy do pracy z sieciami neuronowymi i jest interfejsem do biblioteki TensorFlow
+  \item TensorFlow\footnote{https://www.tensorflow.org/} - biblioteka ta pozwala na wykonywanie obliczeń na tensorach
+  \item NumPy\footnote{https://numpy.org/} - biblioteka do obliczeń numerycznych na n-wymiarowych tablicach
+  \item Pillow\footnote{https://python-pillow.org/} - biblioteka pozwalająca na wczytywanie, zapisywanie oraz edycję obrazów.
+  \item Jupyter Notebook\footnote{https://jupyter.org/} - pozwalająca utworzyć interaktywne środowisko uruchomieniowe Python-a w przeglądarce.
 \end{itemize}
-Kod źródłowy projektu jest wersjonowany z użyciem narzędzia git oraz upubliczniony na platformie GitHub.
-Repozytorium zawierające kod projektu zostało podłączone do platformy CircleCi w celu automatycznego uruchamiania testów jednostkowych (napisane przy użyciu PyTest i Tox) oraz publikacji wyników.
-W ramach pracy powstały również skrypty w jeżyku bash tworzące kontener deweloperski (technologia Docker) zawierający wszystkie niezbędne biblioteki.
+Kod źródłowy projektu jest wersjonowany z użyciem narzędzia git oraz upubliczniony na platformie GitHub\footnote{https://github.com/mtracewicz/CellSegmentation}.
+Repozytorium zawierające kod projektu zostało podłączone do platformy CircleCi\footnote{https://circleci.com} w celu automatycznego uruchamiania testów jednostkowych (napisane przy użyciu PyTest\footnote{https://docs.pytest.org/en/latest/} i Tox\footnote{https://tox.readthedocs.io/en/latest/}) oraz publikacji wyników.
+W ramach pracy powstały również skrypty w powłoki bash\footnote{https://www.gnu.org/software/bash/} tworzące kontener deweloperski (technologia Docker\footnote{https://www.docker.com/}) zawierający wszystkie niezbędne biblioteki.
 Całość dopełnia moduł pozwalający na obróbkę zdjęć wejściowych oraz wyjściowych.
 
 Jako, że obrazy medyczne są danymi chronionymi prawnie to szpitale w większości wypadków nie mogą wysłać ich poza własną sieć wewnętrzną.
-Z tego powodu przetestowałem również możliwość uruchomienia splotowej sieci neuronowej w przeglądarce z użyciem biblioteki TensorFlowJS.
+Z tego powodu przetestowałem również możliwość uruchomienia splotowej sieci neuronowej w przeglądarce z użyciem biblioteki TensorFlowJS\footnote{https://www.tensorflow.org/js}.
 Dzięki takiemu podejściu jedynie uczenie modelu przebiega na komputerze nie będącym komputerem klienckim.
 Model zostaje nauczony na jednym komputerze ale predykcja dla konkretnego obrazu wejściowego wykonywana jest w przeglądarce po stronie klienta (nie następuje wysłanie zapytania do serwera API) i nigdy nie opuszcza sieci.
 \subsection{Obrazy wejściowe i wyjściowe}
