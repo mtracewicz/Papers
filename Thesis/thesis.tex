@@ -66,7 +66,8 @@ Rozwiązanie zostało napisane w języku Python\footnote{https://www.python.org/
   \item Pillow\footnote{https://python-pillow.org/} - biblioteka pozwalająca na wczytywanie, zapisywanie oraz edycję obrazów.
   \item Jupyter Notebook\footnote{https://jupyter.org/} - pozwalająca utworzyć interaktywne środowisko uruchomieniowe Python-a w przeglądarce.
 \end{itemize}
-Kod źródłowy projektu jest wersjonowany z użyciem narzędzia git\footnote{https://git-scm.com/} oraz upubliczniony na platformie GitHub\footnote{https://github.com/mtracewicz/CellSegmentation/}.
+Kod źródłowy projektu jest wersjonowany z użyciem narzędzia git\footnote{https://git-scm.com/} \newline oraz upubliczniony na platformie GitHub\footnote{https://github.com/mtracewicz/CellSegmentation/}.
+Prezentacja wyników jest dostępna online za pośrednictwem platformy GitHub Pages\footnote{ https://mtracewicz.ksummarized.com/CellSegmentation.}
 Repozytorium zawierające kod projektu zostało podłączone do platformy CircleCi\footnote{https://circleci.com/} w celu automatycznego uruchamiania testów jednostkowych (napisane przy użyciu PyTest\footnote{https://docs.pytest.org/en/latest/} i Tox\footnote{https://tox.readthedocs.io/en/latest/}) oraz publikacji wyników.
 W ramach pracy powstały również skrypty w powłoki bash\footnote{https://www.gnu.org/software/bash/} tworzące kontener deweloperski (technologia Docker\footnote{https://www.docker.com/}) zawierający wszystkie niezbędne biblioteki.
 Całość dopełnia moduł pozwalający na obróbkę zdjęć wejściowych oraz wyjściowych.
@@ -203,36 +204,85 @@ Natomiast gdy przeprowadzimy segmentację instancji to w wyniku otrzymamy każd�
 \section{Architektura U-Net historia i zastosowania}
 \newpage
 \section{Przetestowane podejścia}
-W ramach pracy przetestowałem architekturę U-Net oraz różne podejścia do obróbki danych wejściowych i wyjściowych.
+W ramach pracy przetestowałem architekturę U-Net oraz różne podejścia do obróbki danych.
 Mimo wielu prób sieci które przygotowałem zawsze zwracały niemal w pełni czarne/czerwone obrazy.
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}{0.4\linewidth}
+    \includegraphics[width=\linewidth]{images/input.png}
+  \end{subfigure}
+  \begin{subfigure}{0.4\linewidth}
+    \includegraphics[width=\linewidth]{images/output.jpg}
+  \end{subfigure}
+  \caption{Przykładowe otrzymane wyniki}
+  \label{fig:input_and_output}
+\end{figure}
 \subsection{Bazowa sieć U-Net}
 Pierwszym podejściem, które przetestowałem było uruchomienie trzy poziomowej (dziesięciu warstwowej) sieci neuronowej w architekturze U-Net.
-Sieć otrzymywała na wejście obrazy rozmiaru 200x200x3 a jako wyjście zwracała obrazy 200x200x4.
+Sieć otrzymywała na wejście obrazy rozmiaru 200x200x3 a jako wyjście zwracała obrazy 200x200x4 (oryginalne obrazy były rozmiaru 1200 na 1600 pikseli, więcej na ten temat w kolejnym punkcie).
 Na tym etapie przeprowadziłem również testy modyfikując opisujące te sieć hiperparametry.
-Zmieniałem liczbę epok, stałą uczącą oraz wielkość parti.
+Zmieniałem liczbę epok (między wartościami z przedziału od 20 do 40), stałą uczącą (w przedziale od 0.003 do 0.1) oraz wielkość parti (w przedziale od 1 do 25).
 Dodatkowo modyfikowałem również ilość filtrów używanych w każdej warstwie.
 Niezależnie od tych zmian wszystkie powyższe eksperymenty zwracały jako predykcję obrazy praktycznie w stu procentach czarne, zawierały maksymalnie dwa/trzy piksele koloru czerwonego.
-Działo się tak mimo, że sieć uzyskiwała w trakcie uczenia/walidacji wyniki dokładności na poziomie dziewięćdziesięciu czterech procent.
+Działo się tak mimo, że sieć uzyskiwała w trakcie uczenia/walidacji wyniki dokładności na poziomie nawet dziewięćdziesięciu czterech procent.
 
 Powyższe testy uświadomiły mi konieczność znalezienia lepszej funkcji strat/metryki mierzącej poprawność lub poprawienie w jakiś sposób danych wejściowych i wyjściowych w celu ułatwienia sieci procesu uczenia.
 \subsection{Preprocessing obrazów}
 Skupię się teraz na modyfikacji danych, której dokonałem w nadziei na poprawę wyników uczenia.
 \subsubsection{Cięcie i sklejanie obrazów}
 Przy rozwiązywaniu postawionego przede mną problemu natkąłem się na dwa problemy, które miały to samo rozwiązanie.
-Pierwszym z nich była wielkość obrazów wejściowych, która przy wybranej przeze mnie architekturze sieci była zdecydowanie zbyt duża.
-Natomiast drugim był niedobór danych uczących.
-Doszedłem do wniosku, że oba te problemy mogę rozwiązać poprzez pocięcie dużych obrazów wejściowych (1200x1600px) na wiele mniejszych (200x200px z zakładką wynoszącą 100px), a następnie uczenie na nich modelu.
+Pierwszym z nich była wielkość obrazów wejściowych, która przy wybranej przeze mnie architekturze sieci była zdecydowanie zbyt duża. Był to problem na tyle poważny, że na dostępnym dla mnie sprzęcie nie byłem nawet w stanie uruchomić sieci z minimalną ilością warstw i filtrów.
+Natomiast drugim problemem był niedobór danych uczących.
+Otrzymałem dziewięć obrazów wejściowych/wyjściowych.
+Ilość ta jest zdecydowanie zbyt mała aby nauczyć sieć.
+
+Doszedłem do wniosku, że oba te problemy mogę rozwiązać poprzez pocięcie dużych obrazów wejściowych (1200 na 1600 pikseli) na wiele mniejszych (200 na 200 pikseli z zakładką wynoszącą 100 pikseli), a następnie uczenie na nich modelu.
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}{0.8\linewidth}
+    \includegraphics[width=\linewidth]{images/input.png}
+    \caption{Obraz oryginalny}
+  \end{subfigure}
+  \begin{subfigure}{0.4\linewidth}
+    \includegraphics[width=\linewidth]{images/output.jpg}
+    \caption{Lewy górny róg}
+  \end{subfigure}
+  \begin{subfigure}{0.4\linewidth}
+    \includegraphics[width=\linewidth]{images/output.jpg}
+    \caption{Kolejny obraz na prawo}
+  \end{subfigure}
+  \caption{Przykładowe cięcia obrazów wejściowych}
+  \label{fig:input_split}
+\end{figure}
 Gdy model będzie już wyuczony w celu otrzymania segmentacji obraz wejściowy będzie najpierw dzielony w ten sam sposób, aby był zestawem mniejszych zdjęć, potem nastąpi segmentacja a po niej wyniki zostaną scalone ponownie w jeden obraz wyjściowy (w miejscach, gdzie będzie więcej niż jedna odpowiedź dla piksela z powodu kieszonki przyjmę wartość maksymalną).
 Dzięki takiemu rozwiązaniu udało mi się znacząco zmniejszyć ilość pamięci operacyjnej wymaganej dla pojedyńczego przebiegu sieci, dzięki czemu mogę wykorzystać architekturę U-Net oraz znacząco zwiększyć jej skuteczność, ponieważ dostępną pamięć można wykorzystać by dodać dodatkowe warstwy/filtry.
-Dodatkowo rozmiar 200x200px jest obrazem kwadratowym a z takimi najlepiej radzi sobię ta architektura.
-Kolejnym plusem jest to, że w ten sposób ilość moich danych wejściowych drastycznie wzrośnie, ponieważ z każdego jednego obrazu utworzy się trzysta mniejszych, z których każdy będzie oddzielny/niezależnym przykładem uczącym (w tym wypadku obraz oryginalny składa się na siatkę o szerokości 20 i wysokości 15 mniejszych obrazów).
+Dodatkowo rozmiar 200 na 200 pikseli jest obrazem kwadratowym a z takimi najlepiej radzi sobię ta architektura.
+
+Kolejnym plusem jest to, że w ten sposób ilość moich danych wejściowych drastycznie wzrośnie, ponieważ z każdego jednego obrazu utworzy się trzysta mniejszych, z których każdy będzie oddzielny/niezależnym przykładem uczącym (w tym wypadku obraz oryginalny składa się na siatkę o szerokości dwudziestu i wysokości piętnastu mniejszych obrazów).
+Dzięki czemu otrzymujemy zamiast jednego przykładu uczącego trzysta.
+
+Wprowadzając opisane powyżej podejście udało mi się uruchomić proces uczenia sieci neuronowej.
+W wyniku otrzymałem jednak obraz który posiadał około 2 piksele czerwone, podczas gdy wszystkie pozostałe były czarne.
 \subsubsection{Wybór jednego kanału - czerwony/alfa}
-Analizując dane wyjściowe zauważyłem, że piksele czarne (tło) posiadają wartości kanału alpha bliskie zeru natomiast piksele linii wartości bliskie dwustu pięć dziesięciu pięciu.
+Analizując dane wyjściowe zauważyłem, że piksele tła posiadają wartości kanału alpha bliskie zeru natomiast piksele linii obrysowującej komórki przybierają wartości bliskie dwustu pięćdziesięciu pięciu.
 Niemal identycznie wyglądały wartości kanału czerwonego.
 Natomiast kanały zielony i niebieski miały niemal zawsze wartość równą zero.
 
 Dlatego wpadłem na pomysł, żeby spróbować potraktować kanały alfa i czerwony jako obrazy monochromatyczne i użyć ich jako dane wyjściowe.
-W ten sposób w założeniu predykcje tworzyłyby monochromatyczny obraz z białymi liniami na czarnym tle.
+W ten sposób w założeniu predykcje tworzyłyby monochromatyczny obraz. W celu ujednolicenia wyników otrzymane tak obrazy zostały potraktowane jako kanał czerwony obrazu wynikowego a kanały niebieski i zielony otrzymały arbitralnie wartość zero dla wszystkich pikseli (otrzymany po takiej modyfikacji obraz był czarno/czerwony, tak jak oryginalne obrazy).
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}{0.4\linewidth}
+    \includegraphics[width=\linewidth]{images/output.jpg}
+    \caption{Lewy górny róg}
+  \end{subfigure}
+  \begin{subfigure}{0.4\linewidth}
+    \includegraphics[width=\linewidth]{images/output.jpg}
+    \caption{Kolejny obraz na prawo}
+  \end{subfigure}
+  \caption{Przykładowy otrzymany obraz}
+  \label{fig:input_split}
+\end{figure}
 
 Niestety zastosowanie tego rozwiązania nie przyniosło porządnych efektów.
 Obrazy wynikowe przyjmowały teraz w całości kolor czerwony (gdy jako wyjście przykładów uczących podaliśmy obraz monochromatyczny wygenerowany z kanału czerwonego) lub
@@ -244,6 +294,19 @@ Dlatego zdecydowałem się na zmianę obrazów wyjściowych z formatu RGBA do RG
 Zależnie od wartości kanałów czerwonego i alfa zaokrągliłem kolor danego piksela do czystego czerwonego (255, 0, 0) lub czystego czarnego (0, 0, 0).
 Przeprowadziłem te operację z różnymi wartościami progowymi dla obu kanałów.
 W wyniku jednak nadal otrzymywałem całkowicie czerwone/czarne obrazy zależnie od tego jak dużo pikseli zostało zaokrąglonych do danego koloru.
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}{0.4\linewidth}
+    \includegraphics[width=\linewidth]{images/output.jpg}
+    \caption{Lewy górny róg}
+  \end{subfigure}
+  \begin{subfigure}{0.4\linewidth}
+    \includegraphics[width=\linewidth]{images/output.jpg}
+    \caption{Kolejny obraz na prawo}
+  \end{subfigure}
+  \caption{Przykładowy otrzymany obraz}
+  \label{fig:input_split}
+\end{figure}
 
 \subsubsection{Rozmycie Gausa}
 Otrzymane w poprzednich próbach wyniki skłoniły mnie do myśli, że proporcje koloru czerwonego do czarnego są zbyt nierówne.
@@ -251,17 +314,46 @@ Z powodu tej nierówności model jest w stanie uzyskać wysoką wartość dokła
 
 Pomysłem na rozwiązanie tego problemu było zastosowanie na obrazach docelowych rozmycia Gaussa przed pokazaniem ich sieci.
 Filtr ten rozmywa obraz co w wypadku dwu kolorowego obrazu zawierającego linie oraz tło będzie skutkowało poszerzeniem linii.
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}{0.4\linewidth}
+    \includegraphics[width=\linewidth]{images/output.jpg}
+    \caption{Przed}
+  \end{subfigure}
+  \begin{subfigure}{0.4\linewidth}
+    \includegraphics[width=\linewidth]{images/output.jpg}
+    \caption{Po}
+  \end{subfigure}
+  \caption{Obraz wyjściowy przed i po zastosowaniu filtra}
+  \label{fig:input_split}
+\end{figure}
 \subsection{Funkcje start}
 We wszystkich wykonanych do tej pory eksperymentach otrzymywałem jako predykcję jednokolorowe obrazy.
 Jednakże dla każdego z tych podejść otrzymywałem bardzo wysoką wartość dokładności i małą wartość funkcji strat.
 Dlatego zdecydowałem się na zbadanie innych sposobów oceny poprawności działania sieci.
 \subsubsection{Funkcja strat - Współczynnik Sørensena}
-Często używaną w zagadnieniu segmentacji funkcją strat jest $1-f(x)$ gdzie f(x) to współczynnik Sørensena.
+Często używaną w zagadnieniu segmentacji funkcją strat jest $1-QS$ gdzie QS to współczynnik Sørensena opisany wzorem:
+\begin{equation}
+  QS = \frac{2*|X \cap Y|}{|X|+|Y|}
+\end{equation}
+Dla:
+\begin{itemize}
+  \item X - zbiór wejściowy
+  \item Y - zbiór wyjściowy
+\end{itemize}
+
+\begin{lstlisting}[caption={Implementacja przy użyciu Keras i TensorFlow}]
+from tensorflow.keras import backend as K
+
+def custom_metric(y_true, y_pred):
+    y_true = K.flatten(y_true)
+    y_pred = K.flatten(y_pred)
+    return (2. * K.sum(y_true * y_pred) +1) / (K.sum(y_true) + K.sum(y_pred) + 1)
+\end{lstlisting}
 
 \subsubsection{Własna funkcja strat}
 Kolejny pomysł opierał się na tym aby metryka mierząca poprawność zwracała większą uwagę na poprawnie sklasyfikowane czerwone piksele (gdyż jest ich znacznie mniej).
 
-\subsection{Zapis wyniku w postaci distance map}
 \subsection{Obliczenie predykcji na komputerze klienckim}
 Jednym z problemów przy pracy z danymi medycznymi jest to, że nie mogą one opuścić sieci wewnętrznej szpitala.
 Dlatego nie możemy uruchomić wytrenowanego modelu na serwerze i zapewnić możliwości odpytania poprzez API.
@@ -311,18 +403,18 @@ Stworzyłem również skrypt, który otrzymując na wejście ścieżkę do model
 \subsection{Testy jednostkowe}
 W celu wykazania poprawności działania oraz umożliwienia szybszej modyfikacji bez wprowadzania błędów do modułu pozwalającego na preprocessing zdjęć zostały dodane testy jednostkowe.
 Zostały napisane przy pomocy modułu PyTest a ich uruchamianie jest obsługiwane, przez moduł Tox.
-Testy są automatycznie uruchamiane przy wypchnięciu lokalnych commitów, do publicznego repozytorium na platformie GitHub.
+Testy są automatycznie uruchamiane przy wypchnięciu lokalnych migawek (ang. commit), do publicznego repozytorium na platformie GitHub.
 Funkcjonalność ta została zrealizowana za pomocą platformy CircleCi, pozwala ona na uruchomienie testów po otrzymaniu informacji od portalu GitHub.
 Status tych testów możemy zobaczyć w łatwy sposób poprzez dodany do pliku README.md obraz.
-Jest on każdorazowo przy wyświetlaniu wyrenderowanego pliku README pobierany z serwera CircleCi i zależnie od tego czy wszystkie testy jednostkowe z ostatniego commita zostały poprawnie ukończone czy nie przybiera odpowiednio kolor zielony/czerwony.
+Jest on każdorazowo przy wyświetlaniu wyrenderowanego pliku README pobierany z serwera CircleCi i zależnie od tego czy wszystkie testy jednostkowe z ostatniej migawki zostały poprawnie ukończone czy nie przybiera odpowiednio kolor zielony/czerwony.
 \subsection{Automatyczne renderowanie i publikacja wyników}
-W celu prezentacji wyników oraz łatwego i interaktywnego badania ich powstał notatnik Jupyter\footnote{interaktywne środowisko uruchomieniowe. Pozwalające na łączenie kodu oraz języka znaczników markdown. Dostępne pod adresem: https://jupyter.org/}.
+W celu prezentacji wyników oraz łatwego i interaktywnego badania ich powstał notatnik Jupyter.
 W celu interaktywnego przejrzenia go należy pobrać repozytorium a następnie zainstalować wymagane biblioteki oraz uruchomić serwer jupyter za pomocą polecenie ``jupyter notebook''.
 Jednakże jest on również dostępny jako strona internetowa w postaci nie interaktywnej (z pokazanymi wyjściami z wszystkich komórek).
-Strona ta jest automatycznie uaktualniana za każdym razem gdy do repozytorium na serwerze GitHub zostanie wysłany nowy commit zawierający modyfikację notatnika.
+Strona ta jest automatycznie uaktualniana za każdym razem gdy do repozytorium na serwerze GitHub zostanie wysłana nowa migawka zawierająca modyfikację notatnika.
 Rozwiązanie to tak samo jak automatyczne testy jednostkowe zostało zrealizowane przy użyciu platformy CircleCi.
-Otrzymuje ona informację od serwisu GitHub o nowym commicie a następnie sprawdza, czy został w nim zmieniony plik notatnika.
-Jeżeli tak to wywołane zostanie polecenie eksportujące go do pliku w formacie HTML a następnie platforma stworzy nowy commit (jako wiadomość przesłany jest ciąg znaków, który sygnalizuje, że testy jednostkowe nie powinny być dla niego uruchamiane, ponieważ stało się to już przy commicie wywołującym konwersję) i wyśle go do repozytorium na serwisie GitHub.
+Otrzymuje ona informację od serwisu GitHub o nowej migawce a następnie sprawdza, czy został w niej zmieniony plik notatnika.
+Jeżeli tak to wywołane zostanie polecenie eksportujące go do pliku w formacie HTML a następnie platforma stworzy nową migawkę (jako wiadomość przesłany jest ciąg znaków, który sygnalizuje, że testy jednostkowe nie powinny być dla niej uruchamiane, ponieważ stało się to już przy migawce wywołującej konwersję) i wyśle ją do repozytorium na serwisie GitHub.
 Gdy ten go otrzyma opublikuje nowo utworzony plik na platformie GitHub Pages.
 Dzięki tej integracji wszystkie zmiany których dokonam w notatniku prezentującym wyniki moich prac są automatycznie publikowane i dostępne do wglądu.
 \subsection{Kontener developerski}
@@ -338,7 +430,13 @@ Dzięki czemu zmiany mogą być dokonywane zarówno w kontenerze jaki poza nim.
 \section{Podsumowanie i możliwe następne kroki}
 Testy, które przeprowadziłem wskazują na to, że dla tych danych wejściowych/wyjściowych zastosowanie architektury U-Net nie sprawdza się.
 Jako, że jest to najbardziej rozpowszechniona architektura do segmentacji obrazów medycznych może to również sugerować, że użycie sieci neuronowych do tego zadania na ten moment nie przyniesie żądanych wyników.
+
 Jednakże dzięki powstałym w trakcie testów narzędziom pojawiła się możliwość łatwego testowania nowych podejść, które jak wskazują na to ostatnie lata pojawiają się w dziedzinie uczenia maszynowego i głębokich sieci neuronowych bardzo często.
+
+Dobrym tropem może być również przedstawienie obrazów wyjściowych za pomocą techniki zwanej mapy odległości (ang. distance map).
+Polega ona na tym aby wartość każdego piksela obrazu była
+jego odległością od najbliższej krawędzi komórki.
+W wypadku gdy piksel znajduję się wewnątrz komórki do jego odległość oznaczamy jako liczbę ujemną. Następnie dla obrazu wejściowego obliczamy predykcję i na podstawie otrzymanej mapy odległości generujemy obraz ustawiając piksele o wartości zero na czerwone a pozostałe na kolor czarny.
 \newpage
 \section{Bibliografia}
 \bibliography{bibliography.bib}{}
