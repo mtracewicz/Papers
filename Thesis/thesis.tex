@@ -51,13 +51,13 @@ W ostatnich latach bardzo mocno rozwija się dziedzina uczenia maszynowego.
 Technika ta jest inspirowana działaniem ludzkiego mózgu i pozwala na pisanie programów dla, których trudno jest zdefiniować jednoznaczny zbiór reguł postępowania.
 Człowiek posiada pewną intuicję dzięki, której jest w stanie w dość krótkim czasie nauczyć się w jaki sposób należy obrysować komórkę.
 Jednakże gdy zostanie poproszony o wyjaśnienie swojego podejścia będzie to trudne lub wręcz nie wykonalne.
-Możemy się raczej spodziewać odpowiedzi pokroju ``No patrzę na komórkę i ją obrysowuje.''.
+Możemy się raczej spodziewać odpowiedzi pokroju ``No patrzę na komórkę i ją obrysowuje''.
 Biorąc pod uwagę specyfikę tego problemu użycie tej metody wydaję się idealne.
 
-W ramach mojej pracy przeprowadziłem testy architektury U-Net będącej najpopularniejszym wyborem do zadań segmentacji obrazów medycznych.
-Dodatkowo przetestowałem również kilka jej modyfikacji a także różne rodzaje obróbki obrazów wyjściowych.
+W ramach mojej pracy przeprowadziłem testy architektury U-Net będącej jedną z najpopularniejszych wyborów do zadań związanych z segmentacją obrazów medycznych.
+Przetestowałem również różne rodzaje obróbki obrazów wyjściowych w celu zwiększenia skuteczności działania sieci.
 
-Co więcej stworzyłem również zestaw narzędzi pozwalający na łatwe testowanie różnych architektur oraz funkcji strat dla sieci neuronowych w tym problemie.
+Dodatkowo stworzyłem również zestaw narzędzi pozwalający na łatwe testowanie różnych architektur oraz funkcji strat dla sieci neuronowych w tym problemie.
 Rozwiązanie zostało napisane w języku Python\footnote{https://www.python.org/} z użyciem następujących bibliotek
 \begin{itemize}
   \item Keras\footnote{https://keras.io/} - służy do pracy z sieciami neuronowymi i jest interfejsem do biblioteki TensorFlow
@@ -66,8 +66,8 @@ Rozwiązanie zostało napisane w języku Python\footnote{https://www.python.org/
   \item Pillow\footnote{https://python-pillow.org/} - biblioteka pozwalająca na wczytywanie, zapisywanie oraz edycję obrazów.
   \item Jupyter Notebook\footnote{https://jupyter.org/} - pozwalająca utworzyć interaktywne środowisko uruchomieniowe Python-a w przeglądarce.
 \end{itemize}
-Kod źródłowy projektu jest wersjonowany z użyciem narzędzia git oraz upubliczniony na platformie GitHub\footnote{https://github.com/mtracewicz/CellSegmentation}.
-Repozytorium zawierające kod projektu zostało podłączone do platformy CircleCi\footnote{https://circleci.com} w celu automatycznego uruchamiania testów jednostkowych (napisane przy użyciu PyTest\footnote{https://docs.pytest.org/en/latest/} i Tox\footnote{https://tox.readthedocs.io/en/latest/}) oraz publikacji wyników.
+Kod źródłowy projektu jest wersjonowany z użyciem narzędzia git\footnote{https://git-scm.com/} oraz upubliczniony na platformie GitHub\footnote{https://github.com/mtracewicz/CellSegmentation/}.
+Repozytorium zawierające kod projektu zostało podłączone do platformy CircleCi\footnote{https://circleci.com/} w celu automatycznego uruchamiania testów jednostkowych (napisane przy użyciu PyTest\footnote{https://docs.pytest.org/en/latest/} i Tox\footnote{https://tox.readthedocs.io/en/latest/}) oraz publikacji wyników.
 W ramach pracy powstały również skrypty w powłoki bash\footnote{https://www.gnu.org/software/bash/} tworzące kontener deweloperski (technologia Docker\footnote{https://www.docker.com/}) zawierający wszystkie niezbędne biblioteki.
 Całość dopełnia moduł pozwalający na obróbkę zdjęć wejściowych oraz wyjściowych.
 
@@ -78,7 +78,7 @@ Model zostaje nauczony na jednym komputerze ale predykcja dla konkretnego obrazu
 \subsection{Obrazy wejściowe i wyjściowe}
 W opracowywanym przeze mnie zagadnieniu jako obrazy wejściowe użyte zostały zdjęcia mikroskopowe skóry.
 Wszystkie zdjęcia są zrobione z przybliżeniem x40 oraz posiadają rozmiar 1200x1600px z trzema kanałami.
-Obrazy wyjściowe zostały przygotowane za pomocą programu dostarczonego mi, przez dr. Wiśniewskiego.
+Obrazy wyjściowe zostały przygotowane za pomocą programu opracowany przez Panią Dominikę Pawłowską.
 Są to obrazy tego samego rozmiaru jednak zawierają cztery kanały zamiast trzech (RGBA zamiast RGB).
 Możemy na nich zobaczyć czerwoną otoczkę na około komórek, natomiast cała reszta obrazu jest przezroczysta.
 \begin{figure}[H]
@@ -208,7 +208,7 @@ Mimo wielu prób sieci które przygotowałem zawsze zwracały niemal w pełni cz
 \subsection{Bazowa sieć U-Net}
 Pierwszym podejściem, które przetestowałem było uruchomienie trzy poziomowej (dziesięciu warstwowej) sieci neuronowej w architekturze U-Net.
 Sieć otrzymywała na wejście obrazy rozmiaru 200x200x3 a jako wyjście zwracała obrazy 200x200x4.
-Na tym etapie przeprowadziłem testy modyfikując opisujące te sieć hiperparametry.
+Na tym etapie przeprowadziłem również testy modyfikując opisujące te sieć hiperparametry.
 Zmieniałem liczbę epok, stałą uczącą oraz wielkość parti.
 Dodatkowo modyfikowałem również ilość filtrów używanych w każdej warstwie.
 Niezależnie od tych zmian wszystkie powyższe eksperymenty zwracały jako predykcję obrazy praktycznie w stu procentach czarne, zawierały maksymalnie dwa/trzy piksele koloru czerwonego.
