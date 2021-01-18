@@ -357,8 +357,10 @@ Kolejny pomysł opierał się na tym aby metryka mierząca poprawność zwracał
 \subsection{Obliczenie predykcji na komputerze klienckim}
 Jednym z problemów przy pracy z danymi medycznymi jest to, że nie mogą one opuścić sieci wewnętrznej szpitala.
 Dlatego nie możemy uruchomić wytrenowanego modelu na serwerze i zapewnić możliwości odpytania poprzez API.
+
 Rozwiązaniem w tej sytuacji było przeniesienie wytrenowanych w TensorFlow modeli do TensorFlowJS który pozwala na użycie ich na komputerze klienckim.
-Testy te były dokonane na znacznie prostszy modelu służącym do rozpoznawania odręcznie pisanych cyfr (stosował on jednak wszystkie warstwy z, których składa się model w architekturze U-Net, jedynie w innej ilości/konfiguracji).
+Testy te były dokonane na znacznie prostszy modelu służącym do rozpoznawania odręcznie pisanych cyfr ze zbioru MNIST (stosował on jednak wszystkie warstwy z, których składa się model w architekturze U-Net, jedynie w innej ilości/konfiguracji).
+
 Pierwszym krokiem było przekształcenie modelu z biblioteki Python-owej na bibliotekę javascript-ową.
 Można to było łatwo wykonać w skrypcie Python-owym za pomocą metody tfjs.converters.save\_keras\_model, której przekazujemy model oraz ścieżkę do niego.
 Największym problemem w tej zmianie było jednak to, że aby użyć biblioteki w javascript operacje przez nią wykonywane musiały być poza wątkiem głównym, w celu nie blokowania UI - jest to narzucane przez samą bibliotekę.
@@ -371,8 +373,16 @@ W skrypcie zawierającym kod źródłowy workera również subskrybujemy wydarze
 Jest to wymagane nawet jeżeli chcielibyśmy sprawdzić model korzystając z tego samego obrazu ponieważ biblioteki PIL oraz NumPy mają inny format danych niż dane zwrócone przy pomocy javascript z obiektu canvas dostępnego w HTML5 na którym wyświetlany był obraz do klasyfikacji.
 Następnie po doprowadzeniu otrzymanych danych do odpowiedniego formatu jesteśmy w stanie użyć wyuczonego w Pythonie i TensorFlow modelu w celu uzyskania predykcji.
 Następnie za pomocą metody postMessage jesteśmy w stanie wysłać do wątku głównego wiadomość zawierającą predykcję modelu, który ją wyświetli.
+
 Dzięki powyższemu rozwiązaniu jesteśmy w stanie uruchomić nasz model po stronie klienta w przeglądarce.
 Dodatkowo zapewniona jest płynność działania ponieważ procesowanie danych oraz predykcja modelu wykonywane są równolegle do wątku głównego, który obsługuje interfejs użytkownika.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\linewidth]{images/mnist.png}
+  \caption{Przykład klasyfikacji obrazu w przeglądarce}
+  \label{fig:mnist}
+\end{figure}
 \newpage
 \section{Powstałe narzędzia}
 W trakcie prac powstał szereg narzędzi mających za zadanie ułatwić pracę nad tym zagadnieniem.
