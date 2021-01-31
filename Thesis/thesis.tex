@@ -103,7 +103,11 @@ Chociaż zagadnienie to podejmowano już od bardzo długiego czasu, to dopiero o
 Głębokie sieci neuronowe składają się z warstwy wejściowej, wyjściowej oraz pewnej liczby warstw ukrytych.
 Każda warstwa składa się z neuronów, które przyjmują wartość zależnie od wyniku funkcji aktywacyjnej.
 Liczba oraz typ warstw ukrytych a także ilość zawartych w nich neuronów w dużej mierze determinuje działanie sieci.
-
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{"images/dnn.png"}
+    \caption{Głęboka sieć neuronowa z jedną warstwą ukrytą}
+\end{figure}
 Omówienie zaczniemy od tego w jaki sposób sieć przeprowadza obliczenia zwracające odpowiedź, a następnie zajmiemy się procesem uczenia.
 Neurony kolejnych warstw są ze sobą połączone (zajmę się tu jedynie warstwami, które posiadają połączenia neuronów każdy z każdym, czyli tak zwanymi warstwami typu ``dense``).
 Połączenia te posiadają wagi.
@@ -121,6 +125,13 @@ Gdzie (k>=1):
 \end{itemize}
 Obliczając w ten sposób wartości wszystkich neuronów w ostatniej - warstwie wyjściowe otrzymujemy odpowiedź naszego modelu.
 
+Neurony w warstwach możemy traktować jako perceptrony.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{"images/perceptron.png"}
+    \caption{Perceptron}
+\end{figure}
+
 Proces uczenia to wielorazowe przejście przez poprawnie opisane dane wejściowe i poprawianie wag w celu minimalizacji funkcji błędu.
 W celu poprawy wag używamy algorytmu wstecznej propagacji błędu.
 Polega on na poprawianiu wag poprzez przejście sieci w przeciwnym kierunku i zmianie wartości wag na podstawie delt wyliczonych przy pomocy algorytmu spadku gradientowego.
@@ -132,9 +143,19 @@ Natomiast sieci neuronowe są zdecydowanie bardziej zbliżone do programowania d
 \newpage
 \section{Sieci splotowe}
 Sieci splotowe to takie głębokie sieci neuronowe, które zawierają jedną lub więcej warstw splotowych.
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{images/cnn.jpeg}
+    \caption{Przykład sieci splotowej dla problemu MNIST}
+\end{figure}
 \subsection{Operacja splotu}
 Operacja splotu w kontekście sieci neuronowych jest to przebieg jądra przez wartości pikseli obrazu wejściowego.
 W przestrzeni dwu wymiarowej jest to równoważne z nałożeniem na obraz wejściowy filtra.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{images/convolution.png}
+    \caption{Operacja splotu}
+\end{figure}
 \subsection{Sieci w pełni splotowe}
 Sieciami w pełni splotowymi nazywamy te głębokie sieci neuronowe, które jako wszystkie warstwy posiadają warstwy splotowe.
 Sieci tego typu służą głównie do przekształcania obrazów.
@@ -193,16 +214,22 @@ Na wyjściu możemy na przykład otrzymać ten sam obrazek z tym, że zależnie 
 \subsection{Segmentacja instancji}
 Segmentacja instancji to dodanie do segmentacji ograniczenia, że każda jednostka ma być widocznie oddzielona.
 Dla przykładu gdy mamy zdjęcie czterech przytulających się osób, w wyniku segmentacji wszystkie cztery zostaną zakolorowane na ten sam kolor oraz podpisane raz jako człowiek.
-Natomiast gdy przeprowadzimy segmentację instancji to w wyniku otrzymamy każdą osobę pokolorowaną na własny kolor, oraz etykiety ``człowiek 1.``, ``człowiek 2.`` etc.
+Natomiast gdy przeprowadzimy segmentację instancji to w wyniku otrzymamy każdą osobę pokolorowaną na własny kolor, oraz etykiety ``człowiek 1.'', ``człowiek 2.'' etc.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{images/segmentacja_instancji.jpeg}
     \caption{Przykład segmentacji instancji}
-    \cite{patashnik-bibtexing}
+    \cite{unet}
     \label{fig:segmentacja_instancji}
 \end{figure}
 \newpage
 \section{Architektura U-Net historia i zastosowania}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{images/unet.png}
+    \caption{Architektura U-NET}
+    \cite{unet}
+\end{figure}
 \newpage
 \section{Przetestowane podejścia}
 W ramach pracy przetestowałem architekturę U-Net oraz różne podejścia do obróbki danych.
