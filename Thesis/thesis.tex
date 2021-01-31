@@ -99,7 +99,7 @@ Możemy na nich zobaczyć czerwoną otoczkę na około komórek, natomiast cała
 Sztuczne sieci neuronowe są próbą stworzenia programów, których działanie jest inspirowane naszym rozumieniem mózgu.
 Chociaż zagadnienie to podejmowano już od bardzo długiego czasu (1943r.), to dopiero od niedawna posiadamy wystarczającą moc obliczeniową aby realizować tworzone od wielu dziesięcioleci algorytmy.
 
-Informacje w tym rozdziale powstały na podstawie książki ``Hands-On Machine Learning with Scikit-Learn and TensorFlow''\cite{handsonmachinelearning}
+Informacje w tym rozdziale powstały na podstawie książki ``Hands-On Machine Learning with Scikit-Learn and TensorFlow''\cite{handsonmachinelearning} oraz wykładu\cite{wyklad}
 \subsection{Ogólne zasady działania}
 Jak wcześniej wspomniałem sztuczne sieci neuronowe są zainspirowane działaniem mózgu. Dlatego w celu ich zrozumienia zaczniemy od przyrównania najprostszej jednostki mózgu do najprostszej jednostki w uczeniu maszynowym, czyli neuron biologiczny i perceptron.
 
@@ -114,18 +114,43 @@ Jak wcześniej wspomniałem sztuczne sieci neuronowe są zainspirowane działani
         \caption{Perceptron\cite{perceptron-image}}
     \end{subfigure}
 \end{figure}
+Neurony przekazują sobie sygnały za pomocą tak zwanych połączeń synaptycznych.
+Pojedyńczy neuron w momencie otrzymania wystarczająco wielu sygnałów w krótkim czasie sam zaczyna je emitować.
+
+Podobnie działają perceptrony.
+Gdy suma wejść wymnożonych przez ich wagi przekroczy pewien próg (bias) to perceptron jest aktywny.
 
 Wartość zwracana przez perceptron opiszemy wzorem:
-\begin{align}
-    O(x)=\sigma(\sum\limits_{i=0}^{n}{w_i x_i}+\theta)
-\end{align}
+\begin{equation*}
+    O(x)=\sigma(\sum\limits_{i=1}^{n}{w_i x_i})
+\end{equation*}
 gdzie:
 \begin{itemize}
-    \item $\sigma$ - funkcja skokowa np. funkcja znaku
+    \item
+          \begin{align*}
+              \sigma(y)=
+              \begin{cases}
+                  -1 & y<\theta  \\
+                  1  & y>=\theta
+              \end{cases}
+          \end{align*}
     \item x - n-elementowy wektor danych wejściowych
     \item w - n-elementowy wektor wag
     \item $\theta$ - bias
 \end{itemize}
+
+Warto zaznaczyć, że dla ułatwienia obliczeń i jasności wzoru bias jest często dopisywany do wektora wag, natomiast do wektora wejściowego dopisujemy wartość -1.
+W takim wypadku wzór przyjmuje postać:
+\begin{align*}
+    O(x)=sign(\sum\limits_{i=0}^{n}{w_i x_i})
+\end{align*}
+Gdzie ``sign'' to funkcja znaku opisana wzorem
+\begin{equation*}
+    sign(x)=\begin{cases}
+        1  & x>=0 \\
+        -1 & x<0
+    \end{cases}
+\end{equation*}
 
 Głębokie sieci neuronowe składają się z warstwy wejściowej, wyjściowej oraz pewnej liczby warstw ukrytych.
 Każda warstwa składa się z neuronów, które przyjmują wartość zależnie od wyniku funkcji aktywacyjnej.
@@ -136,10 +161,15 @@ Liczba oraz typ warstw ukrytych a także ilość zawartych w nich neuronów w du
     \caption{Głęboka sieć neuronowa z jedną warstwą ukrytą}
 \end{figure}
 Omówienie zaczniemy od tego w jaki sposób sieć przeprowadza obliczenia zwracające odpowiedź, a następnie zajmiemy się procesem uczenia.
-Neurony kolejnych warstw są ze sobą połączone (zajmę się tu jedynie warstwami, które posiadają połączenia neuronów każdy z każdym, czyli tak zwanymi warstwami typu ``dense``).
-Połączenia te posiadają wagi.
-Aby obliczyć wynik zwracany przez sieć rozpoczynamy obliczenia od warstwy wejściowej i obliczmy wartości neuronów w kolejnych warstwach.
-Wartość dla neuronu w warstwie k-tej to wartość funkcji aktywacji na sumie wartości wszystkich neuronów z warstwy poprzedniej przemnożonych przez odpowiednie im wagi połączeń.
+
+W uproszczeniu możemy patrzeć na neurony w sieciach jak na perceptrony, które mogą posiadać funkcję aktywacji inną niż progowa.
+Grupujemy neurony w warstwy a następnie łączymy każdy neuron z warstwy ``k'' z neuronami z warstwy ``k+1''. Takie warstwy (posiadają połączenia neuronów każdy z każdym) nazywamy warstwami typu ``dense''.
+Każde takie połączenia posiada wagę.
+Aby obliczyć wartości neuronów w warstwie ``k+1'' potrzebujemy znać wartości w warstwie k-tej (jako warstwę pierwszą przyjmujemy otrzymany wektor wejściowy).
+W celu obliczenia wartości konkretnego neuronu postępujemy analogicznie jak przy obliczaniu wartości perceptronu.
+Traktujemy wartości zwrócone przez neurony z poprzedniej warstwy jako wektor wejściowy i wymarzamy go przez odpowiedni wektor wag.
+
+Wartość dla j-tego neuronu w warstwie k-tej opiszemy wzorem:
 \begin{align*}
     x_{k,j} = \sigma(\sum\limits_{i=0}^{n-1}{w_ix_{(k-1),i}})
 \end{align*}
@@ -150,11 +180,9 @@ Gdzie (k>=1):
     \item n - liczba neuronów w warstwie k-1
     \item $w_i$ - i-ta waga wchodząca do neuronu
 \end{itemize}
-Obliczając w ten sposób wartości wszystkich neuronów w ostatniej - warstwie wyjściowe otrzymujemy odpowiedź naszego modelu.
+Obliczając w ten sposób wartości wszystkich neuronów, w ostatniej warstwie otrzymujemy odpowiedź naszego modelu.
 
-Neurony w warstwach możemy traktować jako perceptrony.
-
-Proces uczenia to wielorazowe przejście przez poprawnie opisane dane wejściowe i poprawianie wag w celu minimalizacji funkcji błędu.
+Proces uczenia to wielokrotne przejście przez poprawnie opisane dane wejściowe i poprawianie wag w celu minimalizacji funkcji błędu.
 W celu poprawy wag używamy algorytmu wstecznej propagacji błędu.
 Polega on na poprawianiu wag poprzez przejście sieci w przeciwnym kierunku i zmianie wartości wag na podstawie delt wyliczonych przy pomocy algorytmu spadku gradientowego.
 
