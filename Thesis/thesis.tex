@@ -97,9 +97,36 @@ Możemy na nich zobaczyć czerwoną otoczkę na około komórek, natomiast cała
 \newpage
 \section{Sztuczne sieci neuronowe}
 Sztuczne sieci neuronowe są próbą stworzenia programów, których działanie jest inspirowane naszym rozumieniem mózgu.
-Chociaż zagadnienie to podejmowano już od bardzo długiego czasu, to dopiero od niedawna posiadamy wystarczającą moc obliczeniową aby realizować tworzone od wielu dziesięcioleci algorytmy.
+Chociaż zagadnienie to podejmowano już od bardzo długiego czasu (1943r.), to dopiero od niedawna posiadamy wystarczającą moc obliczeniową aby realizować tworzone od wielu dziesięcioleci algorytmy.
 
+Informacje w tym rozdziale powstały na podstawie książki ``Hands-On Machine Learning with Scikit-Learn and TensorFlow''\cite{handsonmachinelearning}
 \subsection{Ogólne zasady działania}
+Jak wcześniej wspomniałem sztuczne sieci neuronowe są zainspirowane działaniem mózgu. Dlatego w celu ich zrozumienia zaczniemy od przyrównania najprostszej jednostki mózgu do najprostszej jednostki w uczeniu maszynowym, czyli neuron biologiczny i perceptron.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.7\linewidth}
+        \includegraphics[width=\linewidth]{images/neuron.png}
+        \caption{Neuron biologiczny\cite{neuron-image}}
+    \end{subfigure}
+    \begin{subfigure}{0.7\linewidth}
+        \includegraphics[width=\linewidth]{images/perceptron.png}
+        \caption{Perceptron\cite{perceptron-image}}
+    \end{subfigure}
+\end{figure}
+
+Wartość zwracana przez perceptron opiszemy wzorem:
+\begin{align}
+    O(x)=\sigma(\sum\limits_{i=0}^{n}{w_i x_i}+\theta)
+\end{align}
+gdzie:
+\begin{itemize}
+    \item $\sigma$ - funkcja skokowa np. funkcja znaku
+    \item x - n-elementowy wektor danych wejściowych
+    \item w - n-elementowy wektor wag
+    \item $\theta$ - bias
+\end{itemize}
+
 Głębokie sieci neuronowe składają się z warstwy wejściowej, wyjściowej oraz pewnej liczby warstw ukrytych.
 Każda warstwa składa się z neuronów, które przyjmują wartość zależnie od wyniku funkcji aktywacyjnej.
 Liczba oraz typ warstw ukrytych a także ilość zawartych w nich neuronów w dużej mierze determinuje działanie sieci.
@@ -126,11 +153,6 @@ Gdzie (k>=1):
 Obliczając w ten sposób wartości wszystkich neuronów w ostatniej - warstwie wyjściowe otrzymujemy odpowiedź naszego modelu.
 
 Neurony w warstwach możemy traktować jako perceptrony.
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\linewidth]{"images/perceptron.png"}
-    \caption{Perceptron}
-\end{figure}
 
 Proces uczenia to wielorazowe przejście przez poprawnie opisane dane wejściowe i poprawianie wag w celu minimalizacji funkcji błędu.
 W celu poprawy wag używamy algorytmu wstecznej propagacji błędu.
