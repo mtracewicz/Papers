@@ -166,6 +166,7 @@ W uproszczeniu możemy patrzeć na neurony w sieciach jak na perceptrony, które
 Grupujemy neurony w warstwy a następnie łączymy każdy neuron z warstwy ``k'' z neuronami z warstwy ``k+1''. Takie warstwy (posiadają połączenia neuronów każdy z każdym) nazywamy warstwami typu ``dense''.
 Każde takie połączenia posiada wagę.
 Aby obliczyć wartości neuronów w warstwie ``k+1'' potrzebujemy znać wartości w warstwie k-tej (jako warstwę pierwszą przyjmujemy otrzymany wektor wejściowy).
+Warto również pamiętać o dodaniu do każdej warstwy bias-u.
 W celu obliczenia wartości konkretnego neuronu postępujemy analogicznie jak przy obliczaniu wartości perceptronu.
 Traktujemy wartości zwrócone przez neurony z poprzedniej warstwy jako wektor wejściowy i wymarzamy go przez odpowiedni wektor wag.
 
@@ -182,9 +183,42 @@ Gdzie (k>=1):
 \end{itemize}
 Obliczając w ten sposób wartości wszystkich neuronów, w ostatniej warstwie otrzymujemy odpowiedź naszego modelu.
 
-Proces uczenia to wielokrotne przejście przez poprawnie opisane dane wejściowe i poprawianie wag w celu minimalizacji funkcji błędu.
+Proces uczenia to wielokrotne przejście przez poprawnie opisane dane wejściowe i poprawianie wag w celu minimalizacji funkcji błędu/kosztu (musi być ona ciągła i różniczkowalna).
+Przykładem takiej funkcji jest funkcja ``Mean absolute error''\cite{mae-tf} opisana wzorem\cite{mae}:
+\begin{align*}
+    MAE=\frac{\sum\limits_{i=1}^{n}|{y_i - x_i}|}{n}
+\end{align*}
+gdzie:
+\begin{itemize}
+    \item $y_i$ - poprawna wartość
+    \item $x_i$ - wartość predykcji sieci
+\end{itemize}
 W celu poprawy wag używamy algorytmu wstecznej propagacji błędu.
-Polega on na poprawianiu wag poprzez przejście sieci w przeciwnym kierunku i zmianie wartości wag na podstawie delt wyliczonych przy pomocy algorytmu spadku gradientowego.
+Na początku obliczamy predykcję sieci na elementach a następnie przechodząc sieć wstecz poprawiamy wagi.
+Wagi poprawiane są na podstawie delt wyliczanych za pomocą algorytmu spadku gradientowego.
+Polega on na wyznaczeniu kierunku w, którym funkcja maleje najszybciej.
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.75\linewidth}
+        \includegraphics[width=\linewidth]{images/gradient_2d.png}
+        \caption{Przykład w dwóch wymiarach\cite{gradient2d}}
+    \end{subfigure}
+    \begin{subfigure}{0.75\linewidth}
+        \includegraphics[width=\linewidth]{images/gradient_3d.png}
+        \caption{Przykład w trzech wymiarach\cite{gradient3d}}
+    \end{subfigure}
+    \caption{Wizualizacja działania algorytmu spadku gradientowego}
+\end{figure}
+Proces ten opiszemy wzorem:
+\begin{align*}
+    w_g^{(m+1)}=w_g^m - \eta\frac{\delta E}{\delta w_g}(w^m)
+\end{align*}
+gdzie:
+\begin{itemize}
+    \item $\eta$ - współczynnik uczenia (bliski zeru)
+    \item $w_g^m$ - wektor wag
+    \item $\frac{\delta E}{\delta w_g}(w^m)$ - pochodna cząstkowa
+\end{itemize}
 
 \subsection{Porównanie do klasycznych metod programowania}
 Przy standardowych paradygmatach programowania (programowanie zorientowane obiektowo, programowanie proceduralne, programowanie funkcyjne) jako programista piszemy kod, który
