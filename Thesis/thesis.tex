@@ -143,7 +143,8 @@ Natomiast sieci neuronowe są zdecydowanie bardziej zbliżone do programowania d
 \newpage
 \section{Sieci splotowe}
 Sieci splotowe to takie głębokie sieci neuronowe, które zawierają jedną lub więcej warstw splotowych.
-\begin{figure}
+Warstwa splotowa przeprowadza operację splotu na obrazach wejściowych i w wyniku zwraca inne obrazy (w liczbie zależnej od parametrów).
+\begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{images/cnn.jpeg}
     \caption{Przykład sieci splotowej dla problemu MNIST}
@@ -161,6 +162,7 @@ W przestrzeni dwu wymiarowej jest to równoważne z nałożeniem na obraz wejśc
 \subsection{Sieci w pełni splotowe}
 Sieciami w pełni splotowymi nazywamy te głębokie sieci neuronowe, które jako wszystkie warstwy posiadają warstwy splotowe.
 Sieci tego typu służą głównie do przekształcania obrazów.
+Jedną z lepiej znanych architektur tego typu jest architektura ``U-NET'' z, której skorzystałem.
 \newpage
 \section{Problem segmentacji}
 Uczenie maszynowe możemy podzielić na różne podtypy.
@@ -230,12 +232,18 @@ Natomiast gdy przeprowadzimy segmentację instancji to w wyniku otrzymamy każd�
 \end{figure}
 \newpage
 \section{Architektura U-Net historia i zastosowania}
+W roku 2015 Olaf Ronneberger, Philipp Fischer, Thomas Brox stworzyli architekturę sieci, której zadaniem jest segmentacja obrazów biomedycznych\cite{unetpaper}.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{images/unet.png}
     \caption{Architektura U-NET}
     \cite{unet}
+    \label{Wizualizacja architektury U-NET}
 \end{figure}
+Założeniem sieci jest to aby wyciągnąć informacje o detalach nie tracąc przy tym informacji przestrzennych.
+
+Patrząc na ilustrację architektury możemy ją podzielić na dwie części. Część zmniejszając oraz zwiększającą.
+Idąc ścieżką zmniejszającą szukamy detali, jest to typowe zastosowanie sieci splotowych. Jednakże druga część sieci, powiększa obraz z powrotem i dzięki temu odzyskujemy informacje o lokalizacji.
 \newpage
 \section{Przetestowane podejścia}
 W ramach pracy przetestowałem architekturę U-Net oraz różne podejścia do obróbki danych.
