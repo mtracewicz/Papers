@@ -32,6 +32,36 @@
   breakatwhitespace=true,
   tabsize=4
 }
+\lstdefinelanguage{JavaScript}{
+keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+keywordstyle=\color{blue}\bfseries,
+ndkeywords={class, export, boolean, throw, implements, import, this},
+ndkeywordstyle=\color{mauve}\bfseries,
+identifierstyle=\color{black},
+sensitive=false,
+comment=[l]{//},
+morecomment=[s]{/*}{*/},
+commentstyle=\color{dkgreen}\ttfamily,
+stringstyle=\color{red}\ttfamily,
+morestring=[b]',
+morestring=[b]"
+}
+\lstset{frame=tb,
+  language=JavaScript,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=4
+}
 
 \title{Segmentacja komórek na zdjęciach mikroskopowych skóry z użyciem głębokich sieci neuronowych.}
 \date{2020-12-25}
@@ -518,6 +548,61 @@ Jest to wymagane nawet jeżeli chcielibyśmy sprawdzić model korzystając z teg
 Następnie po doprowadzeniu otrzymanych danych do odpowiedniego formatu jesteśmy w stanie użyć wyuczonego w Pythonie i TensorFlow modelu w celu uzyskania predykcji.
 Następnie za pomocą metody postMessage jesteśmy w stanie wysłać do wątku głównego wiadomość zawierającą predykcję modelu, który ją wyświetli.
 
+\begin{lstlisting}[caption=Kod workera,language=JavaScript]
+// Import Tensorflow JS
+importScripts(
+  "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.2.7/dist/tf.min.js"
+);
+
+// Make prediction and send back answer
+onmessage = async (e) => {
+  tf.setBackend("cpu");
+  const input = getInputTensor(preprocessImage(e.data));
+  const model = await tf.loadLayersModel("model/model.json");
+  const prediction_array = await model.predict(input).data();
+  postMessage(getPredictionFromArray(prediction_array));
+};
+
+// Convert data into tensor which can be used as tensorflow model input
+function getInputTensor(data) {
+  return tf.tensor(data).asType("float32").reshape([1, 28, 28, 1]);
+}
+
+// Prepare data to fit model input
+function preprocessImage(image) {
+  return makeMonochrome(scaleData(image));
+}
+
+// Scale data from integers [0,255] to floats [0.0,1.0]
+function scaleData(data) {
+  return new Float32Array(data).map((i) => i / 255.0);
+}
+
+/*
+  Get monochrome version from RGBA
+  We can assign red color from input data to processed data,
+  because as the pictures are monochrome in their nature values of 
+  red,green,blue are always the same.
+*/
+function makeMonochrome(input_data) {
+  const processed_data = new Float32Array(input_data.length / 4);
+  for (let x = 0; x < 28; x++) {
+    for (let y = 0; y < 28; y++) {
+      processed_data[x + y * 28] = input_data[4 * (x + y * 28)];
+    }
+  }
+  return processed_data;
+}
+
+// Get class with highest probability
+function getPredictionFromArray(prediction_array) {
+  const max = prediction_array.reduce((current_max_value, item_value) => {
+    return item_value > current_max_value ? item_value : current_max_value;
+  }, 0);
+  return prediction_array.indexOf(max);
+}
+\end{lstlisting}
+
 Dzięki powyższemu rozwiązaniu jesteśmy w stanie uruchomić nasz model po stronie klienta w przeglądarce.
 Dodatkowo zapewniona jest płynność działania ponieważ procesowanie danych oraz predykcja modelu wykonywane są równolegle do wątku głównego, który obsługuje interfejs użytkownika.
 
@@ -541,6 +626,59 @@ Powstałe skrypty pozwalają na:
     \item zespolenie obrazków utworzonych poprzednim skryptem z powrotem w całość
     \item zredukowanie kanałów obrazów z RGBA do RGB i zaokrąglenie wartości pikseli do czerwonego (255, 0, 0) i czarnego (0, 0, 0)
 \end{itemize}
+\begin{lstlisting}[caption=Fragment skrytu dzielącego obrazy na mniejsze]
+def split_image(filename: str, output_directory: str = 'out',
+        output_shape: Tuple[int, int] = (200, 200),
+        pocket: Tuple[int, int] = (100, 100),
+        extension: str = '.png'):
+
+    if os.path.isdir(filename):
+            raise IsADirectoryError()
+
+    image = np.array(Image.open(filename))
+    image_width, image_height = image.shape[:2]
+    vertical_step, horizontal_step = output_shape
+    vertical_pocket, horizontal_pocket = pocket
+    extension = extension if extension.startswith(".") else f".{extension}"
+
+    number_of_moves_horizontally = int(
+        image_width/(image_width-horizontal_pocket)) - 1
+    number_of_moves_vertically = int(
+        image_height/(image_height-vertical_pocket)) - 1
+    for row in range(number_of_moves_vertically):
+        for column in range(number_of_moves_horizontally):
+            tmp_img = create_new_image(image,
+                                       column,
+                                       row,
+                                       image_width,
+                                       image_height,
+                                       horizontal_pocket,
+                                       vertical_pocket,
+                                       horizontal_step,
+                                       vertical_step)
+            new_filename = os.path.join(
+                output_directory, f'{row}_{column}{extension}')
+            tmp_img.save(new_filename)
+
+
+def create_new_image(image: np.ndarray,
+                     column: int,
+                     row: int,
+                     image_width: int,
+                     image_height: int,
+                     horizontal_pocket: int,
+                     vertical_pocket: int) -> np.ndarray:
+    if horizontal_pocket >= image_width or vertical_pocket >= image_height:
+        raise ValueError('Pocket must be smaller then image size')
+    if column < 0 or row < 0 or image_width <= 0 or image_height <= 0 or horizontal_pocket < 0 or vertical_pocket < 0:
+        raise ValueError('Must be positive numbers')
+    if type(image) != np.ndarray:
+        raise TypeError()
+    horizontal_start = column*(image_width - horizontal_pocket)
+    vertical_start = row*(image_height - vertical_pocket)
+    return Image.fromarray(np.copy(
+        image[vertical_start:vertical_start+image_height, horizontal_start:horizontal_start+image_width]))
+\end{lstlisting}
 \subsection{Skrypt do uczenie sieci}
 W celu umożliwienia automatyzacji procesu uczenia stworzyłem skrypt pozwalający na uruchamiane procesu uczenia z różnymi parametrami.
 Dzięki takiemu podejściu jesteśmy przykładowo w stanie uruchomić przez noc proces uczenia dla kilku różnych kombinacji architektur, hiperparametrów, danych wejściowych/wyjściowych. Dodatkowo istotnym elementem skryptu jest to, że użytkownik może samodzielnie napisać  funkcję błędu, metrykę oraz architekturę sieci w języku Python (zgodną z wymaganiami biblioteki Keras) a ta zostanie wstrzyknięta do skryptu.
