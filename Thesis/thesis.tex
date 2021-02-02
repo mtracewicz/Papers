@@ -1,4 +1,5 @@
 \documentclass{article}
+\usepackage{url}
 \usepackage{cite}
 \usepackage{color}
 \usepackage{float}
@@ -215,7 +216,7 @@ Proces ten opiszemy wzorem:
 \end{align*}
 gdzie:
 \begin{itemize}
-    \item $\eta$ - współczynnik uczenia (bliski zeru)
+    \item $\eta$ - współczynnik uczenia (bliski zeru), jest to wartość wskazująca jak ``duży krok'' wykonamy w kierunku wskazanym przez algorytm
     \item $w_g^m$ - wektor wag
     \item $\frac{\delta E}{\delta w_g}(w^m)$ - pochodna cząstkowa
 \end{itemize}
@@ -542,7 +543,7 @@ Powstałe skrypty pozwalają na:
 \end{itemize}
 \subsection{Skrypt do uczenie sieci}
 W celu umożliwienia automatyzacji procesu uczenia stworzyłem skrypt pozwalający na uruchamiane procesu uczenia z różnymi parametrami.
-Dzięki takiemu podejściu jesteśmy przykładowo w stanie uruchomić przez noc proces uczenia dla kilku różnych kombinacji architektur, hiperparametrów, danych wejściowych/wyjściowych.
+Dzięki takiemu podejściu jesteśmy przykładowo w stanie uruchomić przez noc proces uczenia dla kilku różnych kombinacji architektur, hiperparametrów, danych wejściowych/wyjściowych. Dodatkowo istotnym elementem skryptu jest to, że użytkownik może samodzielnie napisać  funkcję błędu, metrykę oraz architekturę sieci w języku Python (zgodną z wymaganiami biblioteki Keras) a ta zostanie wstrzyknięta do skryptu.
 
 Skrypt przyjmuje na wejściu pod jaką nazwą ma zostać zapisany wytrenowany model oraz katalogi ze zdjęciami wejściowymi i wyjściowymi.
 
@@ -552,8 +553,13 @@ Kolejnym opcjonalny parametr jest odpowiedzialny za użytą architekturę, jest 
 
 Następny parametr to ścieżka do pliku zawierającego hiperparametry jako zmienne w skrypcie języka Python (domyślnie jest to plik ``hyperparameters.py`` z napisanego przeze mnie moduły ``neural\_network``).
 
-Skrypt zaczyta dane do pamięci a następnie wykona uczenie modelu (``tf.keras.Model.fit'') na podanych danych ze wskazaną funkcją strat, metryką, hiperparametrami i architekturą.
+Skrypt zaczyta dane do pamięci a następnie wykona uczenie modelu (za pomocą metody ``tf.keras.Model.fit'') na podanych danych ze wskazaną funkcją strat, metryką, hiperparametrami i architekturą.
 Następnie wynikowy model zostanie zapisany pod wskazaną nazwą w katalogu ``trained\_models``.
+\begin{lstlisting}[caption={Dynamiczne wczytywanie funkcji oraz stałych z innych skryptów}]
+    exec(f'from {hyperparameters_file} import BATCH_SIZE, EPOCHS, LEARNING_RATE, VALIDATION_SPLIT')
+    exec(f'from {model_file} import get_model')
+    exec(f'from {metric_and_loss_file} import custom_metric, custom_loss')
+\end{lstlisting}
 \subsection{Skrypt pozwalające na testowanie zapisanych modeli}
 Kolejny skrypt przyjmuje na wejście ścieżkę do zapisanego modelu oraz ścieżki do katalogów zawierających dane wejściowe i wyjściowe.
 A następnie przeprowadza na nich test sprawdzający jak dobrze model sobie na nich poradził za pomocą metody model.evaluate.
@@ -566,6 +572,11 @@ Zostały napisane przy pomocy modułu PyTest a ich uruchamianie jest obsługiwan
 Testy są automatycznie uruchamiane przy wypchnięciu lokalnych migawek (ang. commit), do publicznego repozytorium na platformie GitHub.
 Funkcjonalność ta została zrealizowana za pomocą platformy CircleCi, pozwala ona na uruchomienie testów po otrzymaniu informacji od portalu GitHub.
 Status tych testów możemy zobaczyć w łatwy sposób poprzez dodany do pliku README.md obraz.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{images/ci.png}
+    \caption{Obraz wskazujący, że wszystkie testy zostały zaliczone}
+\end{figure}
 Jest on każdorazowo przy wyświetlaniu wyrenderowanego pliku README pobierany z serwera CircleCi i zależnie od tego czy wszystkie testy jednostkowe z ostatniej migawki zostały poprawnie ukończone czy nie przybiera odpowiednio kolor zielony/czerwony.
 \subsection{Automatyczne renderowanie i publikacja wyników}
 W celu prezentacji wyników oraz łatwego i interaktywnego badania ich powstał notatnik Jupyter.
@@ -576,6 +587,22 @@ Rozwiązanie to tak samo jak automatyczne testy jednostkowe zostało zrealizowan
 Otrzymuje ona informację od serwisu GitHub o nowej migawce a następnie sprawdza, czy został w niej zmieniony plik notatnika.
 Jeżeli tak to wywołane zostanie polecenie eksportujące go do pliku w formacie HTML a następnie platforma stworzy nową migawkę (jako wiadomość przesłany jest ciąg znaków, który sygnalizuje, że testy jednostkowe nie powinny być dla niej uruchamiane, ponieważ stało się to już przy migawce wywołującej konwersję) i wyśle ją do repozytorium na serwisie GitHub.
 Gdy ten go otrzyma opublikuje nowo utworzony plik na platformie GitHub Pages.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{images/jupyter.png}
+    \caption{Przykładowy notatnik wyrenderowany jako strona internetowa}
+\end{figure}
+\begin{lstlisting}[caption='Kod odpowiedzialny za konwersję notatnika do pliku html oraz jego warunkową publikację ']
+    pip install notebook &&
+    jupyter-nbconvert --to html demo.ipynb --stdout  > docs/index.html;
+
+    x=`git diff --numstat | wc -l`
+    [[ $x -eq 1 ]] &&
+    git add docs/index.html &&
+    git commit -m "Deployed website. [ci skip]" &&
+    git push ||
+    echo 'Nothing to do.'
+\end{lstlisting}
 Dzięki tej integracji wszystkie zmiany których dokonam w notatniku prezentującym wyniki moich prac są automatycznie publikowane i dostępne do wglądu.
 \subsection{Kontener developerski}
 Stworzyłem również skrypty, które pozwalają na uruchomienie kontenera (przy użyciu technologii Docker) zawierającego wszystkie wymagane biblioteki.
