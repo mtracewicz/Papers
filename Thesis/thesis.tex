@@ -548,7 +548,7 @@ Jest to wymagane nawet jeżeli chcielibyśmy sprawdzić model korzystając z teg
 Następnie po doprowadzeniu otrzymanych danych do odpowiedniego formatu jesteśmy w stanie użyć wyuczonego w Pythonie i TensorFlow modelu w celu uzyskania predykcji.
 Następnie za pomocą metody postMessage jesteśmy w stanie wysłać do wątku głównego wiadomość zawierającą predykcję modelu, który ją wyświetli.
 
-\begin{lstlisting}[caption=Kod workera,language=JavaScript]
+\begin{lstlisting}[caption=Kod odpowiedzialny za predykcję (worker),language=JavaScript]
 // Import Tensorflow JS
 importScripts(
   "https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.2.7/dist/tf.min.js"
@@ -693,10 +693,10 @@ Następny parametr to ścieżka do pliku zawierającego hiperparametry jako zmie
 
 Skrypt zaczyta dane do pamięci a następnie wykona uczenie modelu (za pomocą metody ``tf.keras.Model.fit'') na podanych danych ze wskazaną funkcją strat, metryką, hiperparametrami i architekturą.
 Następnie wynikowy model zostanie zapisany pod wskazaną nazwą w katalogu ``trained\_models``.
-\begin{lstlisting}[caption={Dynamiczne wczytywanie funkcji oraz stałych z innych skryptów}]
-    exec(f'from {hyperparameters_file} import BATCH_SIZE, EPOCHS, LEARNING_RATE, VALIDATION_SPLIT')
-    exec(f'from {model_file} import get_model')
-    exec(f'from {metric_and_loss_file} import custom_metric, custom_loss')
+\begin{lstlisting}[caption={Dynamiczne wstrzykiwanie funkcji oraz stałych z innych skryptów}]
+exec(f'from {hyperparameters_file} import BATCH_SIZE, EPOCHS, LEARNING_RATE, VALIDATION_SPLIT')
+exec(f'from {model_file} import get_model')
+exec(f'from {metric_and_loss_file} import custom_metric, custom_loss')
 \end{lstlisting}
 \subsection{Skrypt pozwalające na testowanie zapisanych modeli}
 Kolejny skrypt przyjmuje na wejście ścieżkę do zapisanego modelu oraz ścieżki do katalogów zawierających dane wejściowe i wyjściowe.
