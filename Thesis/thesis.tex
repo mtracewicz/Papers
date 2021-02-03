@@ -359,6 +359,7 @@ Założeniem sieci jest to aby wyciągnąć informacje o detalach nie tracąc pr
 
 Patrząc na ilustrację architektury możemy ją podzielić na dwie części. Część zmniejszając oraz zwiększającą.
 Idąc ścieżką zmniejszającą szukamy detali, jest to typowe zastosowanie sieci splotowych. Jednakże druga część sieci, powiększa obraz z powrotem i dzięki temu odzyskujemy informacje o lokalizacji.
+
 \newpage
 \section{Przetestowane podejścia}
 W ramach pracy przetestowałem architekturę U-Net oraz różne podejścia do obróbki danych.
@@ -382,6 +383,62 @@ Zmieniałem liczbę epok (między wartościami z przedziału od 20 do 40), stał
 Dodatkowo modyfikowałem również ilość filtrów używanych w każdej warstwie.
 Niezależnie od tych zmian wszystkie powyższe eksperymenty zwracały jako predykcję obrazy praktycznie w stu procentach czarne, zawierały maksymalnie dwa/trzy piksele koloru czerwonego.
 Działo się tak mimo, że sieć uzyskiwała w trakcie uczenia/walidacji wyniki dokładności na poziomie nawet dziewięćdziesięciu czterech procent.
+
+\begin{lstlisting}[caption=Moja implementacja architektury U-NET,language=python]
+import numpy as np
+import tensorflow as tf
+
+N_FILTERS = 32
+DROPOUT = 0.5
+
+
+def contracting_block(input_tensor, n_filters):
+    c = conv2d_block(input_tensor, n_filters)
+    p = tf.keras.layers.MaxPooling2D((2, 2))(c)
+    p = tf.keras.layers.Dropout(DROPOUT)(p)
+    return (c, p)
+
+
+def expansive_block(input_tensor, n_filters, concatenated_layer):
+    u = tf.keras.layers.Conv2DTranspose(n_filters, (3, 3), strides=(
+        2, 2), padding='same', data_format="channels_last")(input_tensor)
+    u = tf.keras.layers.concatenate([u, concatenated_layer])
+    u = tf.keras.layers.Dropout(DROPOUT)(u)
+    c = conv2d_block(u, n_filters)
+    return c
+
+
+def conv2d_block(input_tensor, n_filters, kernel_size=3):
+    # first layer
+    x = tf.keras.layers.Conv2D(filters=n_filters, kernel_size=(kernel_size, kernel_size), kernel_initializer="he_normal", data_format="channels_last",
+                               padding="same")(input_tensor)
+    x = tf.keras.layers.Activation("relu")(x)
+    # second layer
+    x = tf.keras.layers.Conv2D(filters=n_filters, kernel_size=(kernel_size, kernel_size), kernel_initializer="he_normal", data_format="channels_last",
+                               padding="same")(x)
+    x = tf.keras.layers.Activation("relu")(x)
+    return x
+
+
+def get_model(input_size: np.ndarray) -> tf.keras.Model:
+    inputs = tf.keras.Input(input_size)
+    # contracting path
+
+    l1 = contracting_block(inputs, N_FILTERS)
+    l2 = contracting_block(l1[1], N_FILTERS*2)
+    l3 = contracting_block(l2[1], N_FILTERS*4)
+
+    l4 = conv2d_block(l3[1], N_FILTERS*8)
+
+    # expansive path
+    l5 = expansive_block(l4, N_FILTERS*4, l3[0])
+    l6 = expansive_block(l5, N_FILTERS*2, l2[0])
+    l7 = expansive_block(l6, N_FILTERS, l1[0])
+    outputs = tf.keras.layers.Conv2D(3, 1, activation='sigmoid')(l7)
+
+    return tf.keras.Model(inputs=inputs, outputs=outputs)
+\end{lstlisting}
+
 
 Powyższe testy uświadomiły mi konieczność znalezienia lepszej funkcji strat/metryki mierzącej poprawność lub poprawienie w jakiś sposób danych wejściowych i wyjściowych w celu ułatwienia sieci procesu uczenia.
 \subsection{Preprocessing obrazów}
@@ -499,7 +556,7 @@ Dla:
     \item Y - zbiór wyjściowy
 \end{itemize}
 
-\begin{lstlisting}[caption={Implementacja przy użyciu Keras i TensorFlow}]
+\begin{lstlisting}[caption={Implementacja przy użyciu Keras i TensorFlow},language=python]
 from tensorflow.keras import backend as K
 
 def custom_metric(y_true, y_pred):
@@ -626,7 +683,7 @@ Powstałe skrypty pozwalają na:
     \item zespolenie obrazków utworzonych poprzednim skryptem z powrotem w całość
     \item zredukowanie kanałów obrazów z RGBA do RGB i zaokrąglenie wartości pikseli do czerwonego (255, 0, 0) i czarnego (0, 0, 0)
 \end{itemize}
-\begin{lstlisting}[caption=Fragment skrytu dzielącego obrazy na mniejsze]
+\begin{lstlisting}[caption=Fragment skrytu dzielącego obrazy na mniejsze,language=Python]
 def split_image(filename: str, output_directory: str = 'out',
         output_shape: Tuple[int, int] = (200, 200),
         pocket: Tuple[int, int] = (100, 100),
@@ -693,7 +750,7 @@ Następny parametr to ścieżka do pliku zawierającego hiperparametry jako zmie
 
 Skrypt zaczyta dane do pamięci a następnie wykona uczenie modelu (za pomocą metody ``tf.keras.Model.fit'') na podanych danych ze wskazaną funkcją strat, metryką, hiperparametrami i architekturą.
 Następnie wynikowy model zostanie zapisany pod wskazaną nazwą w katalogu ``trained\_models``.
-\begin{lstlisting}[caption={Dynamiczne wstrzykiwanie funkcji oraz stałych z innych skryptów}]
+\begin{lstlisting}[caption={Dynamiczne wstrzykiwanie funkcji oraz stałych z innych skryptów},language=Python]
 exec(f'from {hyperparameters_file} import BATCH_SIZE, EPOCHS, LEARNING_RATE, VALIDATION_SPLIT')
 exec(f'from {model_file} import get_model')
 exec(f'from {metric_and_loss_file} import custom_metric, custom_loss')
