@@ -545,8 +545,9 @@ Filtr ten rozmywa obraz co w wypadku dwu kolorowego obrazu zawierającego linie 
 We wszystkich wykonanych do tej pory eksperymentach otrzymywałem jako predykcję jednokolorowe obrazy.
 Jednakże dla każdego z tych podejść otrzymywałem bardzo wysoką wartość dokładności i małą wartość funkcji strat.
 Dlatego zdecydowałem się na zbadanie innych sposobów oceny poprawności działania sieci.
-\subsubsection{Funkcja strat - Współczynnik Sørensena}
-Często używaną w zagadnieniu segmentacji funkcją strat jest $1-QS$ gdzie QS to współczynnik Sørensena opisany wzorem:
+\subsubsection{Funkcja strat - Współczynnik Dice`a-Sørensena}
+Poniższy rozdział powstał na podstawie artykułu\cite{coefficient}.
+Często używaną w zagadnieniu segmentacji funkcją strat jest $1-QS$ gdzie QS to współczynnik Dice`a-Sørensena opisany wzorem:
 \begin{equation}
     QS = \frac{2*|X \cap Y|}{|X|+|Y|}
 \end{equation}
@@ -555,6 +556,10 @@ Dla:
     \item X - zbiór wejściowy
     \item Y - zbiór wyjściowy
 \end{itemize}
+
+``Został wprowadzony w 1948 i 1945 odpowiednio przez biologów Thorvalda Sørensena i Lee Reymond Dice`a.''\cite{coefficient} - tłumaczenie własne.
+
+Jego zastosowanie to obliczenie podobieństwa dwóch próbek.
 
 \begin{lstlisting}[caption={Implementacja przy użyciu Keras i TensorFlow},language=python]
 from tensorflow.keras import backend as K
