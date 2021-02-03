@@ -32,6 +32,7 @@
   breakatwhitespace=true,
   tabsize=4
 }
+
 \lstdefinelanguage{JavaScript}{
 keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
 keywordstyle=\color{blue}\bfseries,
@@ -46,6 +47,7 @@ stringstyle=\color{red}\ttfamily,
 morestring=[b]',
 morestring=[b]"
 }
+
 \lstset{frame=tb,
   language=JavaScript,
   aboveskip=3mm,
@@ -67,7 +69,33 @@ morestring=[b]"
 \date{2020-12-25}
 \author{Michał Tracewicz}
 \begin{document}
-\maketitle
+\begin{titlepage}
+    \begin{center}
+        {\large Uniwersytet Mikołaja Kopernika\\}
+        {\large Wydział Matematyki i Informatyki\\}
+        \vspace{2.1cm}
+        {\large Michał Tracewicz\\}
+        nr albumu: 291962\\
+        \vspace{2cm}
+        Praca inżynierska\\
+        na kierunku informatyka\\
+        \vspace{2cm}
+        {\huge Segmentacja komórek na zdjęciach mikroskopowych skóry z użyciem głębokich sieci neuronowych.\\}
+    \end{center}
+    \hfill
+    \begin{minipage}{6cm}
+        \vspace{12mm}
+        {
+            Opiekun pracy dyplomowej\\
+            prof. dr hab. Piotr Wiśniewski
+        }
+    \end{minipage}
+    \vspace{2cm}
+    \begin{center}
+        {Toruń 2021\\}
+    \end{center}
+    \vspace{1.2cm}
+\end{titlepage}
 \newpage
 \tableofcontents
 \newpage
@@ -151,7 +179,7 @@ Pojedyńczy neuron w momencie otrzymania wystarczająco wielu sygnałów w krót
 Podobnie działają perceptrony.
 Gdy suma wejść wymnożonych przez ich wagi przekroczy pewien próg (bias) to perceptron jest aktywny.
 
-Wartość zwracana przez perceptron opiszemy wzorem:
+Wartość zwracaną przez perceptron opiszemy wzorem:
 \begin{equation*}
     O(x)=\sigma(\sum\limits_{i=1}^{n}{w_i x_i})
 \end{equation*}
@@ -541,7 +569,7 @@ Filtr ten rozmywa obraz co w wypadku dwu kolorowego obrazu zawierającego linie 
     \caption{Obraz wyjściowy przed i po zastosowaniu filtra}
     \label{fig:input_split}
 \end{figure}
-\subsection{Funkcje start}
+\subsection{Funkcje strat}
 We wszystkich wykonanych do tej pory eksperymentach otrzymywałem jako predykcję jednokolorowe obrazy.
 Jednakże dla każdego z tych podejść otrzymywałem bardzo wysoką wartość dokładności i małą wartość funkcji strat.
 Dlatego zdecydowałem się na zbadanie innych sposobów oceny poprawności działania sieci.
@@ -557,7 +585,7 @@ Dla:
     \item Y - zbiór wyjściowy
 \end{itemize}
 
-``Został wprowadzony w 1948 i 1945 odpowiednio przez biologów Thorvalda Sørensena i Lee Reymond Dice`a.''\cite{coefficient} - tłumaczenie własne.
+``Został opracowany niezależnie w 1948 i 1945 odpowiednio przez biologów Thorvalda Sørensena i Lee Reymond Dice`a.''\cite{coefficient} - tłumaczenie własne.
 
 Jego zastosowanie to obliczenie podobieństwa dwóch próbek.
 
