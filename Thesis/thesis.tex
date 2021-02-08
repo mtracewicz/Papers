@@ -517,7 +517,7 @@ Doszedłem do wniosku, że oba te problemy mogę rozwiązać poprzez pocięcie d
     \caption{Przykładowe cięcia obrazów wyjściowych}
     \label{fig:input_split}
 \end{figure}
-Gdy model będzie już wyuczony w celu otrzymania segmentacji obraz wejściowy będzie najpierw dzielony w ten sam sposób, aby był zestawem mniejszych zdjęć, potem nastąpi segmentacja a po niej wyniki zostaną scalone ponownie w jeden obraz wyjściowy (w miejscach, gdzie będzie więcej niż jedna odpowiedź dla piksela z powodu kieszonki przyjmę wartość maksymalną).
+Gdy model będzie już wyuczony w celu otrzymania segmentacji obraz wejściowy będzie najpierw dzielony w ten sam sposób, aby był zestawem mniejszych zdjęć, potem nastąpi segmentacja a po niej wyniki zostaną scalone ponownie w jeden obraz wyjściowy.
 Dzięki takiemu rozwiązaniu udało mi się znacząco zmniejszyć ilość pamięci operacyjnej wymaganej dla pojedyńczego przebiegu sieci, dzięki czemu mogę wykorzystać architekturę U-Net oraz znacząco zwiększyć jej skuteczność, ponieważ dostępną pamięć można wykorzystać by dodać dodatkowe warstwy/filtry.
 Dodatkowo rozmiar 200 na 200 pikseli jest obrazem kwadratowym a z takimi najlepiej radzi sobię ta architektura.
 
@@ -612,6 +612,7 @@ Gdzie:
     \item PCZ - liczba poprawnie sklasyfikowanych czarnych pikseli
     \item ACZ - liczba wszystkich czarnych pikseli
 \end{itemize}
+Niestety nie byłem w stanie zaimplementować powyższego rozwiązania we bibliotece TensorFlow.
 
 \subsection{Obliczenie predykcji na komputerze klienckim}
 Jednym z problemów przy pracy z danymi medycznymi jest to, że nie mogą one opuścić sieci wewnętrznej szpitala.
