@@ -265,10 +265,10 @@ gdzie:
     \item $y_i$ - poprawna wartość
     \item $x_i$ - wartość predykcji sieci
 \end{itemize}
-W celu poprawy wag używamy algorytmu wstecznej propagacji błędu.
+W celu poprawy wag używamy algorytmu wstecznej propagacji błędu. Jego celem jest minimalizacja funkcji strat.
 Na początku obliczamy predykcję sieci na elementach a następnie przechodząc sieć wstecz poprawiamy wagi.
 Wagi poprawiane są na podstawie delt wyliczanych za pomocą algorytmu spadku gradientowego.
-Polega on na wyznaczeniu kierunku w, którym funkcja maleje najszybciej.
+Polega on na wyznaczeniu kierunku w, którym funkcja maleje najszybciej (gradient wskazuje kierunek w, którym funkcja rośnie najszybciej, dlatego w algorytmie bierzemy jego odwrotność).
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.75\linewidth}
@@ -288,8 +288,9 @@ Proces ten opiszemy wzorem:
 gdzie:
 \begin{itemize}
     \item $\eta$ - współczynnik uczenia (bliski zeru), jest to wartość wskazująca jak ``duży krok'' wykonamy w kierunku wskazanym przez algorytm
-    \item $w_g^m$ - wektor wag
-    \item $\frac{\delta E}{\delta w_g}(w^m)$ - pochodna cząstkowa
+    \item $w_g^m$ - wektor wag w m-tej warstwie
+    \item E - funkcja błędu/start
+    \item $\frac{\delta E}{\delta w_g}(w^m)$ - gradient (pochodna cząstkowa)
 \end{itemize}
 
 \subsection{Porównanie do klasycznych metod programowania}
@@ -315,6 +316,11 @@ W przestrzeni dwu wymiarowej jest to równoważne z nałożeniem na obraz wejśc
     \caption{Operacja splotu}
     \cite{convolution}
 \end{figure}
+
+\begin{align*}
+    f(x) = I*K
+\end{align*}
+
 \subsection{Sieci w pełni splotowe}
 Sieciami w pełni splotowymi nazywamy te głębokie sieci neuronowe, które jako wszystkie warstwy posiadają warstwy splotowe.
 Sieci tego typu służą głównie do przekształcania obrazów.
@@ -404,14 +410,16 @@ Idąc ścieżką zmniejszającą szukamy detali, jest to typowe zastosowanie sie
 \newpage
 \section{Przetestowane podejścia}
 W ramach pracy przetestowałem architekturę U-Net oraz różne podejścia do obróbki danych.
-Mimo wielu prób sieci które przygotowałem zawsze zwracały niemal w pełni czarne/czerwone obrazy.
+Mimo wielu prób sieci które przygotowałem zawsze zwracały niemal w pełni przezroczyste/czerwone obrazy.
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.4\linewidth}
-        \includegraphics[width=\linewidth]{images/input.png}
+        \includegraphics[width=\linewidth]{images/0_0_0.png}
+        \caption{Wejście}
     \end{subfigure}
     \begin{subfigure}{0.4\linewidth}
-        \includegraphics[width=\linewidth]{images/output.jpg}
+        \includegraphics[width=\linewidth]{images/0_0_0_prediction.png}
+        \caption{Predykcja}
     \end{subfigure}
     \caption{Przykładowe otrzymane wyniki}
     \label{fig:input_and_output}
@@ -495,18 +503,18 @@ Doszedłem do wniosku, że oba te problemy mogę rozwiązać poprzez pocięcie d
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.8\linewidth}
-        \includegraphics[width=\linewidth]{images/input.png}
+        \includegraphics[width=\linewidth]{images/edges0.jpg}
         \caption{Obraz oryginalny}
     \end{subfigure}
     \begin{subfigure}{0.4\linewidth}
-        \includegraphics[width=\linewidth]{images/output.jpg}
+        \includegraphics[width=\linewidth]{images/edges0_0_0.png}
         \caption{Lewy górny róg}
     \end{subfigure}
     \begin{subfigure}{0.4\linewidth}
-        \includegraphics[width=\linewidth]{images/output.jpg}
+        \includegraphics[width=\linewidth]{images/edges0_0_1.png}
         \caption{Kolejny obraz na prawo}
     \end{subfigure}
-    \caption{Przykładowe cięcia obrazów wejściowych}
+    \caption{Przykładowe cięcia obrazów wyjściowych}
     \label{fig:input_split}
 \end{figure}
 Gdy model będzie już wyuczony w celu otrzymania segmentacji obraz wejściowy będzie najpierw dzielony w ten sam sposób, aby był zestawem mniejszych zdjęć, potem nastąpi segmentacja a po niej wyniki zostaną scalone ponownie w jeden obraz wyjściowy (w miejscach, gdzie będzie więcej niż jedna odpowiedź dla piksela z powodu kieszonki przyjmę wartość maksymalną).
@@ -525,19 +533,6 @@ Natomiast kanały zielony i niebieski miały niemal zawsze wartość równą zer
 
 Dlatego wpadłem na pomysł, żeby spróbować potraktować kanały alfa i czerwony jako obrazy monochromatyczne i użyć ich jako dane wyjściowe.
 W ten sposób w założeniu predykcje tworzyłyby monochromatyczny obraz. W celu ujednolicenia wyników otrzymane tak obrazy zostały potraktowane jako kanał czerwony obrazu wynikowego a kanały niebieski i zielony otrzymały arbitralnie wartość zero dla wszystkich pikseli (otrzymany po takiej modyfikacji obraz był czarno/czerwony, tak jak oryginalne obrazy).
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}{0.4\linewidth}
-        \includegraphics[width=\linewidth]{images/output.jpg}
-        \caption{Lewy górny róg}
-    \end{subfigure}
-    \begin{subfigure}{0.4\linewidth}
-        \includegraphics[width=\linewidth]{images/output.jpg}
-        \caption{Kolejny obraz na prawo}
-    \end{subfigure}
-    \caption{Przykładowy otrzymany obraz}
-    \label{fig:input_split}
-\end{figure}
 
 Niestety zastosowanie tego rozwiązania nie przyniosło porządnych efektów.
 Obrazy wynikowe przyjmowały teraz w całości kolor czerwony (gdy jako wyjście przykładów uczących podaliśmy obraz monochromatyczny wygenerowany z kanału czerwonego) lub
@@ -549,20 +544,6 @@ Dlatego zdecydowałem się na zmianę obrazów wyjściowych z formatu RGBA do RG
 Zależnie od wartości kanałów czerwonego i alfa zaokrągliłem kolor danego piksela do czystego czerwonego (255, 0, 0) lub czystego czarnego (0, 0, 0).
 Przeprowadziłem te operację z różnymi wartościami progowymi dla obu kanałów.
 W wyniku jednak nadal otrzymywałem całkowicie czerwone/czarne obrazy zależnie od tego jak dużo pikseli zostało zaokrąglonych do danego koloru.
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}{0.4\linewidth}
-        \includegraphics[width=\linewidth]{images/output.jpg}
-        \caption{Lewy górny róg}
-    \end{subfigure}
-    \begin{subfigure}{0.4\linewidth}
-        \includegraphics[width=\linewidth]{images/output.jpg}
-        \caption{Kolejny obraz na prawo}
-    \end{subfigure}
-    \caption{Przykładowy otrzymany obraz}
-    \label{fig:input_split}
-\end{figure}
-
 \subsubsection{Rozmycie Gausa}
 Otrzymane w poprzednich próbach wyniki skłoniły mnie do myśli, że proporcje koloru czerwonego do czarnego są zbyt nierówne.
 Z powodu tej nierówności model jest w stanie uzyskać wysoką wartość dokładności (rzędu dziewięćdziesięciu czterech procent) jako predykcję zwracając wszystkie piksele w tym samym kolorze.
@@ -572,11 +553,11 @@ Filtr ten rozmywa obraz co w wypadku dwu kolorowego obrazu zawierającego linie 
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.4\linewidth}
-        \includegraphics[width=\linewidth]{images/output.jpg}
+        \includegraphics[width=\linewidth]{images/ex.png}
         \caption{Przed}
     \end{subfigure}
     \begin{subfigure}{0.4\linewidth}
-        \includegraphics[width=\linewidth]{images/output.jpg}
+        \includegraphics[width=\linewidth]{images/blur.png}
         \caption{Po}
     \end{subfigure}
     \caption{Obraz wyjściowy przed i po zastosowaniu filtra}
@@ -605,10 +586,11 @@ Jego zastosowanie to obliczenie podobieństwa dwóch próbek.
 \begin{lstlisting}[caption={Implementacja przy użyciu Keras i TensorFlow},language=python]
 from tensorflow.keras import backend as K
 
-def custom_metric(y_true, y_pred):
-    y_true = K.flatten(y_true)
-    y_pred = K.flatten(y_pred)
-    return (2. * K.sum(y_true * y_pred) +1) / (K.sum(y_true) + K.sum(y_pred) + 1)
+def custom_metric(y_true, y_pred, smooth=1):
+    y_true_f = K.flatten(y_true)
+    y_pred_f = K.flatten(y_pred)
+    return (2. * K.sum(y_true_f * y_pred_f) + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) + smooth)
+
 \end{lstlisting}
 
 Korzystając z tej funkcji strat otrzymałem prawie dokładnie takie same obrazy wyjściowe.
