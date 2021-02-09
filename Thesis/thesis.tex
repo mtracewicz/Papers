@@ -292,7 +292,7 @@ wykonanym dla wszystkich wag g, gdzie:
     \item $\eta$ - współczynnik uczenia (bliski zeru), jest to wartość wskazująca jak ``duży krok'' wykonamy w kierunku wskazanym przez algorytm
     \item $w_g^m$ - wektor wag w m-tej warstwie
     \item E - funkcja błędu/start
-    \item $\frac{\delta E}{\delta w_g}(w^m)$ - gradient (pochodna cząstkowa)
+    \item $\frac{\delta E}{\delta w_g}(w^m)$ - gradient wskazujący kierunek najszybszego wzrostu funkcji błędu
 \end{itemize}
 
 \subsection{Porównanie do klasycznych metod programowania}
@@ -472,12 +472,12 @@ Mimo wielu prób sieci które przygotowałem zawsze zwracały niemal w pełni pr
     \label{fig:input_and_output}
 \end{figure}
 \subsection{Bazowa sieć U-Net}
-Pierwszym podejściem, które przetestowałem było uruchomienie trzy poziomowej (dziesięciu warstwowej) sieci neuronowej w architekturze U-Net.
+Pierwszym podejściem, które przetestowałem było uruchomienie trzy poziomowej sieci neuronowej w architekturze U-Net.
 Sieć otrzymywała na wejście obrazy rozmiaru 200x200x3 a jako wyjście zwracała obrazy 200x200x4 (oryginalne obrazy były rozmiaru 1200 na 1600 pikseli, więcej na ten temat w kolejnym punkcie).
 Na tym etapie przeprowadziłem również testy modyfikując opisujące te sieć hiperparametry.
-Zmieniałem liczbę epok (między wartościami z przedziału od 20 do 40), stałą uczącą (w przedziale od 0.003 do 0.1) oraz wielkość parti (w przedziale od 1 do 25).
+Zmieniałem liczbę epok (między wartościami z przedziału od 20 do 40), stałą uczącą (w przedziale od 0.003 do 0.3) oraz wielkość parti (w przedziale od 1 do 25).
 Dodatkowo modyfikowałem również ilość filtrów używanych w każdej warstwie.
-Niezależnie od tych zmian wszystkie powyższe eksperymenty zwracały jako predykcję obrazy praktycznie w stu procentach czarne, zawierały maksymalnie dwa/trzy piksele koloru czerwonego.
+Niezależnie od tych zmian wszystkie powyższe eksperymenty zwracały jako predykcję obrazy praktycznie w stu procentach czarne, zawierały maksymalnie dwa/trzy piksele koloru czerwonego (dochodziło również do sytuacji przeciwnej - obrazy niemal całkowicie czerwone i dokładność w okolicach czterech procent).
 Działo się tak mimo, że sieć uzyskiwała w trakcie uczenia/walidacji wyniki dokładności na poziomie nawet dziewięćdziesięciu czterech procent.
 
 \begin{lstlisting}[caption=Moja implementacja architektury U-NET,language=python]
