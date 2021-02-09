@@ -7,11 +7,13 @@
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{listings}
+\usepackage{mathtools}
 \usepackage{subcaption}
 \usepackage[T1]{fontenc}
 \usepackage[polish]{babel}
 \usepackage[utf8]{inputenc}
 
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
@@ -312,14 +314,49 @@ Operacja splotu w kontekście sieci neuronowych jest to przebieg jądra przez wa
 W przestrzeni dwu wymiarowej jest to równoważne z nałożeniem na obraz wejściowy filtra.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{images/convolution.png}
+    \includegraphics[width=\linewidth]{images/conv.png}
     \caption{Operacja splotu}
-    \cite{convolution}
+    \cite{nvidia}
 \end{figure}
 
+Nową wartością piksela jest suma ważona filtra(macierz kwadratowa) wymnożona przez fragment obrazu wejściowego.
+Poniższe część powstała na podstawie \cite{convolution-math}
 \begin{align*}
-    f(x) = I*K
+    G[m,n] = (f*h)[m,n] = \sum_0^{j-1}\sum_0^{k-1} h[j,k]f[m-j,n-k]
 \end{align*}
+Gdzie:
+\begin{itemize}
+    \item G - obraz wyjściowy
+    \item m - wiersz
+    \item n - kolumna
+    \item f - obraz wejściowy
+    \item h - jądro
+    \item j - liczba liczba wierszy jądrze
+    \item k - liczba kolumn w jądrze
+\end{itemize}
+W operacji splotu obraz wyjściowy może być mniejszy od obrazu wejściowego lub mieć wymiary takie same jak on.
+Domyślnie wyniku otrzymamy obraz pomniejszony, aby pozostał bez zmian musimy dodać tak zwany ``padding''.
+Dodajemy zera "na około" macierzy zgodnie ze wzorem $p = \frac{f-1}{2}$, gdzie p to szerokość ``paddingu'' a f to rozmiar filtra.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{images/padding.png}
+    \caption{Dodawanie padding-u}
+    \cite{padding}
+\end{figure}
+Kolejnym parametrem jest wartość kroku. Wartość ta wskazuje, co który piksel będziemy obliczać.
+Stosujemy go jeżeli chcemy otrzymać mniejszy obraz wyjściowy.
+Rozmiar obrazu wyjściowego możemy policzyć za pomocą wzoru:
+\begin{align*}
+    n_{out} = \floor{\frac{n_{in}+2p-f}{s}+1}
+\end{align*}
+gdzie:
+\begin{itemize}
+    \item $n_{out}$ - rozmiar obrazu wyjściowego
+    \item $n_{in}$ - rozmiar obrazu wejściowego
+    \item s - krok
+    \item p - padding
+    \item f - rozmiar filtra
+\end{itemize}
 
 \subsection{Sieci w pełni splotowe}
 Sieciami w pełni splotowymi nazywamy te głębokie sieci neuronowe, które jako wszystkie warstwy posiadają warstwy splotowe.
