@@ -121,9 +121,9 @@ Zdecydowanie nie należy ono do takich, które wymagają sześcioletnich studió
 Co za tym idzie, nadaje się ono idealnie do automatyzacji.
 
 W ostatnich latach bardzo mocno rozwija się dziedzina uczenia maszynowego.
-Technika ta jest inspirowana działaniem ludzkiego mózgu i pozwala na pisanie programów dla, których trudno jest zdefiniować jednoznaczny zbiór reguł postępowania.
-Człowiek posiada pewną intuicję dzięki, której jest w stanie w dość krótkim czasie nauczyć się w jaki sposób należy obrysować komórkę.
-Jednakże gdy zostanie poproszony o wyjaśnienie swojego podejścia będzie to trudne lub wręcz nie wykonalne.
+Technika ta jest inspirowana działaniem ludzkiego mózgu i pozwala na pisanie programów, dla których trudno jest zdefiniować jednoznaczny zbiór reguł postępowania.
+Człowiek posiada pewną intuicję, dzięki której jest w stanie w dość krótkim czasie nauczyć się w jaki sposób należy obrysować komórkę.
+Jednakże, gdy zostanie poproszony o wyjaśnienie swojego podejścia będzie to trudne lub wręcz nie wykonalne.
 Możemy się raczej spodziewać odpowiedzi pokroju ``No patrzę na komórkę i ją obrysowuje''.
 Biorąc pod uwagę specyfikę tego problemu użycie tej metody wydaję się idealne.
 
@@ -148,13 +148,13 @@ Całość dopełnia moduł pozwalający na obróbkę zdjęć wejściowych oraz w
 Jako, że obrazy medyczne są danymi chronionymi prawnie to szpitale w większości wypadków nie mogą wysłać ich poza własną sieć wewnętrzną.
 Z tego powodu przetestowałem również możliwość uruchomienia splotowej sieci neuronowej w przeglądarce z użyciem biblioteki TensorFlowJS\footnote{https://www.tensorflow.org/js}.
 Dzięki takiemu podejściu jedynie uczenie modelu przebiega na komputerze nie będącym komputerem klienckim.
-Model zostaje nauczony na jednym komputerze ale predykcja dla konkretnego obrazu wejściowego wykonywana jest w przeglądarce po stronie klienta (nie następuje wysłanie zapytania do serwera API) i nigdy nie opuszcza sieci.
+Model zostaje nauczony na jednym komputerze, ale predykcja dla konkretnego obrazu wejściowego wykonywana jest w przeglądarce po stronie klienta (nie następuje wysłanie zapytania do serwera API) i nigdy nie opuszcza sieci.
 \subsection{Obrazy wejściowe i wyjściowe}
 W opracowywanym przeze mnie zagadnieniu jako obrazy wejściowe użyte zostały zdjęcia mikroskopowe skóry.
 Wszystkie zdjęcia są zrobione z przybliżeniem x40 oraz posiadają rozmiar 1200x1600px z trzema kanałami.
 Obrazy wyjściowe zostały przygotowane za pomocą programu opracowany przez Panią Dominikę Pawłowską.
 Są to obrazy tego samego rozmiaru jednak zawierają cztery kanały zamiast trzech (RGBA zamiast RGB).
-Możemy na nich zobaczyć czerwoną otoczkę na około komórek, natomiast cała reszta obrazu jest przezroczysta.
+Możemy na nich zobaczyć czerwoną otoczkę naokoło komórek, natomiast cała reszta obrazu jest przezroczysta.
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.4\linewidth}
@@ -237,7 +237,7 @@ Liczba oraz typ warstw ukrytych a także ilość zawartych w nich neuronów w du
 Omówienie zaczniemy od tego w jaki sposób sieć przeprowadza obliczenia zwracające odpowiedź, a następnie zajmiemy się procesem uczenia.
 
 W uproszczeniu możemy patrzeć na neurony w sieciach jak na perceptrony, które mogą posiadać funkcję aktywacji inną niż progowa.
-Grupujemy neurony w warstwy a następnie łączymy każdy neuron z warstwy ``k'' z neuronami z warstwy ``k+1''. Takie warstwy (posiadają połączenia neuronów każdy z każdym) nazywamy warstwami typu ``dense''.
+Grupujemy neurony w warstwy, a następnie łączymy każdy neuron z warstwy ``k'' z neuronami z warstwy ``k+1''. Takie warstwy (posiadają połączenia neuronów każdy z każdym) nazywamy warstwami typu ``dense''.
 Każde takie połączenia posiada wagę.
 Aby obliczyć wartości neuronów w warstwie ``k+1'' potrzebujemy znać wartości w warstwie k-tej (jako warstwę pierwszą przyjmujemy otrzymany wektor wejściowy).
 Warto również pamiętać o dodaniu do każdej warstwy bias-u.
@@ -268,9 +268,9 @@ gdzie:
     \item $x_i$ - wartość predykcji sieci
 \end{itemize}
 W celu poprawy wag używamy algorytmu wstecznej propagacji błędu. Jego celem jest minimalizacja funkcji strat.
-Na początku obliczamy predykcję sieci na elementach a następnie przechodząc sieć wstecz poprawiamy wagi.
+Na początku obliczamy predykcję sieci na elementach, a następnie przechodząc sieć wstecz poprawiamy wagi.
 Wagi poprawiane są na podstawie delt wyliczanych za pomocą algorytmu spadku gradientowego.
-Polega on na wyznaczeniu kierunku w, którym funkcja maleje najszybciej (gradient wskazuje kierunek w, którym funkcja rośnie najszybciej, dlatego w algorytmie bierzemy jego odwrotność).
+Polega on na wyznaczeniu kierunku w którym funkcja maleje najszybciej (gradient wskazuje kierunek w którym funkcja rośnie najszybciej, dlatego w algorytmie bierzemy jego odwrotność).
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.75\linewidth}
@@ -287,7 +287,7 @@ Proces ten opiszemy wzorem:
 \begin{align*}
     w_g^{(m+1)}=w_g^m - \eta\frac{\delta E}{\delta w_g}(w^m)
 \end{align*}
-wykonanym dla wszystkich wag g, gdzie:
+wykonanym dla wszystkich wag ``g'', gdzie:
 \begin{itemize}
     \item $\eta$ - współczynnik uczenia (bliski zeru), jest to wartość wskazująca jak ``duży krok'' wykonamy w kierunku wskazanym przez algorytm
     \item $w_g^m$ - wektor wag w m-tej warstwie
@@ -335,8 +335,8 @@ Gdzie:
     \item k - liczba kolumn w jądrze
 \end{itemize}
 W operacji splotu obraz wyjściowy może być mniejszy od obrazu wejściowego lub mieć wymiary takie same jak on.
-Domyślnie wyniku otrzymamy obraz pomniejszony, aby pozostał bez zmian musimy dodać tak zwany ``padding''.
-Dodajemy zera "na około" macierzy zgodnie ze wzorem $p = \frac{f-1}{2}$, gdzie p to szerokość ``paddingu'' a f to rozmiar filtra.
+Domyślnie w wyniku otrzymamy obraz pomniejszony więc aby pozostał bez zmian musimy dodać tak zwany ``padding''.
+Dodajemy zera ``naokoło'' macierzy zgodnie ze wzorem $p = \frac{f-1}{2}$, gdzie ``p'' to szerokość ``paddingu'', a ``f'' to rozmiar filtra.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{images/padding.png}
@@ -370,7 +370,7 @@ Zastosowaniem tej operacji może być na przykład wykrywanie krawędzi na obraz
 \subsection{Sieci w pełni splotowe}
 Sieciami w pełni splotowymi nazywamy te głębokie sieci neuronowe, które jako wszystkie warstwy posiadają warstwy splotowe.
 Sieci tego typu służą głównie do przekształcania obrazów.
-Jedną z lepiej znanych architektur tego typu jest architektura ``U-NET'' z, której skorzystałem.
+Jedną z lepiej znanych architektur tego typu jest architektura ``U-NET'', z której skorzystałem.
 \newpage
 \section{Problem segmentacji}
 Uczenie maszynowe możemy podzielić na różne podtypy.
@@ -382,7 +382,7 @@ Poniższy rozdział powstał na podstawie \cite{unet}
 Jest to najprostsze zagadnienie w dziedzinie widzenia komputerowego.
 Polega ono na tym, że dla otrzymanego na wejście obrazu sieć ma zwrócić klasę do której przedstawiony na zdjęciu obiekt należy.
 Za dobry przykład może nam posłużyć ``Problem MNiST``, polegający na rozpoznawaniu odręcznie napisanych cyfr.
-Jako wejście sieć otrzymuje czarno-biały obrazek rozmiaru 16x16 pikseli na, którym widnieje odręcznie napisana cyfra.
+Jako wejście sieć otrzymuje czarno-biały obrazek rozmiaru 16x16 pikseli, na którym widnieje odręcznie napisana cyfra.
 Natomiast na wyjściu sieć zwraca nam predykcję jaka cyfra widnieje na zdjęciu.
 Ograniczeniem w tym typie problemu jest fakt, że na danym zdjęciu może znajdować się jedynie pojedyńczy obiekt.
 \begin{figure}[H]
@@ -395,9 +395,9 @@ Ograniczeniem w tym typie problemu jest fakt, że na danym zdjęciu może znajdo
 \subsection{Klasyfikacja z lokalizacją}
 Klasyfikacja z lokalizacją to dodanie do poprzedniego problemu zagadnienia odnalezienia klasyfikowanego obrazu na zdjęciu.
 Przykładowo tworząc sieć rozpoznającą gatunki zwierząt domowych, otrzymując zdjęcie kota siedzącego na kanapie otrzymamy nie tylko informację,
-że jest to kot ale również informację o tym gdzie na tej kanapie się znajduje.
-Najczęściej zwracane są w takim wypadku oprócz klasy współrzędne pikseli w których zaczyn i kończy się obiekt.
-Następnie możemy na tej podstawie narysowanie naokoło obiektu ramkę z podpisem zawierającym nazwę klasy.
+że jest to kot, ale również informację o tym gdzie na tej kanapie się znajduje.
+Najczęściej zwracane są w takim wypadku oprócz klasy współrzędne pikseli, w których zaczyna i kończy się obiekt.
+Następnie możemy na tej podstawie narysować naokoło obiektu ramkę z podpisem zawierającym nazwę klasy.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{images/klasyfikacja_z_lokalizacja.jpeg}
@@ -449,9 +449,9 @@ W roku 2015 Olaf Ronneberger, Philipp Fischer, Thomas Brox stworzyli architektur
     \cite{unet}
     \label{Wizualizacja architektury U-NET}
 \end{figure}
-Założeniem sieci jest to aby wyciągnąć informacje o detalach nie tracąc przy tym informacji przestrzennych.
+Założeniem sieci jest to, aby wyciągnąć informacje o detalach nie tracąc przy tym informacji przestrzennych.
 
-Patrząc na ilustrację architektury możemy ją podzielić na dwie części. Część zmniejszając oraz zwiększającą.
+Patrząc na ilustrację architektury możemy ją podzielić na dwie części. Część zmniejszającą oraz zwiększającą.
 Idąc ścieżką zmniejszającą szukamy detali, jest to typowe zastosowanie sieci splotowych. Jednakże druga część sieci, powiększa obraz z powrotem i dzięki temu odzyskujemy informacje o lokalizacji.
 
 \newpage
@@ -581,15 +581,15 @@ Natomiast kanały zielony i niebieski miały niemal zawsze wartość równą zer
 Dlatego wpadłem na pomysł, żeby spróbować potraktować kanały alfa i czerwony jako obrazy monochromatyczne i użyć ich jako dane wyjściowe.
 W ten sposób w założeniu predykcje tworzyłyby monochromatyczny obraz. W celu ujednolicenia wyników otrzymane tak obrazy zostały potraktowane jako kanał czerwony obrazu wynikowego a kanały niebieski i zielony otrzymały arbitralnie wartość zero dla wszystkich pikseli (otrzymany po takiej modyfikacji obraz był czarno/czerwony, tak jak oryginalne obrazy).
 
-Niestety zastosowanie tego rozwiązania nie przyniosło porządnych efektów.
+Niestety zastosowanie tego rozwiązania nie przyniosło pożądanych efektów.
 Obrazy wynikowe przyjmowały teraz w całości kolor czerwony (gdy jako wyjście przykładów uczących podaliśmy obraz monochromatyczny wygenerowany z kanału czerwonego) lub
 czarny (gdy dane wyjściowe były na podstawie kanału alfa).
 \subsubsection{Redukcja do obrazów trzy kanałowych i redukcja kolorów}
-Kolejnym pomysłem było przeprowadzenie redukcję wymiarowości danych wyjściowych oraz zmniejszyłem ilość kolorów w obrazie.
+Kolejnym pomysłem było przeprowadzenie redukcji wymiarowości danych wyjściowych oraz zmniejszenia ilość kolorów w obrazie.
 Wartości kanałów czerwonego i alfa są ze sobą powiązane (dla tła obie zmierzają do zera).
 Dlatego zdecydowałem się na zmianę obrazów wyjściowych z formatu RGBA do RGB.
 Zależnie od wartości kanałów czerwonego i alfa zaokrągliłem kolor danego piksela do czystego czerwonego (255, 0, 0) lub czystego czarnego (0, 0, 0).
-Przeprowadziłem te operację z różnymi wartościami progowymi dla obu kanałów.
+Przeprowadziłem tą operację z różnymi wartościami progowymi dla obu kanałów.
 W wyniku jednak nadal otrzymywałem całkowicie czerwone/czarne obrazy zależnie od tego jak dużo pikseli zostało zaokrąglonych do danego koloru.
 \subsubsection{Rozmycie Gausa}
 Otrzymane w poprzednich próbach wyniki skłoniły mnie do myśli, że proporcje koloru czerwonego do czarnego są zbyt nierówne.
@@ -645,7 +645,7 @@ Jednakże w przeciwieństwie do użycia dokładności jako metryki otrzymane war
 
 \subsubsection{Własna funkcja strat}
 Kolejny pomysł opierał się na tym aby metryka mierząca poprawność zwracała większą uwagę na poprawnie sklasyfikowane czerwone piksele (gdyż jest ich znacznie mniej).
-Piksele, które zostaną poprawnie z kategoryzowane a mają kolor czerwony będą ``X`` razy ważniejsze niż poprawnie sklasyfikowane piksele czarne.
+Piksele, które zostaną poprawnie skategoryzowane a mają kolor czerwony będą ``X`` razy ważniejsze niż poprawnie sklasyfikowane piksele czarne.
 
 \begin{align}
     \frac{X*\frac{PC}{AC} + \frac{PCZ}{ACZ}}{x+1}
@@ -659,14 +659,14 @@ Gdzie:
     \item PCZ - liczba poprawnie sklasyfikowanych czarnych pikseli
     \item ACZ - liczba wszystkich czarnych pikseli
 \end{itemize}
-Niestety nie byłem w stanie zaimplementować powyższego rozwiązania we bibliotece TensorFlow.
+Niestety nie byłem w stanie zaimplementować powyższego rozwiązania w bibliotece TensorFlow.
 
 \subsection{Obliczenie predykcji na komputerze klienckim}
 Jednym z problemów przy pracy z danymi medycznymi jest to, że nie mogą one opuścić sieci wewnętrznej szpitala.
 Dlatego nie możemy uruchomić wytrenowanego modelu na serwerze i zapewnić możliwości odpytania poprzez API.
 
 Rozwiązaniem w tej sytuacji było przeniesienie wytrenowanych w TensorFlow modeli do TensorFlowJS który pozwala na użycie ich na komputerze klienckim.
-Testy te były dokonane na znacznie prostszy modelu służącym do rozpoznawania odręcznie pisanych cyfr ze zbioru MNIST (stosował on jednak wszystkie warstwy z, których składa się model w architekturze U-Net, jedynie w innej ilości/konfiguracji).
+Testy te były dokonane na znacznie prostszym modelu służącym do rozpoznawania odręcznie pisanych cyfr ze zbioru MNIST (stosował on jednak wszystkie warstwy z których składa się model w architekturze U-Net, jedynie w innej ilości/konfiguracji).
 
 Pierwszym krokiem było przekształcenie modelu z biblioteki Python-owej na bibliotekę javascript-ową.
 Można to było łatwo wykonać w skrypcie Python-owym za pomocą metody tfjs.converters.save\_keras\_model, której przekazujemy model oraz ścieżkę do niego.
@@ -812,34 +812,33 @@ def create_new_image(image: np.ndarray,
     return Image.fromarray(np.copy(
         image[vertical_start:vertical_start+image_height, horizontal_start:horizontal_start+image_width]))
 \end{lstlisting}
-\subsection{Skrypt do uczenie sieci}
+\subsection{Skrypt do uczenia sieci}
 W celu umożliwienia automatyzacji procesu uczenia stworzyłem skrypt pozwalający na uruchamiane procesu uczenia z różnymi parametrami.
 Dzięki takiemu podejściu jesteśmy przykładowo w stanie uruchomić przez noc proces uczenia dla kilku różnych kombinacji architektur, hiperparametrów, danych wejściowych/wyjściowych. Dodatkowo istotnym elementem skryptu jest to, że użytkownik może samodzielnie napisać  funkcję błędu, metrykę oraz architekturę sieci w języku Python (zgodną z wymaganiami biblioteki Keras) a ta zostanie wstrzyknięta do skryptu.
 
 Skrypt przyjmuje na wejściu pod jaką nazwą ma zostać zapisany wytrenowany model oraz katalogi ze zdjęciami wejściowymi i wyjściowymi.
 
-Dodatkowo opcjonalnie możemy podać ścieżkę do skryptu napisanego w języku Python w, którym znajdują się funkcje o nazwach ``custom\_loss`` i ``custom\_metrics`` (w wypadku braku domyślnie użyty jest współczynnik Sørensena), które zostaną użyte jako metryka oraz funkcja strat.
+Dodatkowo opcjonalnie możemy podać ścieżkę do skryptu napisanego w języku Python, w którym znajdują się funkcje o nazwach ``custom\_loss`` i ``custom\_metrics`` (w wypadku braku domyślnie użyty jest współczynnik Sørensena), które zostaną użyte jako metryka oraz funkcja strat.
 
-Kolejnym opcjonalny parametr jest odpowiedzialny za użytą architekturę, jest to ścieżka do pliku zawierającego funkcję ``get\_model``, która zwraca obiekt klasy ``tf.Keras.Model`` (domyślnie używany jest model z moją implementacją architektury U-Net).
+Kolejny opcjonalny parametr jest odpowiedzialny za użytą architekturę, jest to ścieżka do pliku zawierającego funkcję ``get\_model``, która zwraca obiekt klasy ``tf.Keras.Model`` (domyślnie używany jest model z moją implementacją architektury U-Net).
 
 Następny parametr to ścieżka do pliku zawierającego hiperparametry jako zmienne w skrypcie języka Python (domyślnie jest to plik ``hyperparameters.py`` z napisanego przeze mnie moduły ``neural\_network``).
 
-Skrypt zaczyta dane do pamięci a następnie wykona uczenie modelu (za pomocą metody ``tf.keras.Model.fit'') na podanych danych ze wskazaną funkcją strat, metryką, hiperparametrami i architekturą.
+Skrypt zaczyta dane do pamięci, a następnie wykona uczenie modelu (za pomocą metody ``tf.keras.Model.fit'') na podanych danych ze wskazaną funkcją strat, metryką, hiperparametrami i architekturą.
 Następnie wynikowy model zostanie zapisany pod wskazaną nazwą w katalogu ``trained\_models``.
 \begin{lstlisting}[caption={Dynamiczne wstrzykiwanie funkcji oraz stałych z innych skryptów},language=Python]
 exec(f'from {hyperparameters_file} import BATCH_SIZE, EPOCHS, LEARNING_RATE, VALIDATION_SPLIT')
 exec(f'from {model_file} import get_model')
 exec(f'from {metric_and_loss_file} import custom_metric, custom_loss')
 \end{lstlisting}
-\subsection{Skrypt pozwalające na testowanie zapisanych modeli}
-Kolejny skrypt przyjmuje na wejście ścieżkę do zapisanego modelu oraz ścieżki do katalogów zawierających dane wejściowe i wyjściowe.
-A następnie przeprowadza na nich test sprawdzający jak dobrze model sobie na nich poradził za pomocą metody model.evaluate.
-\subsection{Skrypt pozwalające na predykcję dla obrazu/folderu obrazów}
+\subsection{Skrypt pozwalający na testowanie zapisanych modeli}
+Kolejny skrypt przyjmuje na wejście ścieżkę do zapisanego modelu oraz ścieżki do katalogów zawierających dane wejściowe i wyjściowe, następnie przeprowadza na nich test sprawdzający jak dobrze model sobie na nich poradził za pomocą metody ``model.evaluate''.
+\subsection{Skrypt pozwalający na predykcję dla obrazu/folderu obrazów}
 Stworzyłem również skrypt, który otrzymując na wejście ścieżkę do modelu, którego chcemy użyć oraz
-ścieżkę do obrazu wejściowego/katalogu obrazów wejściowych zapiszę do pliku/plików nowy obraz będący predykcją modelu.
+ścieżkę do obrazu wejściowego/katalogu obrazów wejściowych zapisze do pliku/plików nowy obraz będący predykcją modelu.
 \subsection{Testy jednostkowe}
 W celu wykazania poprawności działania oraz umożliwienia szybszej modyfikacji bez wprowadzania błędów do modułu pozwalającego na preprocessing zdjęć zostały dodane testy jednostkowe.
-Zostały napisane przy pomocy modułu PyTest a ich uruchamianie jest obsługiwane, przez moduł Tox.
+Zostały napisane przy pomocy modułu PyTest a ich uruchamianie jest obsługiwane przez moduł Tox.
 Testy są automatycznie uruchamiane przy wypchnięciu lokalnych migawek (ang. commit), do publicznego repozytorium na platformie GitHub.
 Funkcjonalność ta została zrealizowana za pomocą platformy CircleCi, pozwala ona na uruchomienie testów po otrzymaniu informacji od portalu GitHub.
 Status tych testów możemy zobaczyć w łatwy sposób poprzez dodany do pliku README.md obraz.
@@ -848,10 +847,10 @@ Status tych testów możemy zobaczyć w łatwy sposób poprzez dodany do pliku R
     \includegraphics[width=\linewidth]{images/ci.png}
     \caption{Obraz wskazujący, że wszystkie testy zostały zaliczone}
 \end{figure}
-Jest on każdorazowo przy wyświetlaniu wyrenderowanego pliku README pobierany z serwera CircleCi i zależnie od tego czy wszystkie testy jednostkowe z ostatniej migawki zostały poprawnie ukończone czy nie przybiera odpowiednio kolor zielony/czerwony.
+Jest on każdorazowo przy wyświetlaniu wyrenderowanego pliku README pobierany z serwera CircleCi i zależnie od tego czy wszystkie testy jednostkowe z ostatniej migawki zostały poprawnie ukończone czy nie, przybiera odpowiednio kolor zielony/czerwony.
 \subsection{Automatyczne renderowanie i publikacja wyników}
-W celu prezentacji wyników oraz łatwego i interaktywnego badania ich powstał notatnik Jupyter.
-W celu interaktywnego przejrzenia go należy pobrać repozytorium a następnie zainstalować wymagane biblioteki oraz uruchomić serwer jupyter za pomocą polecenie ``jupyter notebook''.
+W celu prezentacji wyników oraz łatwego i interaktywnego badania ich, powstał notatnik Jupyter.
+W celu interaktywnego przejrzenia go, należy pobrać repozytorium, a następnie zainstalować wymagane biblioteki oraz uruchomić serwer jupyter za pomocą polecenie ``jupyter notebook''.
 Jednakże jest on również dostępny jako strona internetowa w postaci nie interaktywnej (z pokazanymi wyjściami z wszystkich komórek).
 Strona ta jest automatycznie uaktualniana za każdym razem gdy do repozytorium na serwerze GitHub zostanie wysłana nowa migawka zawierająca modyfikację notatnika.
 Rozwiązanie to tak samo jak automatyczne testy jednostkowe zostało zrealizowane przy użyciu platformy CircleCi.
@@ -882,8 +881,7 @@ Rozwiązanie to w szczególności w znaczący sposób upraszcza dostęp do bibli
 Dzięki temu osoba zainteresowana uruchomieniem aplikacji z wykorzystaniem karty graficznej w celu przyśpieszenia obliczeń musi jedynie posiadać na swoim urządzeniu aktualne sterowniki oraz Docker.
 
 Skrypt przyjmuje na wejście ścieżkę do katalogu, który zawiera kod programu.
-Jest on montowany do kontenera.
-Dzięki czemu zmiany mogą być dokonywane zarówno w kontenerze jaki poza nim.
+Jest on montowany do kontenera, dzięki czemu zmiany mogą być dokonywane zarówno w kontenerze jaki poza nim.
 \newpage
 \section{Podsumowanie i możliwe następne kroki}
 Testy, które przeprowadziłem wskazują na to, że dla tych danych wejściowych/wyjściowych zastosowanie architektury U-Net nie sprawdza się.
