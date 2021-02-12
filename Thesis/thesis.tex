@@ -441,9 +441,9 @@ Natomiast gdy przeprowadzimy segmentację instancji to w wyniku otrzymamy każd�
 \end{figure}
 \newpage
 \section{Architektura U-Net historia i zastosowania}
-W roku 2015 Olaf Ronneberger, Philipp Fischer, Thomas Brox stworzyli architekturę sieci, której zadaniem jest segmentacja obrazów biomedycznych\cite{unetpaper}.
+W roku 2015 Olaf Ronneberger, Philipp Fischer i Thomas Brox stworzyli architekturę sieci, której zadaniem jest segmentacja obrazów biomedycznych.
 
-Informacje w tym rozdziale pochodzą z tej publikacji oraz z artykułu ``Understanding semantic segmentation with unet''\cite{unet}
+Informacje w tym rozdziale pochodzą z ich publikacji ``U-Net: Convolutional Networks for biomedical Image Segmentation''\cite{unetpaper} oraz z artykułu ``Understanding semantic segmentation with unet''\cite{unet}.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{images/unet.png}
@@ -462,7 +462,7 @@ W tym celu przeprowadzamy zwiększanie rozdzielczości (ang. upsampling) na obra
 
 Ostatnia warstwa jest nietypowa, jest to warstwa splotowa, w której filtr ma rozmiar 1x1 piksel. Celem tej warstwy jest z mapowanie obrazów stworzonych przez sieć na odpowiednią ilość klas.
 
-Dodatkowo w celu zapewnienia możliwości segmentacji arbitralnie dużych obrazów istotnym jest aby obrazy wejściowe były kwadratowe. Jest to spowodowane zastosowaniem strategi ``overlap-tile'' polegającej na uzupełnieniu danych brakujących w rogach obrazu za pomocą odbicia lustrzanego.
+Dodatkowo w celu zapewnienia możliwości segmentacji arbitralnie dużych obrazów istotnym jest, aby obrazy wejściowe były kwadratowe. Jest to spowodowane zastosowaniem strategi ``overlap-tile'' polegającej na uzupełnieniu danych brakujących w rogach obrazu za pomocą odbicia lustrzanego.
 \newpage
 \section{Przetestowane podejścia}
 W ramach pracy przetestowałem architekturę U-Net oraz różne podejścia do obróbki danych.
